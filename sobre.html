@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobre — Bora Apps</title>
+<meta name="description" content="Conheça o Bora Apps — ferramentas simples e gratuitas para o dia a dia brasileiro.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0e0e0c;--ink:#f5f2ea;--muted:#7a7870;--border:#2a2a26;--orange:#f0722a;--green:#2ecc71;--card:#17170f;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--ink);text-decoration:none;}
+.nav-logo span{color:var(--orange);}
+.nav-back{font-size:13px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.nav-back:hover{color:var(--ink);}
+.content{max-width:680px;margin:0 auto;padding:60px 40px 100px;}
+.eyebrow{font-size:11px;letter-spacing:.12em;color:var(--orange);text-transform:uppercase;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-weight:900;font-size:40px;line-height:1.1;margin-bottom:32px;}
+h1 em{font-style:italic;color:var(--orange);}
+.intro{font-size:17px;color:var(--muted);line-height:1.75;margin-bottom:48px;}
+.valores{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:48px;}
+.valor{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.valor-icon{font-size:24px;margin-bottom:10px;}
+.valor-title{font-family:'Fraunces',serif;font-weight:700;font-size:16px;margin-bottom:6px;}
+.valor-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.divider{border:none;border-top:1px solid var(--border);margin:48px 0;}
+h2{font-family:'Fraunces',serif;font-weight:700;font-size:26px;margin-bottom:16px;}
+.apps-list{display:flex;flex-direction:column;gap:12px;margin-bottom:48px;}
+.app-item{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-decoration:none;color:var(--ink);transition:border-color .15s;}
+.app-item:hover{border-color:var(--orange);}
+.app-item-icon{font-size:24px;flex-shrink:0;}
+.app-item-info{}
+.app-item-name{font-weight:500;font-size:15px;margin-bottom:2px;}
+.app-item-desc{font-size:12px;color:var(--muted);}
+.app-item-tag{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;flex-shrink:0;}
+.tag-live{background:rgba(46,204,113,.1);color:var(--green);border:1px solid rgba(46,204,113,.2);}
+.tag-soon{background:rgba(122,120,112,.1);color:var(--muted);border:1px solid var(--border);}
+.contato-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;}
+.contato-box p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.contato-email{display:inline-block;font-size:14px;color:var(--orange);text-decoration:none;border:1px solid rgba(240,114,42,.3);border-radius:8px;padding:8px 20px;transition:background .15s;}
+.contato-email:hover{background:rgba(240,114,42,.08);}
+footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-logo{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--muted);}
+.footer-logo span{color:var(--orange);}
+.footer-copy{font-size:12px;color:var(--muted);}
+@media(max-width:600px){nav,footer{padding:16px 20px;}.content{padding:40px 20px 80px;}h1{font-size:30px;}.valores{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="nav-back" href="index.html">← voltar</a>
+</nav>
+
+<div class="content">
+  <div class="eyebrow">nossa história</div>
+  <h1>simples de verdade,<br><em>do jeito brasileiro</em></h1>
+
+  <p class="intro">O Bora Apps nasceu de uma pergunta simples: por que é tão difícil calcular uma coisa tão corriqueira como dividir uma carona ou rachar uma conta no bar? Criamos ferramentas que resolvem isso em segundos — sem cadastro, sem app para baixar, sem complicação.</p>
+
+  <div class="valores">
+    <div class="valor">
+      <div class="valor-icon">⚡</div>
+      <div class="valor-title">Rápido</div>
+      <div class="valor-desc">Abre, usa, compartilha. Sem telas desnecessárias.</div>
+    </div>
+    <div class="valor">
+      <div class="valor-icon">🔓</div>
+      <div class="valor-title">Gratuito</div>
+      <div class="valor-desc">Sempre gratuito. Sem plano premium, sem truque.</div>
+    </div>
+    <div class="valor">
+      <div class="valor-icon">🔒</div>
+      <div class="valor-title">Privado</div>
+      <div class="valor-desc">Seus dados ficam no seu celular. Não enviamos nada.</div>
+    </div>
+    <div class="valor">
+      <div class="valor-icon">📱</div>
+      <div class="valor-title">Mobile first</div>
+      <div class="valor-desc">Feito para funcionar bem no celular, onde a vida acontece.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>nossas ferramentas</h2>
+  <div class="apps-list">
+    <a class="app-item" href="bora-junto.html">
+      <div class="app-item-icon">🚗</div>
+      <div class="app-item-info">
+        <div class="app-item-name">Bora Junto</div>
+        <div class="app-item-desc">Calcula o valor justo de carona por km rodado</div>
+      </div>
+      <span class="app-item-tag tag-live">disponível</span>
+    </a>
+    <a class="app-item" href="bora-lanchar.html">
+      <div class="app-item-icon">🍻</div>
+      <div class="app-item-info">
+        <div class="app-item-name">Bora Lanchar</div>
+        <div class="app-item-desc">Racha a conta do bar de forma justa</div>
+      </div>
+      <span class="app-item-tag tag-live">disponível</span>
+    </a>
+    <a class="app-item" href="#">
+      <div class="app-item-icon">✈️</div>
+      <div class="app-item-info">
+        <div class="app-item-name">Bora Viajar</div>
+        <div class="app-item-desc">Divide despesas da viagem entre o grupo</div>
+      </div>
+      <span class="app-item-tag tag-soon">em breve</span>
+    </a>
+    <a class="app-item" href="#">
+      <div class="app-item-icon">🏠</div>
+      <div class="app-item-info">
+        <div class="app-item-name">Bora Dividir</div>
+        <div class="app-item-desc">Racha contas do apartamento entre moradores</div>
+      </div>
+      <span class="app-item-tag tag-soon">em breve</span>
+    </a>
+  </div>
+
+  <hr class="divider">
+
+  <h2>fale com a gente</h2>
+  <div class="contato-box">
+    <p>Sugestões de ferramentas, dúvidas ou qualquer coisa — adoramos ouvir quem usa o Bora Apps.</p>
+    <a class="contato-email" href="mailto:contato@boraapps.com.br">contato@boraapps.com.br</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Bora <span>Apps</span></div>
+  <div class="footer-copy">© 2025 Bora Apps</div>
+</footer>
+
+</body>
+</html>
