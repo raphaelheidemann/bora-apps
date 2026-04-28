@@ -181,7 +181,7 @@ function calcular() {
 
   // Depreciação: ~10% ao ano do valor FIPE, distribuída por ~15000km/ano
   const anos_uso = 2025 - ano;
-  const deprec_pct = Math.min(0.10 + anos_uso * 0.005, 0.25); // entre 10% e 25%/ano
+  const deprec_pct = Math.min(0.02 + anos_uso * 0.005, 0.25); // entre 10% e 25%/ano
   const deprec_anual = fipe * deprec_pct;
   const deprec_por_km = deprec_anual / 15000;
   const custo_deprec = deprec_por_km * km_total;
