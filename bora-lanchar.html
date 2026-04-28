@@ -77,12 +77,7 @@ input::placeholder{color:#ccc;}
 .calc-btn:hover{opacity:.88;}
 .hidden{display:none!important;}
 </style>
-<nav style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e8e0d0;">
-  <a href="index.html" style="font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:#1a1208;text-decoration:none;">
-    Bora <span style="color:#f0722a;">Apps</span>
-  </a>
-  <a href="index.html" style="font-size:13px;color:#7a6e5f;text-decoration:none;">← voltar ao início</a>
-</nav>
+
 <div class="app">
   <div class="logo">Bora <span>Lanchar</span></div>
   <p class="tagline">divide a conta de forma justa — sem briga</p>
@@ -112,13 +107,11 @@ input::placeholder{color:#ccc;}
         <label>gorjeta / taxa (%)</label>
         <input type="number" id="gorjeta-s" placeholder="10" value="10" min="0" max="50">
       </div>
-      <div class="field">
-        <label>multiplicador álcool</label>
-        <input type="number" id="mult-alcool" placeholder="1.5" value="1.5" step="0.1" min="1">
-      </div>
-      <div class="field" style="align-self:end;">
-        <label style="font-size:10px;color:var(--muted);">quem bebeu paga X vezes mais que quem não bebeu</label>
-      </div>
+      <div class="field full">
+  <label>total em bebidas alcoólicas (R$)</label>
+  <input type="text" id="total-alcool" placeholder="ex: 10+10+8+12" oninput="previewAlcool(this)">
+  <span id="alcool-preview" style="font-size:11px;color:var(--green);margin-top:3px;"></span>
+</div>
     </div>
   </div>
 
@@ -159,6 +152,16 @@ input::placeholder{color:#ccc;}
 </div>
 
 <script>
+  function previewAlcool(input) {
+  const expr = input.value.replace(/[^0-9+.\-]/g, '');
+  try {
+    const val = expr ? Function('"use strict";return (' + expr + ')')() : 0;
+    document.getElementById('alcool-preview').textContent =
+      (val > 0 && isFinite(val)) ? '= R$ ' + val.toFixed(2) : '';
+  } catch(e) {
+    document.getElementById('alcool-preview').textContent = '';
+  }
+}
 let modo = 'simples';
 let pessoas = [
   {nome:'Ana', alcool:false},
@@ -237,19 +240,35 @@ function calcular(){
   let resultados = [];
 
   if(modo==='simples'){
-    const total = parseFloat(document.getElementById('total-conta').value)||0;
-    if(!total){alert('Preencha o total da conta.');return;}
-    const gorjeta = (parseFloat(document.getElementById('gorjeta-s').value)||0)/100;
-    const mult = parseFloat(document.getElementById('mult-alcool').value)||1.5;
-    const totalFinal = total*(1+gorjeta);
-    const nAlcool = pessoas.filter(p=>p.alcool).length;
-    const nSem = pessoas.filter(p=>!p.alcool).length;
-    // peso: álcool = mult, sem = 1
-    const pesoTotal = nAlcool*mult + nSem*1;
-    const valorPeso = totalFinal/pesoTotal;
-    resultados = pessoas.map(p=>({nome:p.nome, alcool:p.alcool, valor: p.alcool ? valorPeso*mult : valorPeso}));
-    const taxaStr = gorjeta>0 ? ` (incl. ${(gorjeta*100).toFixed(0)}% gorjeta)` : '';
-    ultimoResultado = {resultados, totalFinal, modo:'simples', taxaStr, mult};
+  const total = parseFloat(document.getElementById('total-conta').value)||0;
+  if(!total){alert('Preencha o total da conta.');return;}
+  const gorjeta = (parseFloat(document.getElementById('gorjeta-s').value)||0)/100;
+
+  // Avalia expressão do álcool (ex: 10+10+8+12)
+  const exprAlcool = document.getElementById('total-alcool').value.replace(/[^0-9+.\-]/g,'');
+  let totalAlcool = 0;
+  try { totalAlcool = exprAlcool ? Function('"use strict";return('+exprAlcool+')')() : 0; } catch(e){}
+  if(!isFinite(totalAlcool)||totalAlcool<0) totalAlcool=0;
+
+  const totalFinal = total*(1+gorjeta);
+  const fatorGorjeta = 1+gorjeta;
+  const alcoolFinal = totalAlcool * fatorGorjeta;      // gorjeta proporcional
+  const comidaFinal = totalFinal - alcoolFinal;        // resto é comida
+
+  const nTodos = pessoas.length;
+  const bebedores = pessoas.filter(p=>p.alcool);
+  if(bebedores.length===0&&totalAlcool>0){alert('Ninguém marcado como "bebeu" mas há valor de álcool!');return;}
+
+  const baseParaCada    = comidaFinal / nTodos;
+  const alcoolParaCada  = bebedores.length > 0 ? alcoolFinal / bebedores.length : 0;
+
+  resultados = pessoas.map(p=>({
+    nome:p.nome, alcool:p.alcool,
+    valor: p.alcool ? baseParaCada + alcoolParaCada : baseParaCada
+  }));
+
+  const taxaStr = gorjeta>0 ? ` (incl. ${(gorjeta*100).toFixed(0)}% gorjeta)` : '';
+  ultimoResultado = {resultados, totalFinal, modo:'simples', taxaStr, totalAlcool:alcoolFinal, comidaFinal};
 
   } else {
     const gorjeta = (parseFloat(document.getElementById('gorjeta-i').value)||0)/100;
@@ -290,8 +309,7 @@ function calcular(){
   const nAlc = res.resultados.filter(r=>r.alcool).length;
   const nSem = res.resultados.filter(r=>!r.alcool).length;
   let resumoTxt = `<strong>Total da conta:</strong> ${fmt(res.totalFinal)}<br>`;
-  if(modo==='simples'&&nAlc>0&&nSem>0) resumoTxt+=`<strong>Multiplicador álcool:</strong> ${res.mult}x<br>`;
-  resumoTxt+=`<strong>${nAlc}</strong> beberam · <strong>${nSem}</strong> não beberam`;
+  if(modo==='simples'&&res.totalAlcool>0) resumoTxt+=`<strong>Bebidas:</strong> ${fmt(res.totalAlcool)} · <strong>Comida:</strong> ${fmt(res.comidaFinal)}<br>`;
   document.getElementById('res-resumo').innerHTML = resumoTxt;
 
   const el = document.getElementById('resultado');
