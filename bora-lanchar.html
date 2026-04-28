@@ -1,4 +1,10 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Lanchar — divide a conta de forma justa</title>
+<meta name="description" content="Racha a conta do bar ou lanchonete de forma justa. Separa quem bebeu álcool de quem não bebeu.">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -7,8 +13,22 @@
   --orange:#e8622a;--orange-light:#fdf0e8;--green:#1e7a4a;--green-light:#e8f5ee;
   --radius:12px;--white:#fff;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:20px 16px 60px;}
-.app{max-width:480px;margin:0 auto;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 60px;}
+
+/* NAV */
+.top-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  border-bottom:1px solid var(--border);
+  background:var(--white);
+  position:sticky;top:0;z-index:10;
+}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:6px;}
+.top-nav-logo span{color:var(--orange);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:20px 16px;}
 .logo{font-family:'Fraunces',serif;font-weight:900;font-size:30px;color:var(--ink);line-height:1;}
 .logo span{color:var(--orange);}
 .tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:3px;}
@@ -47,13 +67,10 @@ input::placeholder{color:#ccc;}
 .add-pessoa input{flex:1;}
 .add-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;}
 
-/* Itens (modo itemizado) */
+/* Itens */
 .itens-lista{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
 .item-row{display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;}
 .item-desc{flex:2;font-size:13px;}
-.item-val{width:90px;font-size:13px;}
-.item-pessoa{flex:1;}
-.item-pessoa select{font-family:'DM Sans',sans-serif;font-size:12px;border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;background:var(--white);color:var(--ink);outline:none;width:100%;}
 .add-item{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
 .add-item input{flex:2;min-width:120px;}
 .add-item input.val{flex:1;min-width:80px;}
@@ -77,10 +94,15 @@ input::placeholder{color:#ccc;}
 .calc-btn:hover{opacity:.88;}
 .hidden{display:none!important;}
 </style>
+</head>
+<body>
+
+<!-- NAV HOME -->
 <nav class="top-nav">
   <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
   <a class="top-nav-back" href="index.html">← início</a>
 </nav>
+
 <div class="app">
   <div class="logo">Bora <span>Lanchar</span></div>
   <p class="tagline">divide a conta de forma justa — sem briga</p>
@@ -90,7 +112,6 @@ input::placeholder{color:#ccc;}
     <button class="tab" onclick="setModo('itemizado')">Modo itemizado</button>
   </div>
 
-  <!-- PESSOAS -->
   <div class="section-label">quem estava na mesa?</div>
   <div class="pessoas-lista" id="pessoas-lista"></div>
   <div class="add-pessoa">
@@ -104,17 +125,18 @@ input::placeholder{color:#ccc;}
     <div class="row">
       <div class="field">
         <label>total (R$)</label>
-        <input type="number" id="total-conta" placeholder="0,00" step="0.01" value="">
+        <input type="number" id="total-conta" placeholder="0,00" step="0.01">
       </div>
       <div class="field">
         <label>gorjeta / taxa (%)</label>
         <input type="number" id="gorjeta-s" placeholder="10" value="10" min="0" max="50">
       </div>
+      <!-- MUDANÇA 1: campo de álcool no lugar do multiplicador -->
       <div class="field full">
-  <label>total em bebidas alcoólicas (R$)</label>
-  <input type="text" id="total-alcool" placeholder="ex: 10+10+8+12" oninput="previewAlcool(this)">
-  <span id="alcool-preview" style="font-size:11px;color:var(--green);margin-top:3px;"></span>
-</div>
+        <label>total em bebidas alcoólicas (R$)</label>
+        <input type="text" id="total-alcool" placeholder="ex: 10+10+8+12" oninput="previewAlcool(this)">
+        <span id="alcool-preview" style="font-size:11px;color:var(--green);margin-top:3px;min-height:16px;display:block;"></span>
+      </div>
     </div>
   </div>
 
@@ -155,16 +177,6 @@ input::placeholder{color:#ccc;}
 </div>
 
 <script>
-  function previewAlcool(input) {
-  const expr = input.value.replace(/[^0-9+.\-]/g, '');
-  try {
-    const val = expr ? Function('"use strict";return (' + expr + ')')() : 0;
-    document.getElementById('alcool-preview').textContent =
-      (val > 0 && isFinite(val)) ? '= R$ ' + val.toFixed(2) : '';
-  } catch(e) {
-    document.getElementById('alcool-preview').textContent = '';
-  }
-}
 let modo = 'simples';
 let pessoas = [
   {nome:'Ana', alcool:false},
@@ -195,7 +207,6 @@ function renderPessoas() {
       <button class="del-btn" onclick="removePessoa(${i})">×</button>
     </div>
   `).join('');
-  // atualiza select de itens
   const sel = document.getElementById('item-pessoa');
   if(sel) {
     sel.innerHTML = '<option value="todos">todos dividem</option>' + pessoas.map((p,i)=>`<option value="${i}">${p.nome}</option>`).join('');
@@ -211,6 +222,18 @@ function addPessoa() {
   pessoas.push({nome, alcool:false});
   inp.value='';
   renderPessoas();
+}
+
+// MUDANÇA 2: preview do valor de álcool em tempo real
+function previewAlcool(input) {
+  const expr = input.value.replace(/[^0-9+.\-]/g, '');
+  try {
+    const val = expr ? Function('"use strict";return (' + expr + ')')() : 0;
+    document.getElementById('alcool-preview').textContent =
+      (val > 0 && isFinite(val)) ? '= R$ ' + val.toFixed(2).replace('.', ',') : '';
+  } catch(e) {
+    document.getElementById('alcool-preview').textContent = '';
+  }
 }
 
 function renderItens() {
@@ -243,35 +266,40 @@ function calcular(){
   let resultados = [];
 
   if(modo==='simples'){
-  const total = parseFloat(document.getElementById('total-conta').value)||0;
-  if(!total){alert('Preencha o total da conta.');return;}
-  const gorjeta = (parseFloat(document.getElementById('gorjeta-s').value)||0)/100;
+    const total = parseFloat(document.getElementById('total-conta').value)||0;
+    if(!total){alert('Preencha o total da conta.');return;}
+    const gorjeta = (parseFloat(document.getElementById('gorjeta-s').value)||0)/100;
 
-  // Avalia expressão do álcool (ex: 10+10+8+12)
-  const exprAlcool = document.getElementById('total-alcool').value.replace(/[^0-9+.\-]/g,'');
-  let totalAlcool = 0;
-  try { totalAlcool = exprAlcool ? Function('"use strict";return('+exprAlcool+')')() : 0; } catch(e){}
-  if(!isFinite(totalAlcool)||totalAlcool<0) totalAlcool=0;
+    // MUDANÇA 3: avalia expressão do álcool (ex: 10+10+8+12)
+    const exprAlcool = document.getElementById('total-alcool').value.replace(/[^0-9+.\-]/g,'');
+    let totalAlcool = 0;
+    try { totalAlcool = exprAlcool ? Function('"use strict";return('+exprAlcool+')')() : 0; } catch(e){}
+    if(!isFinite(totalAlcool)||totalAlcool<0) totalAlcool = 0;
 
-  const totalFinal = total*(1+gorjeta);
-  const fatorGorjeta = 1+gorjeta;
-  const alcoolFinal = totalAlcool * fatorGorjeta;      // gorjeta proporcional
-  const comidaFinal = totalFinal - alcoolFinal;        // resto é comida
+    const totalFinal  = total * (1 + gorjeta);
+    const fatorGorjeta = 1 + gorjeta;
+    const alcoolFinal = totalAlcool * fatorGorjeta;   // gorjeta proporcional sobre álcool
+    const comidaFinal = totalFinal - alcoolFinal;      // resto é comida/outros
 
-  const nTodos = pessoas.length;
-  const bebedores = pessoas.filter(p=>p.alcool);
-  if(bebedores.length===0&&totalAlcool>0){alert('Ninguém marcado como "bebeu" mas há valor de álcool!');return;}
+    const nTodos   = pessoas.length;
+    const bebedores = pessoas.filter(p => p.alcool);
 
-  const baseParaCada    = comidaFinal / nTodos;
-  const alcoolParaCada  = bebedores.length > 0 ? alcoolFinal / bebedores.length : 0;
+    if(bebedores.length === 0 && totalAlcool > 0){
+      alert('Há valor de álcool mas ninguém está marcado como "bebeu 🍺".');
+      return;
+    }
 
-  resultados = pessoas.map(p=>({
-    nome:p.nome, alcool:p.alcool,
-    valor: p.alcool ? baseParaCada + alcoolParaCada : baseParaCada
-  }));
+    const baseParaCada   = comidaFinal / nTodos;                                          // comida dividida por todos
+    const alcoolParaCada = bebedores.length > 0 ? alcoolFinal / bebedores.length : 0;    // álcool só entre quem bebeu
 
-  const taxaStr = gorjeta>0 ? ` (incl. ${(gorjeta*100).toFixed(0)}% gorjeta)` : '';
-  ultimoResultado = {resultados, totalFinal, modo:'simples', taxaStr, totalAlcool:alcoolFinal, comidaFinal};
+    resultados = pessoas.map(p => ({
+      nome: p.nome,
+      alcool: p.alcool,
+      valor: p.alcool ? baseParaCada + alcoolParaCada : baseParaCada
+    }));
+
+    const taxaStr = gorjeta > 0 ? ` (incl. ${(gorjeta*100).toFixed(0)}% gorjeta)` : '';
+    ultimoResultado = {resultados, totalFinal, modo:'simples', taxaStr, alcoolFinal, comidaFinal};
 
   } else {
     const gorjeta = (parseFloat(document.getElementById('gorjeta-i').value)||0)/100;
@@ -279,7 +307,6 @@ function calcular(){
     const subtotal = itens.reduce((s,it)=>s+it.val,0);
     const totalFinal = subtotal*(1+gorjeta);
     const fatores = totalFinal/subtotal;
-    // soma por pessoa
     const vals = {};
     pessoas.forEach((_,i)=>vals[i]=0);
     itens.forEach(it=>{
@@ -295,7 +322,6 @@ function calcular(){
     ultimoResultado = {resultados, totalFinal, modo:'itemizado', taxaStr};
   }
 
-  // renderiza resultado
   const res = ultimoResultado;
   document.getElementById('res-titulo').textContent = '🧾 Conta dividida!';
   document.getElementById('res-sub').textContent = `Total: ${fmt(res.totalFinal)}${res.taxaStr}`;
@@ -312,7 +338,11 @@ function calcular(){
   const nAlc = res.resultados.filter(r=>r.alcool).length;
   const nSem = res.resultados.filter(r=>!r.alcool).length;
   let resumoTxt = `<strong>Total da conta:</strong> ${fmt(res.totalFinal)}<br>`;
-  if(modo==='simples'&&res.totalAlcool>0) resumoTxt+=`<strong>Bebidas:</strong> ${fmt(res.totalAlcool)} · <strong>Comida:</strong> ${fmt(res.comidaFinal)}<br>`;
+  // MUDANÇA 4: mostra detalhamento comida vs álcool no resumo
+  if(modo==='simples' && res.alcoolFinal > 0) {
+    resumoTxt += `<strong>Bebidas:</strong> ${fmt(res.alcoolFinal)} · <strong>Comida:</strong> ${fmt(res.comidaFinal)}<br>`;
+  }
+  resumoTxt+=`<strong>${nAlc}</strong> beberam · <strong>${nSem}</strong> não beberam`;
   document.getElementById('res-resumo').innerHTML = resumoTxt;
 
   const el = document.getElementById('resultado');
@@ -327,7 +357,8 @@ function compartilhar(){
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
-// init
 renderPessoas();
 renderItens();
 </script>
+</body>
+</html>
