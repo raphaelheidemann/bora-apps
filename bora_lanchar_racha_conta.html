@@ -1,0 +1,307 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fffdf7;--ink:#1a1208;--muted:#7a6e5f;--border:#e8e0d0;
+  --orange:#e8622a;--orange-light:#fdf0e8;--green:#1e7a4a;--green-light:#e8f5ee;
+  --radius:12px;--white:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:20px 16px 60px;}
+.app{max-width:480px;margin:0 auto;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:30px;color:var(--ink);line-height:1;}
+.logo span{color:var(--orange);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:3px;}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;}
+.tab{flex:1;padding:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.tab.active{background:var(--ink);color:#fff;}
+
+/* Sections */
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+input[type=number],input[type=text]{
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 12px;background:var(--white);color:var(--ink);
+  outline:none;transition:border-color .15s;width:100%;
+}
+input:focus{border-color:var(--orange);}
+input::placeholder{color:#ccc;}
+.full{grid-column:1/-1;}
+
+/* Pessoas */
+.pessoas-lista{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+.pessoa-row{display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;}
+.pessoa-nome{flex:1;font-size:14px;}
+.toggle-group{display:flex;gap:4px;}
+.tipo-btn{font-size:11px;padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.tipo-btn.alcool.active{background:#fff0e8;border-color:var(--orange);color:var(--orange);}
+.tipo-btn.nao.active{background:var(--green-light);border-color:var(--green);color:var(--green);}
+.del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:2px 4px;line-height:1;}
+.del-btn:hover{color:#e8622a;}
+.add-pessoa{display:flex;gap:8px;margin-top:8px;}
+.add-pessoa input{flex:1;}
+.add-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+
+/* Itens (modo itemizado) */
+.itens-lista{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+.item-row{display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;}
+.item-desc{flex:2;font-size:13px;}
+.item-val{width:90px;font-size:13px;}
+.item-pessoa{flex:1;}
+.item-pessoa select{font-family:'DM Sans',sans-serif;font-size:12px;border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;background:var(--white);color:var(--ink);outline:none;width:100%;}
+.add-item{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.add-item input{flex:2;min-width:120px;}
+.add-item input.val{flex:1;min-width:80px;}
+
+/* Resultado */
+#resultado{display:none;margin-top:24px;border-radius:16px;overflow:hidden;}
+.res-header{background:var(--ink);padding:20px 20px 16px;color:#fff;}
+.res-titulo{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
+.res-sub{font-size:12px;color:#aaa;}
+.res-body{background:var(--white);border:1.5px solid var(--border);border-top:none;border-radius:0 0 16px 16px;padding:16px 20px;}
+.pessoa-result{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.pessoa-result:last-child{border-bottom:none;}
+.pr-nome{font-size:14px;font-weight:500;}
+.pr-tipo{font-size:11px;color:var(--muted);}
+.pr-val{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--orange);}
+.resumo{background:var(--orange-light);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:12px;color:var(--muted);line-height:1.8;}
+.resumo strong{color:var(--ink);}
+.share-btn{margin-top:14px;width:100%;background:var(--green);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
+.share-btn:hover{opacity:.9;}
+.calc-btn{margin-top:20px;width:100%;background:var(--orange);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+.hidden{display:none!important;}
+</style>
+
+<div class="app">
+  <div class="logo">Bora <span>Lanchar</span></div>
+  <p class="tagline">divide a conta de forma justa — sem briga</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setModo('simples')">Modo simples</button>
+    <button class="tab" onclick="setModo('itemizado')">Modo itemizado</button>
+  </div>
+
+  <!-- PESSOAS -->
+  <div class="section-label">quem estava na mesa?</div>
+  <div class="pessoas-lista" id="pessoas-lista"></div>
+  <div class="add-pessoa">
+    <input type="text" id="novo-nome" placeholder="nome da pessoa" onkeydown="if(event.key==='Enter')addPessoa()">
+    <button class="add-btn" onclick="addPessoa()">+ add</button>
+  </div>
+
+  <!-- MODO SIMPLES -->
+  <div id="modo-simples">
+    <div class="section-label">total da conta</div>
+    <div class="row">
+      <div class="field">
+        <label>total (R$)</label>
+        <input type="number" id="total-conta" placeholder="0,00" step="0.01" value="">
+      </div>
+      <div class="field">
+        <label>gorjeta / taxa (%)</label>
+        <input type="number" id="gorjeta-s" placeholder="10" value="10" min="0" max="50">
+      </div>
+      <div class="field">
+        <label>multiplicador álcool</label>
+        <input type="number" id="mult-alcool" placeholder="1.5" value="1.5" step="0.1" min="1">
+      </div>
+      <div class="field" style="align-self:end;">
+        <label style="font-size:10px;color:var(--muted);">quem bebeu paga X vezes mais que quem não bebeu</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODO ITEMIZADO -->
+  <div id="modo-itemizado" class="hidden">
+    <div class="section-label">itens do pedido</div>
+    <div class="itens-lista" id="itens-lista"></div>
+    <div class="add-item">
+      <input type="text" id="item-desc" placeholder="descrição (ex: cerveja, frango)">
+      <input type="number" class="val" id="item-val" placeholder="R$" step="0.01" min="0">
+      <select id="item-pessoa" style="font-family:'DM Sans',sans-serif;font-size:12px;border:1.5px solid var(--border);border-radius:6px;padding:8px;background:var(--white);flex:1;min-width:100px;"></select>
+      <button class="add-btn" onclick="addItem()">+ add</button>
+    </div>
+    <div class="row" style="margin-top:12px;">
+      <div class="field">
+        <label>gorjeta / taxa (%)</label>
+        <input type="number" id="gorjeta-i" placeholder="10" value="10" min="0" max="50">
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">calcular a divisão →</button>
+
+  <div id="resultado">
+    <div class="res-header">
+      <div class="res-titulo" id="res-titulo">Conta dividida!</div>
+      <div class="res-sub" id="res-sub"></div>
+    </div>
+    <div class="res-body">
+      <div id="res-pessoas"></div>
+      <div class="resumo" id="res-resumo"></div>
+      <button class="share-btn" onclick="compartilhar()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        mandar no whatsapp
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let modo = 'simples';
+let pessoas = [
+  {nome:'Ana', alcool:false},
+  {nome:'Bruno', alcool:true},
+  {nome:'Carol', alcool:false},
+  {nome:'Diego', alcool:true},
+];
+let itens = [];
+let ultimoResultado = null;
+
+function setModo(m) {
+  modo = m;
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0&&m==='simples')||(i===1&&m==='itemizado')));
+  document.getElementById('modo-simples').classList.toggle('hidden', m!=='simples');
+  document.getElementById('modo-itemizado').classList.toggle('hidden', m!=='itemizado');
+  renderPessoas();
+}
+
+function renderPessoas() {
+  const lista = document.getElementById('pessoas-lista');
+  lista.innerHTML = pessoas.map((p,i) => `
+    <div class="pessoa-row">
+      <span class="pessoa-nome">${p.nome}</span>
+      <div class="toggle-group">
+        <button class="tipo-btn nao ${!p.alcool?'active':''}" onclick="setTipo(${i},false)">sem álcool</button>
+        <button class="tipo-btn alcool ${p.alcool?'active':''}" onclick="setTipo(${i},true)">bebeu 🍺</button>
+      </div>
+      <button class="del-btn" onclick="removePessoa(${i})">×</button>
+    </div>
+  `).join('');
+  // atualiza select de itens
+  const sel = document.getElementById('item-pessoa');
+  if(sel) {
+    sel.innerHTML = '<option value="todos">todos dividem</option>' + pessoas.map((p,i)=>`<option value="${i}">${p.nome}</option>`).join('');
+  }
+}
+
+function setTipo(i, alcool) { pessoas[i].alcool = alcool; renderPessoas(); }
+function removePessoa(i) { pessoas.splice(i,1); renderPessoas(); }
+function addPessoa() {
+  const inp = document.getElementById('novo-nome');
+  const nome = inp.value.trim();
+  if(!nome) return;
+  pessoas.push({nome, alcool:false});
+  inp.value='';
+  renderPessoas();
+}
+
+function renderItens() {
+  const lista = document.getElementById('itens-lista');
+  lista.innerHTML = itens.map((it,i) => `
+    <div class="item-row">
+      <span class="item-desc">${it.desc}</span>
+      <span style="font-weight:500;color:var(--orange)">R$ ${it.val.toFixed(2)}</span>
+      <span style="font-size:12px;color:var(--muted)">${it.pessoa==='todos'?'todos':pessoas[it.pessoa]?.nome||''}</span>
+      <button class="del-btn" onclick="removeItem(${i})">×</button>
+    </div>
+  `).join('');
+}
+function removeItem(i){itens.splice(i,1);renderItens();}
+function addItem(){
+  const desc=document.getElementById('item-desc').value.trim();
+  const val=parseFloat(document.getElementById('item-val').value)||0;
+  const pessoa=document.getElementById('item-pessoa').value;
+  if(!desc||!val)return;
+  itens.push({desc,val,pessoa});
+  document.getElementById('item-desc').value='';
+  document.getElementById('item-val').value='';
+  renderItens();
+}
+
+const fmt = v => 'R$ '+v.toFixed(2).replace('.',',');
+
+function calcular(){
+  if(pessoas.length<2){alert('Adicione pelo menos 2 pessoas.');return;}
+  let resultados = [];
+
+  if(modo==='simples'){
+    const total = parseFloat(document.getElementById('total-conta').value)||0;
+    if(!total){alert('Preencha o total da conta.');return;}
+    const gorjeta = (parseFloat(document.getElementById('gorjeta-s').value)||0)/100;
+    const mult = parseFloat(document.getElementById('mult-alcool').value)||1.5;
+    const totalFinal = total*(1+gorjeta);
+    const nAlcool = pessoas.filter(p=>p.alcool).length;
+    const nSem = pessoas.filter(p=>!p.alcool).length;
+    // peso: álcool = mult, sem = 1
+    const pesoTotal = nAlcool*mult + nSem*1;
+    const valorPeso = totalFinal/pesoTotal;
+    resultados = pessoas.map(p=>({nome:p.nome, alcool:p.alcool, valor: p.alcool ? valorPeso*mult : valorPeso}));
+    const taxaStr = gorjeta>0 ? ` (incl. ${(gorjeta*100).toFixed(0)}% gorjeta)` : '';
+    ultimoResultado = {resultados, totalFinal, modo:'simples', taxaStr, mult};
+
+  } else {
+    const gorjeta = (parseFloat(document.getElementById('gorjeta-i').value)||0)/100;
+    if(!itens.length){alert('Adicione pelo menos um item.');return;}
+    const subtotal = itens.reduce((s,it)=>s+it.val,0);
+    const totalFinal = subtotal*(1+gorjeta);
+    const fatores = totalFinal/subtotal;
+    // soma por pessoa
+    const vals = {};
+    pessoas.forEach((_,i)=>vals[i]=0);
+    itens.forEach(it=>{
+      if(it.pessoa==='todos'){
+        const share = it.val/pessoas.length;
+        pessoas.forEach((_,i)=>vals[i]+=share);
+      } else {
+        vals[parseInt(it.pessoa)]+=it.val;
+      }
+    });
+    resultados = pessoas.map((p,i)=>({nome:p.nome, alcool:p.alcool, valor:vals[i]*fatores}));
+    const taxaStr = gorjeta>0?` (incl. ${(gorjeta*100).toFixed(0)}% gorjeta)`:'';
+    ultimoResultado = {resultados, totalFinal, modo:'itemizado', taxaStr};
+  }
+
+  // renderiza resultado
+  const res = ultimoResultado;
+  document.getElementById('res-titulo').textContent = '🧾 Conta dividida!';
+  document.getElementById('res-sub').textContent = `Total: ${fmt(res.totalFinal)}${res.taxaStr}`;
+  document.getElementById('res-pessoas').innerHTML = res.resultados.map(r=>`
+    <div class="pessoa-result">
+      <div>
+        <div class="pr-nome">${r.nome}</div>
+        <div class="pr-tipo">${r.alcool?'bebeu 🍺':'sem álcool 🥤'}</div>
+      </div>
+      <div class="pr-val">${fmt(r.valor)}</div>
+    </div>
+  `).join('');
+
+  const nAlc = res.resultados.filter(r=>r.alcool).length;
+  const nSem = res.resultados.filter(r=>!r.alcool).length;
+  let resumoTxt = `<strong>Total da conta:</strong> ${fmt(res.totalFinal)}<br>`;
+  if(modo==='simples'&&nAlc>0&&nSem>0) resumoTxt+=`<strong>Multiplicador álcool:</strong> ${res.mult}x<br>`;
+  resumoTxt+=`<strong>${nAlc}</strong> beberam · <strong>${nSem}</strong> não beberam`;
+  document.getElementById('res-resumo').innerHTML = resumoTxt;
+
+  const el = document.getElementById('resultado');
+  el.style.display='block';
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function compartilhar(){
+  const res = ultimoResultado;
+  const linhas = res.resultados.map(r=>`  • ${r.nome} (${r.alcool?'bebeu':'sem álcool'}): *${fmt(r.valor)}*`).join('\n');
+  const msg = `🍻 *Bora Lanchar — Divisão da conta*\n\nTotal: ${fmt(res.totalFinal)}${res.taxaStr}\n\n${linhas}\n\n_Dividido com Bora Lanchar_ 🟠`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+// init
+renderPessoas();
+renderItens();
+</script>
