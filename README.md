@@ -35,7 +35,7 @@ Sim, isso é um projeto hobby. Feito nas horas vagas, com carinho, por alguém q
 |-----|-----------|--------|
 | 💧 **Bora Hidratar** | Lembrete e meta diária de água personalizada por peso, idade e nível de atividade | 🔜 Em breve |
 | 💊 **Bora Remediar** | Controle de horários de medicamentos com alertas configuráveis | 🔜 Em breve |
-| 😴 **Bora Dormir** | Calcula os melhores horários para acordar com base nos ciclos de sono recomendados | 🔜 Em breve |
+| 😴 **Bora Dormir** | Calcula os melhores horários para acordar com base nos ciclos de sono recomendados | ✅ Disponível |
 
 ---
 
