@@ -50,10 +50,14 @@ input[type=time]:focus{border-color:var(--purple);}
 .now-btn{width:100%;background:transparent;border:1.5px solid var(--border);border-radius:10px;padding:11px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;}
 .now-btn:hover{border-color:var(--purple);color:var(--ink);}
 
-/* SLEEP PREP */
-.prep-row{display:flex;align-items:center;gap:10px;margin-top:20px;}
-.prep-label{font-size:12px;color:var(--muted);flex:1;}
-.prep-select{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--card);color:var(--ink);outline:none;cursor:pointer;color-scheme:dark;}
+/* SLEEP PREP PILLS */
+.prep-section{margin-top:20px;}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.pill{font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.pill:hover{border-color:var(--purple);color:var(--ink);}
+.pill.active{background:var(--purple);border-color:var(--purple);color:#fff;font-weight:500;}
+.prep-media{margin-top:12px;font-size:11px;color:var(--muted);line-height:1.6;padding:10px 12px;background:var(--card);border-radius:8px;border-left:2px solid var(--purple);}
+.prep-media strong{color:var(--ink);}
 
 .calc-btn{margin-top:24px;width:100%;background:var(--purple);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:opacity .15s;}
 .calc-btn:hover{opacity:.88;}
@@ -112,15 +116,22 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:200px;backgro
   <div class="or-now">— ou —</div>
   <button class="now-btn" onclick="usarAgora()">😴 vou dormir agora</button>
 
-  <div class="prep-row">
-    <span class="prep-label">tempo para pegar no sono</span>
-    <select class="prep-select" id="prep-time">
-      <option value="14">14 min (média)</option>
-      <option value="7">7 min (rápido)</option>
-      <option value="20">20 min (devagar)</option>
-      <option value="30">30 min (muito devagar)</option>
-    </select>
+  <div class="prep-section">
+    <div class="section-label">quanto tempo você leva para pegar no sono?</div>
+    <div class="pills">
+      <button class="pill" onclick="setPill(this, 5)">5 min</button>
+      <button class="pill" onclick="setPill(this, 10)">10 min</button>
+      <button class="pill active" onclick="setPill(this, 14)">14 min</button>
+      <button class="pill" onclick="setPill(this, 20)">20 min</button>
+      <button class="pill" onclick="setPill(this, 30)">30 min</button>
+      <button class="pill" onclick="setPill(this, 45)">45 min</button>
+      <button class="pill" onclick="setPill(this, 60)">60 min</button>
+    </div>
+    <div class="prep-media">
+      <strong>14 min</strong> é a média clínica para adultos saudáveis — chamada de <em>latência do sono</em>. Menos de 5 min pode indicar privação de sono; mais de 30 min pode sinalizar insônia. <em>(National Sleep Foundation)</em>
+    </div>
   </div>
+  <input type="hidden" id="prep-time" value="14">
 
   <button class="calc-btn" onclick="calcular()">calcular horários →</button>
 
@@ -129,15 +140,36 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:200px;backgro
     <div class="res-sub" id="res-sub"></div>
     <div class="ciclos" id="ciclos"></div>
     <div class="dica" id="dica"></div>
+  <div class="share-btn-wrap">
     <button class="share-btn" onclick="compartilhar()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
       compartilhar no whatsapp
     </button>
   </div>
-</div>
+  </div>
+
+  <!-- FONTES -->
+  <div style="max-width:480px;margin:32px auto 0;padding:0 16px;">
+    <div style="border-top:1px solid var(--border);padding-top:20px;">
+      <p style="font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">base científica</p>
+      <p style="font-size:11px;color:var(--muted);line-height:1.8;">
+        🔬 <strong style="color:var(--ink)">Ciclos de 90 min:</strong> Kleitman, N. (1953). <em>Sleep and Wakefulness</em>. Universidade de Chicago. Popularizado por Walker, M. (2017). <em>Why We Sleep</em>. Scribner.<br><br>
+        😴 <strong style="color:var(--ink)">Latência de sono (14 min):</strong> National Sleep Foundation. <em>Sleep Latency</em>. sleepfoundation.org<br><br>
+        ✅ <strong style="color:var(--ink)">Recomendação de 7–9h:</strong> American Academy of Sleep Medicine & Sleep Research Society (2015). <em>Recommended amount of sleep for a healthy adult</em>. Sleep, 38(6).<br><br>
+        <span style="color:var(--border);font-size:10px;">Os valores são médias populacionais. Cada pessoa pode variar entre 80 e 120 min por ciclo.</span>
+      </p>
+    </div>
+  </div>
 
 <script>
-let ultimoResultado = null;
+let prepSelecionado = 14;
+
+function setPill(el, val) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  prepSelecionado = val;
+  document.getElementById('prep-time').value = val;
+}
 
 function usarAgora() {
   const agora = new Date();
