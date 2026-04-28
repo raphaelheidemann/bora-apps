@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Dormir — descubra a hora certa de acordar</title>
+<meta name="description" content="Calculadora de ciclos de sono. Informe a hora que vai dormir e descubra os melhores horários para acordar descansado.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d1a;--ink:#f0eefc;--muted:#8884aa;--border:#2a2840;
+  --purple:#7c6fcd;--purple-light:#2a2840;--purple-mid:#9b8fe0;
+  --green:#2ecc71;--white:#13122a;--card:#181730;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 60px;}
+
+/* NAV */
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--purple-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:28px 16px;}
+
+/* HERO */
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:30px;color:var(--ink);line-height:1;}
+.logo span{color:var(--purple-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:32px;margin-top:4px;}
+
+/* INFO BOX */
+.info-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:28px;display:flex;gap:12px;align-items:flex-start;}
+.info-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+.info-text{font-size:12px;color:var(--muted);line-height:1.7;}
+.info-text strong{color:var(--ink);}
+
+/* INPUT */
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+.time-input-wrap{display:flex;gap:10px;align-items:center;margin-bottom:8px;}
+input[type=time]{
+  font-family:'DM Sans',sans-serif;font-size:22px;font-weight:500;
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:12px 16px;background:var(--card);color:var(--ink);
+  outline:none;transition:border-color .15s;flex:1;
+  color-scheme:dark;
+}
+input[type=time]:focus{border-color:var(--purple);}
+.or-now{font-size:12px;color:var(--muted);text-align:center;margin:10px 0;}
+.now-btn{width:100%;background:transparent;border:1.5px solid var(--border);border-radius:10px;padding:11px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;}
+.now-btn:hover{border-color:var(--purple);color:var(--ink);}
+
+/* SLEEP PREP */
+.prep-row{display:flex;align-items:center;gap:10px;margin-top:20px;}
+.prep-label{font-size:12px;color:var(--muted);flex:1;}
+.prep-select{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--card);color:var(--ink);outline:none;cursor:pointer;color-scheme:dark;}
+
+.calc-btn{margin-top:24px;width:100%;background:var(--purple);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+
+/* RESULTADO */
+#resultado{display:none;margin-top:32px;}
+.res-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:6px;}
+.res-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+
+.ciclos{display:flex;flex-direction:column;gap:10px;}
+.ciclo-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;transition:border-color .2s;}
+.ciclo-card.ideal{border-color:var(--purple);background:var(--purple-light);}
+.ciclo-card.ok{border-color:#3a3060;}
+.ciclo-hora{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--ink);min-width:90px;}
+.ciclo-info{flex:1;}
+.ciclo-n{font-size:12px;color:var(--muted);margin-bottom:2px;}
+.ciclo-desc{font-size:13px;color:var(--ink);line-height:1.5;}
+.ciclo-badge{font-size:10px;padding:3px 10px;border-radius:20px;align-self:flex-start;white-space:nowrap;}
+.badge-ideal{background:rgba(124,111,205,.25);color:var(--purple-mid);border:1px solid rgba(124,111,205,.4);}
+.badge-ok{background:rgba(136,132,170,.1);color:var(--muted);border:1px solid var(--border);}
+.badge-min{background:rgba(231,76,60,.1);color:#e74c3c;border:1px solid rgba(231,76,60,.2);}
+
+.dica{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-top:20px;font-size:12px;color:var(--muted);line-height:1.7;}
+.dica strong{color:var(--ink);}
+
+.share-btn{margin-top:16px;width:100%;background:var(--green);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
+.share-btn:hover{opacity:.9;}
+
+/* STARS BG */
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:200px;background:radial-gradient(ellipse at 50% 0%, rgba(124,111,205,.15) 0%, transparent 70%);pointer-events:none;z-index:0;}
+.app{position:relative;z-index:1;}
+.top-nav{position:sticky;z-index:10;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora <span>Dormir</span></div>
+  <p class="tagline">descubra a hora certa de acordar — sem aquela sensação de ressaca de sono</p>
+
+  <div class="info-box">
+    <div class="info-icon">🧠</div>
+    <div class="info-text">
+      O sono é dividido em ciclos de <strong>90 minutos</strong>. Acordar no fim de um ciclo — e não no meio — é o que faz a diferença entre levantar disposto ou arrastado. Este app calcula os horários ideais com base na hora que você vai dormir.
+    </div>
+  </div>
+
+  <div class="section-label">que horas você vai dormir?</div>
+  <input type="time" id="hora-dormir" value="23:00">
+
+  <div class="or-now">— ou —</div>
+  <button class="now-btn" onclick="usarAgora()">😴 vou dormir agora</button>
+
+  <div class="prep-row">
+    <span class="prep-label">tempo para pegar no sono</span>
+    <select class="prep-select" id="prep-time">
+      <option value="14">14 min (média)</option>
+      <option value="7">7 min (rápido)</option>
+      <option value="20">20 min (devagar)</option>
+      <option value="30">30 min (muito devagar)</option>
+    </select>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">calcular horários →</button>
+
+  <div id="resultado">
+    <div class="res-title" id="res-title">Melhores horários para acordar</div>
+    <div class="res-sub" id="res-sub"></div>
+    <div class="ciclos" id="ciclos"></div>
+    <div class="dica" id="dica"></div>
+    <button class="share-btn" onclick="compartilhar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      compartilhar no whatsapp
+    </button>
+  </div>
+</div>
+
+<script>
+let ultimoResultado = null;
+
+function usarAgora() {
+  const agora = new Date();
+  const h = String(agora.getHours()).padStart(2,'0');
+  const m = String(agora.getMinutes()).padStart(2,'0');
+  document.getElementById('hora-dormir').value = `${h}:${m}`;
+}
+
+function calcular() {
+  const val = document.getElementById('hora-dormir').value;
+  if(!val) { alert('Informe a hora que vai dormir.'); return; }
+
+  const prep = parseInt(document.getElementById('prep-time').value) || 14;
+  const [hh, mm] = val.split(':').map(Number);
+
+  // hora real de adormecer = hora dormir + tempo de prep
+  const base = new Date();
+  base.setHours(hh, mm + prep, 0, 0);
+
+  const ciclos = [];
+  // gera 6 ciclos (de 3h até 9h de sono)
+  for(let i = 3; i <= 6; i++) {
+    const acordar = new Date(base.getTime() + i * 90 * 60 * 1000);
+    const horasTotal = (i * 90) / 60;
+    ciclos.push({ acordar, ciclos: i, horas: horasTotal });
+  }
+
+  const fmt = (d) => {
+    const h = String(d.getHours()).padStart(2,'0');
+    const m = String(d.getMinutes()).padStart(2,'0');
+    return `${h}:${m}`;
+  };
+
+  const descricoes = {
+    3: 'Mínimo absoluto — só em emergência. Risco de mal-estar.',
+    4: 'Curto mas completo. Funciona se for necessário.',
+    5: 'Sono razoável. Pode sentir cansaço à tarde.',
+    6: 'Sono ideal para a maioria dos adultos. Recomendado.',
+  };
+
+  const badges = {
+    3: { cls: 'badge-min', txt: 'mínimo' },
+    4: { cls: 'badge-ok', txt: '6h — curto' },
+    5: { cls: 'badge-ideal', txt: '★ recomendado' },
+    6: { cls: 'badge-ideal', txt: '★ ideal' },
+  };
+
+  document.getElementById('ciclos').innerHTML = ciclos.map(c => {
+    const b = badges[c.ciclos] || { cls:'badge-ok', txt:`${c.horas}h` };
+    const isIdeal = c.ciclos >= 5;
+    return `
+      <div class="ciclo-card ${isIdeal ? 'ideal' : 'ok'}">
+        <div class="ciclo-hora">${fmt(c.acordar)}</div>
+        <div class="ciclo-info">
+          <div class="ciclo-n">${c.ciclos} ciclos · ${c.horas}h de sono</div>
+          <div class="ciclo-desc">${descricoes[c.ciclos]}</div>
+        </div>
+        <span class="ciclo-badge ${b.cls}">${b.txt}</span>
+      </div>
+    `;
+  }).join('');
+
+  const horaBase = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+  document.getElementById('res-sub').textContent = `Dormindo às ${horaBase} e levando ${prep} min para pegar no sono`;
+
+  document.getElementById('dica').innerHTML = `
+    <strong>💡 Dica:</strong> O despertador no meio de um ciclo causa a chamada <em>inércia do sono</em> — aquela sensação pesada de acordar mal. Escolha um dos horários acima e prefira os marcados com ★ sempre que possível.
+  `;
+
+  ultimoResultado = { horaBase, ciclos, fmt };
+
+  const el = document.getElementById('resultado');
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function compartilhar() {
+  if(!ultimoResultado) return;
+  const { horaBase, ciclos, fmt } = ultimoResultado;
+  const linhas = ciclos.map(c => {
+    const star = c.ciclos >= 5 ? ' ★' : '';
+    return `  ${fmt(c.acordar)} — ${c.horas}h (${c.ciclos} ciclos)${star}`;
+  }).join('\n');
+  const msg = `😴 *Bora Dormir — horários para acordar*\n\nDormindo às ${horaBase}:\n\n${linhas}\n\n_Calculado com Bora Apps_ 🟣\nboraapps.com.br`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+</script>
+</body>
+</html>
