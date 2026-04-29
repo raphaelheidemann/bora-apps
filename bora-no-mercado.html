@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7831385824431254"
+     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bora no Mercado — lista de compras inteligente</title>
@@ -38,10 +40,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
   outline:none;transition:border-color .15s;flex:1;
 }
 .input-row input:focus{border-color:var(--green);}
-.input-row input.qty{width:75px;flex:none;text-align:center;}
-.add-btn{background:var(--green-mid);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:'Fraunces',serif;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.input-row input::placeholder{color:#aaa;}
+.input-row input.qty{width:64px;flex:none;text-align:center;}
+.input-row input.price{width:90px;flex:none;}
+.add-btn{background:var(--green-mid);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-family:'Fraunces',serif;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
 .add-btn:hover{opacity:.88;}
-
 .input-hints{display:flex;gap:6px;flex-wrap:wrap;}
 .hint{font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;cursor:pointer;transition:all .15s;}
 .hint:hover{border-color:var(--green);color:var(--green);}
@@ -61,23 +64,51 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 .categoria-nome{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;font-weight:500;}
 .categoria-count{font-size:10px;color:var(--muted);margin-left:auto;}
 
-.item-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;transition:opacity .3s;}
-.item-card.comprado{border-color:var(--green-mid); background: var(--green-light);}
-.item-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.item-preco-row{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.preco-group{display:flex;flex-direction:column;gap:2px;flex:1;}
+.preco-lbl{font-size:9px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;}
+.preco-inp{font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;background:var(--bg);color:var(--ink);outline:none;width:100%;transition:border-color .15s;}
+.preco-inp:focus{border-color:var(--green);}
+.preco-inp.ant{background:var(--bg);color:var(--muted);font-size:12px;}
+.preco-inp.readonly{pointer-events:none;background:#f0f0f0;}
+.preco-variacao{text-align:center;min-width:56px;flex-shrink:0;}
+.var-absoluta{font-family:'Fraunces',serif;font-size:13px;font-weight:700;}
+.var-pct{font-size:10px;font-weight:500;margin-top:1px;}
+.var-up .var-absoluta,.var-up .var-pct{color:var(--red);}
+.var-down .var-absoluta,.var-down .var-pct{color:var(--green);}
+.var-neutro .var-absoluta,.var-neutro .var-pct{color:var(--muted);}
+.item-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;transition:opacity .3s;}
+.item-card.comprado{opacity:.45;}
+.item-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .item-check.done{background:var(--green-mid);border-color:var(--green-mid);}
 .item-check.done::after{content:'✓';color:#fff;font-size:12px;}
 .item-info{flex:1;min-width:0;}
 .item-nome{font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.item-card.comprado .item-nome{text-decoration:line-through; color: var(--green);}
+.item-card.comprado .item-nome{text-decoration:line-through;}
 .item-qty{font-size:11px;color:var(--muted);}
-.item-preco-col{text-align:right;flex-shrink:0; min-width: 80px;}
+.item-preco-col{text-align:right;flex-shrink:0;}
 .item-preco-atual{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--ink);}
-.item-preco-ant{font-size:9px;color:var(--muted);margin-top:1px; line-height: 1.1;}
-.item-variacao{font-size:10px;font-weight:700;margin-top:1px;}
+.item-preco-ant{font-size:10px;color:var(--muted);margin-top:1px;}
+.item-variacao{font-size:10px;font-weight:500;margin-top:1px;}
 .item-variacao.up{color:var(--red);}
 .item-variacao.down{color:var(--green);}
 .item-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:2px 4px;flex-shrink:0;transition:color .15s;}
 .item-del:hover{color:var(--red);}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:6px;color:var(--ink);}
+.empty-sub{font-size:13px;line-height:1.6;}
+
+/* AÇÕES FINAIS */
+.acoes{display:flex;gap:8px;margin-top:20px;}
+.acao-btn{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s;text-align:center;}
+.acao-btn:hover{border-color:var(--green);color:var(--green);}
+.acao-btn.primary{background:var(--green-mid);border-color:var(--green-mid);color:#fff;}
+.acao-btn.primary:hover{opacity:.88;}
+.acao-btn.danger{color:var(--red);}
+.acao-btn.danger:hover{border-color:var(--red);}
 
 /* OUTROS REPORT */
 .outros-box{margin-top:16px;background:var(--yellow-light);border:1px solid var(--yellow);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);display:none;}
@@ -85,81 +116,99 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 .outros-lista{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.8;}
 .outros-copy{margin-top:8px;font-size:11px;color:var(--green);cursor:pointer;text-decoration:underline;}
 
-/* AÇÕES */
-.acoes{display:flex;gap:8px;margin-top:20px;}
-.acao-btn{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s;text-align:center;}
-.acao-btn:hover{border-color:var(--green);color:var(--green);}
-.acao-btn.danger{color:var(--red);}
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
 </style>
 </head>
 <body>
 
 <nav class="top-nav">
-  <a class="top-nav-logo" href="#">Bora <span>Apps</span></a>
-  <a class="top-nav-back" href="#">← início</a>
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
 </nav>
 
 <div class="app">
   <div class="logo">Bora no <span>Mercado</span></div>
-  <p class="tagline">coloque o preço ao marcar o item no mercado</p>
+  <p class="tagline">lista inteligente — compara preço com a última compra</p>
 
+  <!-- INPUT -->
   <div class="input-box">
     <div class="input-row">
-      <input type="text" id="inp-nome" placeholder="O que comprar?" onkeydown="if(event.key==='Enter')addItem()">
-      <input type="number" class="qty" id="inp-qty" placeholder="qtd" value="1" min="1">
+      <input type="text" id="inp-nome" placeholder="o que comprar? ex: arroz, sabão..." onkeydown="if(event.key==='Enter')addItem()">
+    </div>
+    <div class="input-row">
+      <input type="number" class="qty" id="inp-qty" placeholder="qtd" value="1" min="1" step="1">
       <button class="add-btn" onclick="addItem()">+ add</button>
     </div>
     <div class="input-hints" id="hints"></div>
   </div>
 
+  <!-- RESUMO -->
   <div class="resumo-bar" id="resumo-bar" style="display:none;">
     <div class="resumo-pill" id="pill-total">
       <div class="resumo-pill-val" id="pill-total-val">R$ 0</div>
-      <div class="resumo-pill-lbl">total da compra</div>
+      <div class="resumo-pill-lbl">total estimado</div>
+    </div>
+    <div class="resumo-pill" id="pill-itens">
+      <div class="resumo-pill-val" id="pill-itens-val">0</div>
+      <div class="resumo-pill-lbl">itens</div>
     </div>
     <div class="resumo-pill" id="pill-var">
       <div class="resumo-pill-val" id="pill-var-val">—</div>
-      <div class="resumo-pill-lbl">vs anterior</div>
+      <div class="resumo-pill-lbl">vs última compra</div>
     </div>
   </div>
 
-  <div id="lista-container"></div>
-
-  <div class="outros-box" id="outros-box">
-    <strong>📋 Itens em "Outros"</strong>
-    <div class="outros-lista" id="outros-lista"></div>
-    <div class="outros-copy" onclick="copiarOutros()">copiar para sugerir categorias</div>
+  <!-- LISTA -->
+  <div id="lista-container">
+    <div class="empty">
+      <div class="empty-icon">🛒</div>
+      <div class="empty-title">lista vazia</div>
+      <div class="empty-sub">Digite o item acima e clique em + add.<br>O app categoriza automaticamente.</div>
+    </div>
   </div>
 
+  <!-- ITENS NÃO RECONHECIDOS -->
+  <div class="outros-box" id="outros-box">
+    <strong>📋 Itens em "Outros" — nos ajude a melhorar!</strong>
+    <div class="outros-lista" id="outros-lista"></div>
+    <div class="outros-copy" onclick="copiarOutros()">copiar lista para enviar ao Bora Apps</div>
+  </div>
+
+  <!-- AÇÕES -->
   <div class="acoes" id="acoes" style="display:none;">
     <button class="acao-btn" onclick="compartilhar()">📲 WhatsApp</button>
+    <button class="acao-btn" onclick="limparComprados()">✓ limpar comprados</button>
     <button class="acao-btn danger" onclick="limparTudo()">🗑 zerar</button>
   </div>
 </div>
 
 <script>
+// ─── DE-PARA DE CATEGORIAS ───────────────────────────────────────────────────
 const CATEGORIAS = {
-  '🥩 Carnes e Frios': ['carne','frango','picanha','costela','linguiça','presunto','salsicha','bacon','peixe','atum','mortadela'],
-  '🥛 Laticínios': ['leite','queijo','iogurte','manteiga','margarina','requeijão','creme de leite','ovos','ovo'],
-  '🥦 Hortifruti': ['alface','tomate','cebola','alho','batata','cenoura','banana','maçã','laranja','limão','limao'],
-  '🍞 Padaria': ['pão','pao','pãozinho','bolo','biscoito','bolacha','torrada'],
-  '🧴 Higiene': ['shampoo','condicionador','sabonete','pasta de dente','desodorante','papel higiênico','Lenço Umedecido','Lencinho'],
-  '🧹 Limpeza': ['detergente','desinfetante','amaciante','sabão em pó','esponja','álcool'],
-  '🛒 Mercearia': ['arroz','feijão','macarrão','farinha','açúcar','sal','azeite','óleo','café','molho'],
-  '🥤 Bebidas': ['refrigerante','suco','água','cerveja','vinho'],
-  '👶 Bebê': ['Fralda','Pomada','Nan','Leite Ninho'],
-  '🍫 Doces': ['chocolate','bombom','bala'],
-  '🐾 Pet': ['ração','racao','areia'],
+  '🥩 Carnes e Frios': ['carne','frango','picanha','costela','linguiça','linguica','presunto','salsicha','bacon','peixe','camarão','camarao','atum','sardinha','patê','pate','mortadela','peito de peru','blanquet','salame'],
+  '🥛 Laticínios': ['leite','queijo','iogurte','manteiga','margarina','creme de leite','requeijão','requeijao','nata','coalhada','mussarela','parmesão','parmesao','catupiry'],
+  '🥦 Hortifruti': ['alface','tomate','cebola','alho','batata','cenoura','beterraba','abobrinha','chuchu','pepino','pimentão','pimentao','brócolis','brocolis','couve','espinafre','rúcula','rucula','banana','maçã','maca','laranja','uva','morango','limão','limao','abacate','mamão','mamao','manga','melancia','melão','melao','abacaxi','pêra','pera','kiwi','ameixa'],
+  '🍞 Padaria': ['pão','pao','pãozinho','paozinho','baguete','torrada','bolo','biscoito','bolacha','croissant','bisnaguinha','brioche'],
+  '🧴 Higiene': ['shampoo','condicionador','sabonete','sabão','pasta de dente','escova de dente','fio dental','desodorante','absorvente','creme','loção','locao','perfume','protetor solar','cotonete','papel higiênico','papel higienico','toalha','lâmina','lamina','barbeador'],
+  '🧹 Limpeza': ['detergente','desinfetante','água sanitária','agua sanitaria','cloro','amaciante','sabão em pó','sabao em po','lava-louças','lava-loucas','esponja','pano','vassoura','rodo','saco de lixo','multiuso','álcool','alcool'],
+  '🛒 Mercearia': ['arroz','feijão','feijao','macarrão','macarrao','farinha','açúcar','acucar','sal','azeite','óleo','oleo','vinagre','molho','extrato','catchup','mostarda','maionese','tempero','caldo','aveia','granola','cereal','café','cafe','chá','cha','achocolatado','leite em pó','leite em po','coco','mel','geleia','sardinha em lata','milho','ervilha','atum em lata'],
+  '🧊 Congelados': ['pizza congelada','lasanha','nuggets','hambúrguer','hamburger','sorvete','açaí','acai','batata frita congelada'],
+  '🥤 Bebidas': ['refrigerante','suco','água','agua','cerveja','vinho','energético','energetico','isotônico','isotonico','cachaça','cachaca','whisky','vodka','gin'],
+  '🍫 Mercearia Doce': ['chocolate','bombom','bala','chiclete','pirulito','wafer','cookie','paçoca','pacoca','goiabada','doce de leite'],
+  '🐾 Pet': ['ração','racao','petisco','areia de gato','shampoo pet'],
+  '👶 Bebê': ['fralda','lenço umedecido','lenco umedecido','pomada','papinha','leite em fórmula','leite em formula'],
 };
 
-const HINTS_RAPIDOS = ['arroz','feijão','leite','ovos','pão','frango','tomate','cebola','alho','café'];
+const HINTS_RAPIDOS = ['arroz','feijão','leite','ovos','pão','frango','tomate','cebola','alho','manteiga','queijo','café'];
 
-const SK_LISTA = 'bora_mercado_v2_lista';
-const SK_HISTORICO = 'bora_mercado_v2_historico'; // { nome: {preco: 0, data: ''} }
+// ─── STORAGE ──────────────────────────────────────────────────────────────────
+const SK_LISTA   = 'bora_mercado_lista';
+const SK_PRECOS  = 'bora_mercado_precos'; // {nome: ultimoPreco}
 
-let lista = JSON.parse(localStorage.getItem(SK_LISTA) || '[]');
-let historico = JSON.parse(localStorage.getItem(SK_HISTORICO) || '{}');
+let lista  = JSON.parse(localStorage.getItem(SK_LISTA)  || '[]');
+let precos = JSON.parse(localStorage.getItem(SK_PRECOS) || '{}');
 
+// ─── CATEGORIZAÇÃO ────────────────────────────────────────────────────────────
 function detectarCategoria(nome) {
   const n = nome.toLowerCase().trim();
   for (const [cat, palavras] of Object.entries(CATEGORIAS)) {
@@ -168,6 +217,7 @@ function detectarCategoria(nome) {
   return '📦 Outros';
 }
 
+// ─── HINTS RÁPIDOS ────────────────────────────────────────────────────────────
 function renderHints() {
   const nomesNaLista = lista.map(i => i.nome.toLowerCase());
   const disponiveis = HINTS_RAPIDOS.filter(h => !nomesNaLista.includes(h));
@@ -178,170 +228,242 @@ function renderHints() {
 
 function addHint(nome) {
   document.getElementById('inp-nome').value = nome;
-  addItem();
+  document.getElementById('inp-preco').focus();
 }
 
+// ─── ADD ITEM ─────────────────────────────────────────────────────────────────
 function addItem() {
-  const nome = document.getElementById('inp-nome').value.trim();
-  const qty = parseFloat(document.getElementById('inp-qty').value) || 1;
-  if (!nome) return;
+  const nome  = document.getElementById('inp-nome').value.trim();
+  const qty   = parseFloat(document.getElementById('inp-qty').value) || 1;
+  if (!nome) { document.getElementById('inp-nome').focus(); return; }
 
-  const categoria = detectarCategoria(nome);
-  const infoAntiga = historico[nome.toLowerCase()] || null;
+  const categoria   = detectarCategoria(nome);
+  const ultimoPreco = precos[nome.toLowerCase()] || null;
 
-  lista.push({ 
-    id: Date.now(), 
-    nome, 
-    qty, 
-    preco: 0, 
-    categoria, 
-    comprado: false, 
-    precoAnterior: infoAntiga ? infoAntiga.preco : null,
-    dataAnterior: infoAntiga ? infoAntiga.data : null
-  });
-
+  lista.push({ id: Date.now(), nome, qty, preco: null, categoria, comprado: false, ultimoPreco });
   localStorage.setItem(SK_LISTA, JSON.stringify(lista));
+
   document.getElementById('inp-nome').value = '';
-  document.getElementById('inp-qty').value = '1';
+  document.getElementById('inp-qty').value  = '1';
   document.getElementById('inp-nome').focus();
   render();
 }
 
+// ─── TOGGLE COMPRADO ──────────────────────────────────────────────────────────
 function toggleComprado(id) {
   const item = lista.find(i => i.id === id);
-  if (!item) return;
-
-  if (!item.comprado) {
-    // Ao marcar como comprado, pede o preço
-    const pStr = prompt(`Qual o preço de "${item.nome}"?`, item.preco > 0 ? item.preco : "");
-    if (pStr === null) return; // cancelou o prompt
-
-    const valor = parseFloat(pStr.replace(',', '.')) || 0;
-    item.preco = valor;
-    item.comprado = true;
-    
-    // Salva no histórico com a data de hoje
-    if (valor > 0) {
-      const hoje = new Date().toLocaleDateString('pt-BR', {day: '2d', month: '2d', year: '2y'});
-      historico[item.nome.toLowerCase()] = { preco: valor, data: hoje };
-      localStorage.setItem(SK_HISTORICO, JSON.stringify(historico));
-    }
-  } else {
-    // Se desmarcar, limpa o preço desta compra
-    item.comprado = false;
-    item.preco = 0;
-  }
-
+  if (item) item.comprado = !item.comprado;
   localStorage.setItem(SK_LISTA, JSON.stringify(lista));
   render();
 }
 
+// ─── ATUALIZAR PREÇO INLINE ───────────────────────────────────────────────────
+function updatePreco(id, val) {
+  const item  = lista.find(i => i.id === id);
+  if (!item) return;
+  const preco = parseFloat(val);
+  item.preco  = isNaN(preco) || preco <= 0 ? null : preco;
+
+  // salva histórico ao preencher
+  if (item.preco) {
+    precos[item.nome.toLowerCase()] = item.preco;
+    localStorage.setItem(SK_PRECOS, JSON.stringify(precos));
+  }
+  localStorage.setItem(SK_LISTA, JSON.stringify(lista));
+
+  // atualiza só a variação e o resumo sem re-render completo
+  const varEl = document.getElementById('var-' + id);
+  if (varEl) varEl.innerHTML = calcVarHTML(item);
+  atualizaResumo();
+}
+
+function calcVarHTML(item) {
+  if (!item.preco || !item.ultimoPreco || item.ultimoPreco === item.preco) {
+    return `<div class="var-absoluta var-neutro" style="color:var(--muted)">—</div>`;
+  }
+  const diff    = item.preco - item.ultimoPreco;
+  const pct     = (diff / item.ultimoPreco) * 100;
+  const cls     = diff > 0 ? 'var-up' : 'var-down';
+  const seta    = diff > 0 ? '↑' : '↓';
+  const sinal   = diff > 0 ? '+' : '';
+  return `<div class="${cls}">
+    <div class="var-absoluta">${seta} R$ ${Math.abs(diff).toFixed(2)}</div>
+    <div class="var-pct">${sinal}${pct.toFixed(1)}%</div>
+  </div>`;
+}
+
+function atualizaResumo() {
+  const totalAtual = lista.reduce((s, i) => s + (i.preco || 0) * i.qty, 0);
+  const temVar     = lista.some(i => i.ultimoPreco && i.preco && i.ultimoPreco !== i.preco);
+  const totalAnt   = lista.reduce((s, i) => s + (i.ultimoPreco ? i.ultimoPreco * i.qty : (i.preco || 0) * i.qty), 0);
+  const varTotal   = totalAnt > 0 ? ((totalAtual - totalAnt) / totalAnt * 100) : 0;
+
+  document.getElementById('pill-total-val').textContent = totalAtual > 0 ? fmt(totalAtual) : '—';
+  document.getElementById('pill-itens-val').textContent = lista.filter(i => !i.comprado).length + '/' + lista.length;
+
+  const pillVar    = document.getElementById('pill-var');
+  const pillVarVal = document.getElementById('pill-var-val');
+  if (temVar) {
+    pillVar.className    = 'resumo-pill ' + (varTotal > 0 ? 'variacao-neg' : 'variacao-pos');
+    pillVarVal.textContent = (varTotal > 0 ? '↑ +' : '↓ ') + Math.abs(varTotal).toFixed(1) + '%';
+  } else {
+    pillVar.className    = 'resumo-pill';
+    pillVarVal.textContent = '—';
+  }
+}
 function removeItem(id) {
   lista = lista.filter(i => i.id !== id);
   localStorage.setItem(SK_LISTA, JSON.stringify(lista));
   render();
 }
 
+// ─── LIMPAR ───────────────────────────────────────────────────────────────────
+function limparComprados() {
+  lista = lista.filter(i => !i.comprado);
+  localStorage.setItem(SK_LISTA, JSON.stringify(lista));
+  render();
+}
+
 function limparTudo() {
-  if (!confirm('Deseja apagar toda a lista?')) return;
+  if (!confirm('Zerar a lista?')) return;
   lista = [];
   localStorage.setItem(SK_LISTA, JSON.stringify(lista));
   render();
 }
 
+// ─── RENDER ───────────────────────────────────────────────────────────────────
 function fmt(v) { return 'R$ ' + v.toFixed(2).replace('.', ','); }
 
 function render() {
   renderHints();
+
   const container = document.getElementById('lista-container');
   const resumoBar = document.getElementById('resumo-bar');
-  const acoes = document.getElementById('acoes');
+  const acoes     = document.getElementById('acoes');
+  const outrosBox = document.getElementById('outros-box');
 
   if (lista.length === 0) {
-    container.innerHTML = `<div style="text-align:center; padding:40px; color:#aaa">Lista vazia</div>`;
+    container.innerHTML = `<div class="empty"><div class="empty-icon">🛒</div><div class="empty-title">lista vazia</div><div class="empty-sub">Digite o item acima e clique em + add.<br>O app categoriza automaticamente.</div></div>`;
     resumoBar.style.display = 'none';
     acoes.style.display = 'none';
+    outrosBox.style.display = 'none';
     return;
   }
 
+  // agrupa por categoria
   const grupos = {};
   lista.forEach(item => {
     if (!grupos[item.categoria]) grupos[item.categoria] = [];
     grupos[item.categoria].push(item);
   });
 
+  // ordena categorias — Outros sempre por último
+  const ordemCats = Object.keys(CATEGORIAS);
+  const catsSorted = Object.keys(grupos).sort((a, b) => {
+    if (a === '📦 Outros') return 1;
+    if (b === '📦 Outros') return -1;
+    return ordemCats.indexOf(a) - ordemCats.indexOf(b);
+  });
+
   let html = '';
-  Object.keys(grupos).sort().forEach(cat => {
+  catsSorted.forEach(cat => {
+    const itens = grupos[cat];
+    // não comprados primeiro
+    itens.sort((a, b) => a.comprado - b.comprado);
     html += `<div class="categoria-section">
       <div class="categoria-header">
         <span class="categoria-icon">${cat.split(' ')[0]}</span>
         <span class="categoria-nome">${cat.split(' ').slice(1).join(' ')}</span>
+        <span class="categoria-count">${itens.filter(i=>!i.comprado).length}/${itens.length}</span>
       </div>`;
-    
-    grupos[cat].forEach(item => {
-      let varHTML = '';
-      if (item.comprado && item.preco > 0 && item.precoAnterior) {
-        const diff = ((item.preco - item.precoAnterior) / item.precoAnterior * 100);
-        const cls = diff > 0 ? 'up' : 'down';
-        const seta = diff > 0 ? '↑' : '↓';
-        varHTML = `<div class="item-variacao ${cls}">${seta} ${Math.abs(diff).toFixed(1)}%</div>`;
-      }
-
+    itens.forEach(item => {
+      const precoAtualVal = item.preco ? item.preco.toFixed(2) : '';
+      const precoAntVal   = item.ultimoPreco ? item.ultimoPreco.toFixed(2) : '';
       html += `
         <div class="item-card ${item.comprado ? 'comprado' : ''}">
-          <div class="item-check ${item.comprado ? 'done' : ''}" onclick="toggleComprado(${item.id})"></div>
-          <div class="item-info">
-            <div class="item-nome">${item.nome}</div>
-            <div class="item-qty">${item.qty} un</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="item-check ${item.comprado ? 'done' : ''}" onclick="toggleComprado(${item.id})"></div>
+            <div class="item-info">
+              <div class="item-nome">${item.nome}</div>
+              <div class="item-qty">${item.qty > 1 ? item.qty + ' un' : ''}</div>
+            </div>
+            <button class="item-del" onclick="removeItem(${item.id})">×</button>
           </div>
-          <div class="item-preco-col">
-            <div class="item-preco-atual">${item.preco > 0 ? fmt(item.preco * item.qty) : '—'}</div>
-            ${item.dataAnterior ? `<div class="item-preco-ant">Ant: ${fmt(item.precoAnterior)} (${item.dataAnterior})</div>` : ''}
-            ${varHTML}
+          <div class="item-preco-row">
+            <div class="preco-group">
+              <div class="preco-lbl">anterior</div>
+              <input class="preco-inp ant" type="number" value="${precoAntVal}" placeholder="—" readonly tabindex="-1">
+            </div>
+            <div class="preco-group">
+              <div class="preco-lbl">hoje R$</div>
+              <input class="preco-inp" type="number" value="${precoAtualVal}" placeholder="0,00" step="0.01" min="0"
+                onchange="updatePreco(${item.id}, this.value)"
+                oninput="updatePreco(${item.id}, this.value)">
+            </div>
+            <div class="preco-variacao" id="var-${item.id}">
+              ${calcVarHTML(item)}
+            </div>
           </div>
-          <button class="item-del" onclick="removeItem(${item.id})">×</button>
         </div>`;
     });
     html += `</div>`;
   });
 
   container.innerHTML = html;
-
-  // Resumo
-  const totalGeral = lista.reduce((s, i) => s + (i.preco * i.qty), 0);
-  document.getElementById('pill-total-val').textContent = fmt(totalGeral);
-
-  // Variação Total da Compra (dos itens que já foram marcados)
-  const itensComPreco = lista.filter(i => i.comprado && i.preco > 0 && i.precoAnterior);
-  if (itensComPreco.length > 0) {
-    const sumAtual = itensComPreco.reduce((s, i) => s + (i.preco * i.qty), 0);
-    const sumAnt = itensComPreco.reduce((s, i) => s + (i.precoAnterior * i.qty), 0);
-    const vTotal = ((sumAtual - sumAnt) / sumAnt * 100);
-    const pillVar = document.getElementById('pill-var');
-    pillVar.className = 'resumo-pill ' + (vTotal > 0 ? 'variacao-neg' : 'variacao-pos');
-    document.getElementById('pill-var-val').textContent = (vTotal > 0 ? '↑ ' : '↓ ') + Math.abs(vTotal).toFixed(1) + '%';
-  } else {
-    document.getElementById('pill-var-val').textContent = '—';
-    document.getElementById('pill-var').className = 'resumo-pill';
-  }
-
+  atualizaResumo();
   resumoBar.style.display = 'flex';
   acoes.style.display = 'flex';
+
+  // outros report
+  const outros = grupos['📦 Outros'];
+  if (outros && outros.length > 0) {
+    outrosBox.style.display = 'block';
+    document.getElementById('outros-lista').textContent = outros.map(i => i.nome).join(', ');
+  } else {
+    outrosBox.style.display = 'none';
+  }
 }
 
+// ─── COMPARTILHAR ─────────────────────────────────────────────────────────────
 function compartilhar() {
-  let msg = '🛒 *Minha Lista de Mercado*\n\n';
+  if (lista.length === 0) return;
+  const grupos = {};
   lista.forEach(i => {
-    const status = i.comprado ? '✅' : '⬜';
-    const preco = i.preco > 0 ? ` - ${fmt(i.preco * i.qty)}` : '';
-    msg += `${status} ${i.nome} (${i.qty}un)${preco}\n`;
+    if (!grupos[i.categoria]) grupos[i.categoria] = [];
+    grupos[i.categoria].push(i);
   });
-  const total = lista.reduce((s, i) => s + (i.preco * i.qty), 0);
-  if (total > 0) msg += `\n💰 *Total: ${fmt(total)}*`;
+
+  let msg = '🛒 *Lista do Mercado — Bora Apps*\n\n';
+  Object.entries(grupos).forEach(([cat, itens]) => {
+    msg += `*${cat}*\n`;
+    itens.forEach(i => {
+      const check = i.comprado ? '✅' : '⬜';
+      const preco = i.preco > 0 ? ` — ${fmt(i.preco * i.qty)}` : '';
+      const qty   = i.qty > 1 ? ` (${i.qty}x)` : '';
+      msg += `${check} ${i.nome}${qty}${preco}\n`;
+    });
+    msg += '\n';
+  });
+
+  const total = lista.reduce((s, i) => s + (i.preco || 0) * i.qty, 0);
+  if (total > 0) msg += `💰 *Total estimado: ${fmt(total)}*\n`;
+  msg += '\n_Bora Apps_ 🟢\nboraapps.com.br';
+
   window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
+function copiarOutros() {
+  const outros = lista.filter(i => i.categoria === '📦 Outros').map(i => i.nome);
+  const texto = 'Itens sem categoria no Bora no Mercado:\n' + outros.join(', ');
+  navigator.clipboard.writeText(texto).then(() => {
+    document.querySelector('.outros-copy').textContent = '✅ copiado!';
+    setTimeout(() => document.querySelector('.outros-copy').textContent = 'copiar lista para enviar ao Bora Apps', 2000);
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 render();
+document.getElementById('inp-nome').focus();
 </script>
 </body>
 </html>
