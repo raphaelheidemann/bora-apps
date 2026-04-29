@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Abastecer — controle de consumo e comparador flex</title>
+<meta name="description" content="Registre seus abastecimentos, calcule o consumo real do seu carro e descubra se vale mais abastecer com etanol ou gasolina.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f9f7;--ink:#0f1a0f;--muted:#5a6e5a;--border:#d0ddd0;
+  --green:#1e8c3a;--green-light:#e8f5ec;--green-mid:#27ae60;
+  --yellow:#f39c12;--yellow-light:#fef9e7;
+  --red:#e74c3c;--red-light:#fdf0ee;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 60px;}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:10;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--green-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:20px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--green-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+
+.tabs{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;}
+.tab{flex:1;padding:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.tab.active{background:var(--ink);color:#fff;}
+
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input,.field select{
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 12px;background:var(--white);color:var(--ink);
+  outline:none;transition:border-color .15s;width:100%;
+}
+.field input:focus{border-color:var(--green);}
+.field input::placeholder{color:#bbb;}
+.full{grid-column:1/-1;}
+
+.add-btn{margin-top:16px;width:100%;background:var(--green-mid);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.add-btn:hover{opacity:.88;}
+
+/* RESUMO */
+.resumo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+.resumo-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px;}
+.resumo-val{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--ink);}
+.resumo-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+.resumo-card.destaque{border-color:var(--green);background:var(--green-light);}
+.resumo-card.destaque .resumo-val{color:var(--green);}
+
+/* EXPORTAR PARA BORA JUNTO */
+.export-box{margin-top:16px;background:var(--green-light);border:1.5px solid var(--green);border-radius:12px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.export-info{font-size:12px;color:var(--muted);line-height:1.5;}
+.export-info strong{color:var(--ink);display:block;margin-bottom:2px;}
+.export-btn{background:var(--green-mid);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.export-btn:hover{opacity:.88;}
+.export-ok{font-size:11px;color:var(--green);margin-top:6px;display:none;}
+
+/* HISTÓRICO */
+.hist-header{display:flex;justify-content:space-between;align-items:center;margin-top:24px;}
+.hist-title{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.hist-clear{font-size:11px;color:var(--red);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.hist-lista{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.hist-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;}
+.hist-item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.hist-data{font-size:12px;font-weight:500;color:var(--ink);}
+.hist-consumo{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--green);}
+.hist-consumo.pending{color:var(--muted);font-size:13px;font-family:'DM Sans',sans-serif;}
+.hist-details{display:flex;gap:12px;font-size:11px;color:var(--muted);}
+.hist-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:2px;}
+.hist-del:hover{color:var(--red);}
+.empty-state{text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;}
+.empty-icon{font-size:32px;margin-bottom:8px;}
+
+/* FLEX TAB */
+.flex-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:20px;margin-top:16px;}
+.resultado-flex{display:none;margin-top:20px;}
+.vencedor{border-radius:14px;padding:20px;text-align:center;margin-bottom:16px;}
+.vencedor.etanol{background:var(--green-light);border:2px solid var(--green);}
+.vencedor.gasolina{background:var(--yellow-light);border:2px solid var(--yellow);}
+.vencedor-emoji{font-size:36px;margin-bottom:8px;}
+.vencedor-titulo{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
+.vencedor.etanol .vencedor-titulo{color:var(--green);}
+.vencedor.gasolina .vencedor-titulo{color:var(--yellow);}
+.vencedor-sub{font-size:13px;color:var(--muted);}
+.comparacao{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.comp-item{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.comp-item.winner{border-color:var(--green-mid);}
+.comp-nome{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.comp-val{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--ink);}
+.comp-unit{font-size:11px;color:var(--muted);}
+.regra-box{margin-top:14px;background:var(--bg);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.7;border:1px solid var(--border);}
+.regra-box strong{color:var(--ink);}
+.calc-btn{margin-top:16px;width:100%;background:var(--ink);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.85;}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora <span>Abastecer</span></div>
+  <p class="tagline">controle de consumo real e comparador flex</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('historico')">⛽ Histórico</button>
+    <button class="tab" onclick="setTab('flex')">🌿 Flex</button>
+  </div>
+
+  <!-- ABA HISTÓRICO -->
+  <div id="aba-historico">
+    <div class="section-label">novo abastecimento</div>
+    <div class="row">
+      <div class="field">
+        <label>data</label>
+        <input type="date" id="h-data">
+      </div>
+      <div class="field">
+        <label>odômetro (km)</label>
+        <input type="number" id="h-odometro" placeholder="ex: 45320">
+      </div>
+      <div class="field">
+        <label>litros abastecidos</label>
+        <input type="number" id="h-litros" placeholder="ex: 40.5" step="0.1">
+      </div>
+      <div class="field">
+        <label>valor total (R$)</label>
+        <input type="number" id="h-reais" placeholder="ex: 251.10" step="0.01" oninput="calcPrecoLitro()">
+      </div>
+    </div>
+    <div id="preco-litro-preview" style="font-size:11px;color:var(--green);margin-top:6px;display:none;">
+      💧 preço por litro: <strong id="preco-litro-val"></strong>
+    </div>
+
+    <button class="add-btn" onclick="addAbastecimento()">+ registrar abastecimento</button>
+
+    <!-- RESUMO -->
+    <div id="resumo-section" style="display:none;">
+      <div class="section-label" style="margin-top:24px;">resumo</div>
+      <div class="resumo-grid" id="resumo-grid"></div>
+      <div class="export-box" id="export-box" style="display:none;">
+        <div class="export-info">
+          <strong>📲 usar no Bora Junto</strong>
+          Enviar consumo médio para a calculadora de carona
+        </div>
+        <button class="export-btn" onclick="exportarParaBoraJunto()">usar →</button>
+      </div>
+      <div class="export-ok" id="export-ok">✅ Consumo salvo! Abra o Bora Junto para usar.</div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div class="hist-header">
+      <span class="hist-title">registros</span>
+      <button class="hist-clear" onclick="limparHistorico()">limpar tudo</button>
+    </div>
+    <div class="hist-lista" id="hist-lista">
+      <div class="empty-state">
+        <div class="empty-icon">⛽</div>
+        Registre seu primeiro abastecimento.<br>Você precisa de <strong>2 registros</strong> para calcular o consumo.
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA FLEX -->
+  <div id="aba-flex" class="hidden">
+    <div class="flex-card">
+      <div class="section-label" style="margin-top:0;">preços atuais</div>
+      <div class="row">
+        <div class="field">
+          <label>etanol (R$/l)</label>
+          <input type="number" id="f-etanol" placeholder="ex: 4.20" step="0.01">
+        </div>
+        <div class="field">
+          <label>gasolina (R$/l)</label>
+          <input type="number" id="f-gasolina" placeholder="ex: 6.20" step="0.01">
+        </div>
+      </div>
+
+      <div id="consumo-importado" style="display:none;margin-top:12px;background:var(--green-light);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--muted);">
+        📲 <strong style="color:var(--ink);">Consumo importado do Histórico:</strong> <span id="consumo-importado-val"></span> km/l
+      </div>
+
+      <button class="calc-btn" onclick="calcFlex()">comparar agora →</button>
+    </div>
+
+    <div class="resultado-flex" id="resultado-flex">
+      <div class="vencedor" id="vencedor-box">
+        <div class="vencedor-emoji" id="vencedor-emoji"></div>
+        <div class="vencedor-titulo" id="vencedor-titulo"></div>
+        <div class="vencedor-sub" id="vencedor-sub"></div>
+      </div>
+      <div class="comparacao">
+        <div class="comp-item" id="comp-etanol">
+          <div class="comp-nome">🌿 Etanol</div>
+          <div class="comp-val" id="comp-etanol-val">—</div>
+          <div class="comp-unit">R$ por km</div>
+        </div>
+        <div class="comp-item" id="comp-gasolina">
+          <div class="comp-nome">⛽ Gasolina</div>
+          <div class="comp-val" id="comp-gasolina-val">—</div>
+          <div class="comp-unit">R$ por km</div>
+        </div>
+      </div>
+      <div class="regra-box">
+        <strong>Como funciona a regra dos 70%?</strong><br>
+        Carros flex consomem ~30% mais etanol que gasolina para percorrer a mesma distância. Se o etanol custar <strong>menos de 70% do preço da gasolina</strong>, ele é mais barato por km. Acima disso, a gasolina vence.<br><br>
+        <strong>Proporção atual:</strong> <span id="proporcao-atual"></span>% &nbsp;·&nbsp; Limite: 70%
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'bora_abastecer_historico';
+const CONSUMO_KEY = 'bora_junto_consumo';
+
+// init
+document.getElementById('h-data').value = new Date().toISOString().split('T')[0];
+let historico = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+renderHistorico();
+verificarConsumoImportado();
+
+function setTab(t) {
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', (i===0&&t==='historico')||(i===1&&t==='flex')));
+  document.getElementById('aba-historico').classList.toggle('hidden', t!=='historico');
+  document.getElementById('aba-flex').classList.toggle('hidden', t!=='flex');
+  if(t==='flex') verificarConsumoImportado();
+}
+
+function calcPrecoLitro() {
+  const reais = parseFloat(document.getElementById('h-reais').value)||0;
+  const litros = parseFloat(document.getElementById('h-litros').value)||0;
+  const prev = document.getElementById('preco-litro-preview');
+  if(reais>0 && litros>0) {
+    document.getElementById('preco-litro-val').textContent = 'R$ '+(reais/litros).toFixed(3)+'/l';
+    prev.style.display='block';
+  } else {
+    prev.style.display='none';
+  }
+}
+
+function addAbastecimento() {
+  const data = document.getElementById('h-data').value;
+  const odometro = parseFloat(document.getElementById('h-odometro').value);
+  const litros = parseFloat(document.getElementById('h-litros').value);
+  const reais = parseFloat(document.getElementById('h-reais').value);
+
+  if(!data||!odometro||!litros||!reais) { alert('Preencha todos os campos.'); return; }
+  if(historico.length>0 && odometro <= historico[historico.length-1].odometro) {
+    alert('O odômetro deve ser maior que o registro anterior ('+historico[historico.length-1].odometro+' km).'); return;
+  }
+
+  historico.push({ data, odometro, litros, reais, precoLitro: reais/litros });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(historico));
+
+  // limpa campos
+  document.getElementById('h-odometro').value='';
+  document.getElementById('h-litros').value='';
+  document.getElementById('h-reais').value='';
+  document.getElementById('preco-litro-preview').style.display='none';
+  document.getElementById('h-data').value = new Date().toISOString().split('T')[0];
+
+  renderHistorico();
+}
+
+function renderHistorico() {
+  const lista = document.getElementById('hist-lista');
+  if(historico.length===0) {
+    lista.innerHTML = `<div class="empty-state"><div class="empty-icon">⛽</div>Registre seu primeiro abastecimento.<br>Você precisa de <strong>2 registros</strong> para calcular o consumo.</div>`;
+    document.getElementById('resumo-section').style.display='none';
+    return;
+  }
+
+  // calcula consumos
+  const items = historico.map((h,i) => {
+    let consumo = null;
+    let km = null;
+    if(i>0) {
+      km = h.odometro - historico[i-1].odometro;
+      consumo = km / h.litros;
+    }
+    return { ...h, consumo, km };
+  }).reverse();
+
+  lista.innerHTML = items.map((h,i) => {
+    const idx = historico.length - 1 - i;
+    const dataFmt = new Date(h.data+'T12:00:00').toLocaleDateString('pt-BR');
+    return `
+      <div class="hist-item">
+        <div class="hist-item-top">
+          <span class="hist-data">${dataFmt} &nbsp;·&nbsp; ${h.odometro.toLocaleString()} km</span>
+          <button class="hist-del" onclick="removeItem(${idx})">×</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="hist-details">
+            <span>⛽ ${h.litros.toFixed(1)}L</span>
+            <span>💰 R$ ${h.reais.toFixed(2)}</span>
+            <span>💧 R$ ${h.precoLitro.toFixed(3)}/L</span>
+            ${h.km ? `<span>📍 ${h.km} km</span>` : ''}
+          </div>
+          <span class="${h.consumo ? 'hist-consumo' : 'hist-consumo pending'}">
+            ${h.consumo ? h.consumo.toFixed(1)+' km/l' : '1º registro'}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  calcularResumo();
+}
+
+function calcularResumo() {
+  if(historico.length < 2) {
+    document.getElementById('resumo-section').style.display='none';
+    return;
+  }
+
+  const kmTotal = historico[historico.length-1].odometro - historico[0].odometro;
+  // litros do 2º registro em diante
+  const litrosTotal = historico.slice(1).reduce((s,h)=>s+h.litros, 0);
+  const reaisTotal = historico.slice(1).reduce((s,h)=>s+h.reais, 0);
+  const consumoMedio = kmTotal / litrosTotal;
+  const precoMedioLitro = reaisTotal / litrosTotal;
+
+  // gasto mensal estimado (assume período em dias)
+  const diasTotal = (new Date(historico[historico.length-1].data) - new Date(historico[0].data)) / (1000*60*60*24) || 1;
+  const gastoMensal = (reaisTotal / diasTotal) * 30;
+
+  document.getElementById('resumo-section').style.display='block';
+  document.getElementById('resumo-grid').innerHTML = `
+    <div class="resumo-card destaque">
+      <div class="resumo-val">${consumoMedio.toFixed(1)} km/l</div>
+      <div class="resumo-lbl">consumo médio real</div>
+    </div>
+    <div class="resumo-card">
+      <div class="resumo-val">${kmTotal.toLocaleString()} km</div>
+      <div class="resumo-lbl">km registrados</div>
+    </div>
+    <div class="resumo-card">
+      <div class="resumo-val">R$ ${gastoMensal.toFixed(0)}</div>
+      <div class="resumo-lbl">gasto mensal estimado</div>
+    </div>
+    <div class="resumo-card">
+      <div class="resumo-val">R$ ${precoMedioLitro.toFixed(3)}</div>
+      <div class="resumo-lbl">preço médio por litro</div>
+    </div>
+  `;
+
+  // salva consumo automaticamente no localStorage para Bora Junto
+  localStorage.setItem(CONSUMO_KEY, JSON.stringify({ consumo: parseFloat(consumoMedio.toFixed(2)), data: new Date().toISOString() }));
+
+  document.getElementById('export-box').style.display='flex';
+}
+
+function exportarParaBoraJunto() {
+  document.getElementById('export-ok').style.display='block';
+  setTimeout(()=>{ window.location.href='bora-junto.html'; }, 1200);
+}
+
+function removeItem(idx) {
+  if(!confirm('Remover este registro?')) return;
+  historico.splice(idx,1);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(historico));
+  renderHistorico();
+}
+
+function limparHistorico() {
+  if(!confirm('Apagar todo o histórico?')) return;
+  historico = [];
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(CONSUMO_KEY);
+  renderHistorico();
+}
+
+function verificarConsumoImportado() {
+  const saved = JSON.parse(localStorage.getItem(CONSUMO_KEY)||'null');
+  const box = document.getElementById('consumo-importado');
+  if(saved && saved.consumo) {
+    document.getElementById('consumo-importado-val').textContent = saved.consumo.toFixed(1);
+    box.style.display='block';
+  } else {
+    box.style.display='none';
+  }
+}
+
+function calcFlex() {
+  const etanol = parseFloat(document.getElementById('f-etanol').value)||0;
+  const gasolina = parseFloat(document.getElementById('f-gasolina').value)||0;
+  if(!etanol||!gasolina) { alert('Preencha os dois preços.'); return; }
+
+  const proporcao = (etanol/gasolina)*100;
+  const custoPorKmEtanol = etanol / 0.7; // ajuste consumo flex
+  const custoPorKmGasolina = gasolina / 1;
+  // custo real por km (usando consumo base 1 para comparação proporcional)
+  const custoE = etanol / 7; // assumindo 10 km/l gasolina e 7 km/l etanol como base comparativa
+  const custoG = gasolina / 10;
+
+  const etanolVence = proporcao <= 70;
+
+  document.getElementById('vencedor-box').className = 'vencedor '+(etanolVence?'etanol':'gasolina');
+  document.getElementById('vencedor-emoji').textContent = etanolVence ? '🌿' : '⛽';
+  document.getElementById('vencedor-titulo').textContent = etanolVence ? 'Etanol vale mais!' : 'Gasolina vale mais!';
+  document.getElementById('vencedor-sub').textContent = etanolVence
+    ? `Etanol está em ${proporcao.toFixed(1)}% do preço da gasolina — abaixo do limite de 70%`
+    : `Etanol está em ${proporcao.toFixed(1)}% do preço da gasolina — acima do limite de 70%`;
+
+  document.getElementById('comp-etanol-val').textContent = 'R$ '+custoE.toFixed(3);
+  document.getElementById('comp-gasolina-val').textContent = 'R$ '+custoG.toFixed(3);
+  document.getElementById('comp-etanol').className = 'comp-item'+(etanolVence?' winner':'');
+  document.getElementById('comp-gasolina').className = 'comp-item'+(!etanolVence?' winner':'');
+  document.getElementById('proporcao-atual').textContent = proporcao.toFixed(1);
+
+  document.getElementById('resultado-flex').style.display='block';
+  document.getElementById('resultado-flex').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+</script>
+</body>
+</html>

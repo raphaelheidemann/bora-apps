@@ -101,6 +101,9 @@ h1{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;line-height:1.1;
   </div>
 
   <div class="section-label">seu carro</div>
+  <div id="consumo-importado" style="display:none;margin-bottom:10px;background:#e8f5ee;border:1.5px solid #1e7a4a;border-radius:10px;padding:10px 14px;font-size:12px;color:#1e7a4a;align-items:center;gap:8px;">
+    📲 <strong>Consumo importado do Bora Abastecer:</strong> <span id="consumo-importado-val"></span> km/l
+  </div>
   <div class="row">
     <div class="field">
       <label>consumo (km/l)</label>
@@ -136,6 +139,19 @@ h1{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;line-height:1.1;
 
 <script>
 let dadosCalculo = {};
+
+// importa consumo salvo pelo Bora Abastecer
+(function() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('bora_junto_consumo') || 'null');
+    if(saved && saved.consumo) {
+      document.getElementById('consumo').value = saved.consumo;
+      const box = document.getElementById('consumo-importado');
+      document.getElementById('consumo-importado-val').textContent = parseFloat(saved.consumo).toFixed(1);
+      box.style.display = 'flex';
+    }
+  } catch(e) {}
+})();
 
 function calcular() {
   const nome = document.getElementById('nome').value || 'Passageiro';

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Churrasquear — calculadora de churrasco</title>
+<meta name="description" content="Calcule a quantidade certa de carne, bebida, carvão e acompanhamentos para o seu churrasco. Informe quantos homens, mulheres e crianças.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a0a00;--ink:#fdf3e7;--muted:#9a7a5a;--border:#3a2010;
+  --orange:#e8622a;--orange-light:#2a1500;--orange-mid:#f07030;
+  --green:#27ae60;--green-light:#0a2010;
+  --white:#fff;--card:#231008;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 60px;}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--orange-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:24px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--orange-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:28px;margin-top:4px;}
+
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;margin-top:20px;}
+
+/* CONTADOR DE PESSOAS */
+.pessoas-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.pessoa-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px 10px;text-align:center;}
+.pessoa-emoji{font-size:28px;margin-bottom:6px;}
+.pessoa-label{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.contador{display:flex;align-items:center;justify-content:center;gap:8px;}
+.cnt-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1;}
+.cnt-btn:hover{border-color:var(--orange);color:var(--orange);}
+.cnt-val{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--ink);min-width:28px;text-align:center;}
+
+/* OPÇÕES */
+.opcoes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+.opcao-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s;}
+.opcao-pill.active{border-color:var(--orange);background:var(--orange-light);}
+.opcao-pill input[type=checkbox]{accent-color:var(--orange);width:14px;height:14px;}
+.opcao-label{font-size:13px;color:var(--ink);}
+
+.calc-btn{margin-top:24px;width:100%;background:var(--orange-mid);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+
+/* RESULTADO */
+#resultado{display:none;margin-top:28px;}
+.res-titulo{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
+.res-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+
+.lista-compras{display:flex;flex-direction:column;gap:8px;}
+.item-grupo{background:var(--card);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;}
+.item-grupo-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;}
+.item-linha{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);}
+.item-linha:last-child{border-bottom:none;}
+.item-nome{font-size:14px;color:var(--ink);}
+.item-qtd{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--orange-mid);}
+.item-detalhe{font-size:11px;color:var(--muted);margin-top:1px;}
+
+.aviso{background:var(--orange-light);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.7;margin-top:14px;}
+.aviso strong{color:var(--ink);}
+
+.share-btn{margin-top:16px;width:100%;background:var(--green);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
+.share-btn:hover{opacity:.9;}
+
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:180px;background:radial-gradient(ellipse at 50% 0%,rgba(232,98,42,.18) 0%,transparent 70%);pointer-events:none;}
+.app{position:relative;z-index:1;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora <span>Churrasquear</span></div>
+  <p class="tagline">lista de compras certa para não faltar — nem sobrar demais</p>
+
+  <div class="section-label">quantas pessoas?</div>
+  <div class="pessoas-grid">
+    <div class="pessoa-card">
+      <div class="pessoa-emoji">👨</div>
+      <div class="pessoa-label">homens</div>
+      <div class="contador">
+        <button class="cnt-btn" onclick="adj('h',-1)">−</button>
+        <span class="cnt-val" id="cnt-h">4</span>
+        <button class="cnt-btn" onclick="adj('h',1)">+</button>
+      </div>
+    </div>
+    <div class="pessoa-card">
+      <div class="pessoa-emoji">👩</div>
+      <div class="pessoa-label">mulheres</div>
+      <div class="contador">
+        <button class="cnt-btn" onclick="adj('m',-1)">−</button>
+        <span class="cnt-val" id="cnt-m">3</span>
+        <button class="cnt-btn" onclick="adj('m',1)">+</button>
+      </div>
+    </div>
+    <div class="pessoa-card">
+      <div class="pessoa-emoji">👧</div>
+      <div class="pessoa-label">crianças</div>
+      <div class="contador">
+        <button class="cnt-btn" onclick="adj('c',-1)">−</button>
+        <span class="cnt-val" id="cnt-c">2</span>
+        <button class="cnt-btn" onclick="adj('c',1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">o que vai ter?</div>
+  <div class="opcoes-grid">
+    <label class="opcao-pill active" id="pill-picanha">
+      <input type="checkbox" id="opt-picanha" checked onchange="togglePill('picanha')"> <span class="opcao-label">🥩 Picanha</span>
+    </label>
+    <label class="opcao-pill active" id="pill-frango">
+      <input type="checkbox" id="opt-frango" checked onchange="togglePill('frango')"> <span class="opcao-label">🍗 Frango</span>
+    </label>
+    <label class="opcao-pill active" id="pill-linguica">
+      <input type="checkbox" id="opt-linguica" checked onchange="togglePill('linguica')"> <span class="opcao-label">🌭 Linguiça</span>
+    </label>
+    <label class="opcao-pill" id="pill-costela">
+      <input type="checkbox" id="opt-costela" onchange="togglePill('costela')"> <span class="opcao-label">🦴 Costela</span>
+    </label>
+    <label class="opcao-pill active" id="pill-cerveja">
+      <input type="checkbox" id="opt-cerveja" checked onchange="togglePill('cerveja')"> <span class="opcao-label">🍺 Cerveja</span>
+    </label>
+    <label class="opcao-pill active" id="pill-refri">
+      <input type="checkbox" id="opt-refri" checked onchange="togglePill('refri')"> <span class="opcao-label">🥤 Refrigerante</span>
+    </label>
+    <label class="opcao-pill active" id="pill-pao">
+      <input type="checkbox" id="opt-pao" checked onchange="togglePill('pao')"> <span class="opcao-label">🧄 Pão de alho</span>
+    </label>
+    <label class="opcao-pill active" id="pill-queijo">
+      <input type="checkbox" id="opt-queijo" checked onchange="togglePill('queijo')"> <span class="opcao-label">🧀 Queijo coalho</span>
+    </label>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">montar lista de compras →</button>
+
+  <div id="resultado">
+    <div class="res-titulo">🛒 Lista do Churrasco</div>
+    <div class="res-sub" id="res-sub"></div>
+    <div class="lista-compras" id="lista-compras"></div>
+    <div class="aviso">
+      <strong>💡 Dica:</strong> Estas quantidades seguem as referências do <strong>Guia do Churrasqueiro</strong>: ~400g de carne por homem, ~300g por mulher e ~150g por criança (total entre todos os tipos). Sempre arredonde para cima na hora de comprar.
+    </div>
+    <button class="share-btn" onclick="compartilhar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      mandar lista no whatsapp
+    </button>
+  </div>
+</div>
+
+<script>
+let qtd = { h:4, m:3, c:2 };
+let listaResultado = [];
+
+function adj(tipo, delta) {
+  qtd[tipo] = Math.max(0, qtd[tipo]+delta);
+  document.getElementById('cnt-'+tipo).textContent = qtd[tipo];
+}
+
+function togglePill(nome) {
+  const cb = document.getElementById('opt-'+nome);
+  document.getElementById('pill-'+nome).classList.toggle('active', cb.checked);
+}
+
+function arred(val, base=0.5) { return Math.ceil(val/base)*base; }
+
+function calcular() {
+  const h=qtd.h, m=qtd.m, c=qtd.c;
+  const total = h+m+c;
+  if(total===0) { alert('Adicione pelo menos 1 pessoa.'); return; }
+
+  // Carne total em gramas
+  const carneTotal = h*400 + m*300 + c*150;
+
+  const carnes = [];
+  const opts = {
+    picanha: document.getElementById('opt-picanha').checked,
+    frango:  document.getElementById('opt-frango').checked,
+    linguica:document.getElementById('opt-linguica').checked,
+    costela: document.getElementById('opt-costela').checked,
+  };
+
+  const tiposAtivos = Object.values(opts).filter(Boolean).length;
+
+  if(tiposAtivos===0) { alert('Selecione pelo menos um tipo de carne.'); return; }
+
+  // distribuição proporcional por tipo
+  const pesos = { picanha:0.4, frango:0.35, linguica:0.15, costela:0.1 };
+  const soma = Object.keys(opts).filter(k=>opts[k]).reduce((s,k)=>s+pesos[k],0);
+
+  if(opts.picanha) {
+    const g = carneTotal*(pesos.picanha/soma);
+    carnes.push({ nome:'Picanha', qtd: arred(g/1000,0.5)+' kg', detalhe: Math.round(g)+'g no total' });
+  }
+  if(opts.frango) {
+    const g = carneTotal*(pesos.frango/soma);
+    const coxas = Math.ceil(g/150);
+    carnes.push({ nome:'Frango (coxas/sobrecoxas)', qtd: coxas+' un', detalhe: Math.round(g)+'g · ~150g cada' });
+  }
+  if(opts.linguica) {
+    const g = carneTotal*(pesos.linguica/soma);
+    const pcts = Math.ceil(g/500);
+    carnes.push({ nome:'Linguiça', qtd: pcts+' pct (500g)', detalhe: Math.round(g)+'g no total' });
+  }
+  if(opts.costela) {
+    const g = carneTotal*(pesos.costela/soma);
+    carnes.push({ nome:'Costela', qtd: arred(g/1000,0.5)+' kg', detalhe: Math.round(g)+'g no total' });
+  }
+
+  const bebidas = [];
+  if(document.getElementById('opt-cerveja').checked) {
+    const latas = Math.ceil((h*4 + m*2 + c*0) * 1); // latas 350ml
+    bebidas.push({ nome:'Cerveja', qtd: latas+' latas', detalhe: 'aprox. '+Math.ceil(latas/12)+' fardo(s) de 12' });
+  }
+  if(document.getElementById('opt-refri').checked) {
+    const litros = arred((h*0.5+m*0.75+c*1), 0.5);
+    bebidas.push({ nome:'Refrigerante', qtd: litros+'L', detalhe: 'garrafas de 2L: '+Math.ceil(litros/2) });
+  }
+
+  const acomp = [];
+  if(document.getElementById('opt-pao').checked) {
+    acomp.push({ nome:'Pão de alho', qtd: Math.ceil(total/4)+' pcts', detalhe: '~4 fatias por pessoa' });
+  }
+  if(document.getElementById('opt-queijo').checked) {
+    const espetos = Math.ceil(total/3);
+    acomp.push({ nome:'Queijo coalho', qtd: espetos+' espetos', detalhe: '~1 espeto a cada 3 pessoas' });
+  }
+
+  // carvão: ~1kg por hora, estimando 3h de churrasco + 1kg de reserva por 5 pessoas
+  const carvao = Math.ceil((total/5)+3);
+  // gelo: ~1kg por pessoa
+  const gelo = Math.ceil(total*1.2);
+  // sal grosso: ~100g/kg de carne
+  const salKg = arred((carneTotal/1000)*0.1, 0.5);
+
+  listaResultado = { carnes, bebidas, acomp, carvao, gelo, salKg, total, h, m, c };
+
+  document.getElementById('res-sub').textContent = `${total} pessoas — ${h} homem(ns), ${m} mulher(es), ${c} criança(s)`;
+
+  let html = '';
+
+  if(carnes.length) {
+    html += `<div class="item-grupo">
+      <div class="item-grupo-header">🥩 carnes</div>
+      ${carnes.map(i=>`<div class="item-linha"><div><div class="item-nome">${i.nome}</div><div class="item-detalhe">${i.detalhe}</div></div><div class="item-qtd">${i.qtd}</div></div>`).join('')}
+    </div>`;
+  }
+  if(bebidas.length) {
+    html += `<div class="item-grupo">
+      <div class="item-grupo-header">🍺 bebidas</div>
+      ${bebidas.map(i=>`<div class="item-linha"><div><div class="item-nome">${i.nome}</div><div class="item-detalhe">${i.detalhe}</div></div><div class="item-qtd">${i.qtd}</div></div>`).join('')}
+    </div>`;
+  }
+  if(acomp.length) {
+    html += `<div class="item-grupo">
+      <div class="item-grupo-header">🧄 acompanhamentos</div>
+      ${acomp.map(i=>`<div class="item-linha"><div><div class="item-nome">${i.nome}</div><div class="item-detalhe">${i.detalhe}</div></div><div class="item-qtd">${i.qtd}</div></div>`).join('')}
+    </div>`;
+  }
+  html += `<div class="item-grupo">
+    <div class="item-grupo-header">🔥 essenciais</div>
+    <div class="item-linha"><div><div class="item-nome">Carvão</div><div class="item-detalhe">estimativa para ~3h de churrasco</div></div><div class="item-qtd">${carvao} kg</div></div>
+    <div class="item-linha"><div><div class="item-nome">Gelo</div><div class="item-detalhe">~1,2 kg por pessoa</div></div><div class="item-qtd">${gelo} kg</div></div>
+    <div class="item-linha"><div><div class="item-nome">Sal grosso</div><div class="item-detalhe">~100g por kg de carne</div></div><div class="item-qtd">${salKg} kg</div></div>
+  </div>`;
+
+  document.getElementById('lista-compras').innerHTML = html;
+  const el = document.getElementById('resultado');
+  el.style.display='block';
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function compartilhar() {
+  const r = listaResultado;
+  if(!r.total) return;
+  let msg = `🔥 *Lista do Churrasco — Bora Churrasquear*\n`;
+  msg += `👥 ${r.total} pessoas (${r.h}H · ${r.m}M · ${r.c}C)\n\n`;
+  msg += `*🥩 Carnes*\n${r.carnes.map(i=>`  • ${i.nome}: ${i.qtd}`).join('\n')}\n\n`;
+  if(r.bebidas.length) msg += `*🍺 Bebidas*\n${r.bebidas.map(i=>`  • ${i.nome}: ${i.qtd}`).join('\n')}\n\n`;
+  if(r.acomp.length) msg += `*🧄 Acompanhamentos*\n${r.acomp.map(i=>`  • ${i.nome}: ${i.qtd}`).join('\n')}\n\n`;
+  msg += `*🔥 Essenciais*\n  • Carvão: ${r.carvao}kg\n  • Gelo: ${r.gelo}kg\n  • Sal grosso: ${r.salKg}kg\n\n`;
+  msg += `_Lista gerada com Bora Apps_ 🟠\nboraapps.com.br`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+</script>
+</body>
+</html>
