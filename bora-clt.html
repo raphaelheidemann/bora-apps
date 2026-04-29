@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora CLT — calcule 13º, férias, rescisão e FGTS</title>
+<meta name="description" content="Calculadora CLT completa e gratuita. Calcule 13º salário, férias, rescisão sem justa causa e saldo de FGTS de forma simples.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5ff;--ink:#12082a;--muted:#6a5e7a;--border:#ddd8ee;
+  --purple:#6c3fc5;--purple-light:#f0ebff;--purple-mid:#7c52d9;
+  --green:#1a7a3a;--green-light:#e8f5ec;
+  --red:#c0392b;--red-light:#fdf0ee;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--purple-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:20px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--purple-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+
+/* TABS */
+.tabs{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;}
+.tab{flex:1;padding:9px 4px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;}
+.tab.active{background:var(--ink);color:#fff;}
+
+/* FORM */
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input,.field select{
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 12px;background:var(--white);color:var(--ink);
+  outline:none;transition:border-color .15s;width:100%;
+}
+.field input:focus,.field select:focus{border-color:var(--purple);}
+.field input::placeholder{color:#bbb;}
+.full{grid-column:1/-1;}
+
+.calc-btn{margin-top:20px;width:100%;background:var(--purple-mid);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+
+/* RESULTADO */
+.resultado{display:none;margin-top:24px;}
+.res-hero{background:var(--ink);border-radius:16px;padding:24px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden;}
+.res-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:var(--purple-mid);opacity:.15;}
+.res-lbl{font-size:10px;letter-spacing:.12em;color:#aaa;margin-bottom:6px;}
+.res-total{font-family:'Fraunces',serif;font-size:44px;font-weight:900;line-height:1;margin-bottom:4px;}
+.res-sub{font-size:12px;color:#aaa;}
+
+.breakdown{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.bk-header{padding:12px 16px;background:var(--purple-light);font-size:10px;letter-spacing:.1em;color:var(--purple);text-transform:uppercase;font-weight:500;}
+.bk-row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);}
+.bk-row:last-child{border-bottom:none;}
+.bk-nome{font-size:13px;color:var(--ink);}
+.bk-sub{font-size:11px;color:var(--muted);}
+.bk-val{font-family:'Fraunces',serif;font-size:15px;font-weight:700;}
+.bk-val.pos{color:var(--green);}
+.bk-val.neg{color:var(--red);}
+
+.aviso-legal{background:var(--purple-light);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.7;margin-top:4px;}
+.aviso-legal strong{color:var(--ink);}
+
+.share-btn{margin-top:14px;width:100%;background:var(--green);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
+.share-btn:hover{opacity:.9;}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora <span>CLT</span></div>
+  <p class="tagline">calcule 13º, férias, rescisão e FGTS sem complicação</p>
+
+  <!-- SALÁRIO GLOBAL -->
+  <div style="background:var(--purple-light);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
+    <div class="section-label" style="margin-top:0;color:var(--purple-mid);">salário bruto — base para todos os cálculos</div>
+    <input type="number" id="salario-global" placeholder="ex: 3500,00" step="0.01" min="0"
+      oninput="sincronizarSalario(this.value)"
+      style="font-family:'DM Sans',sans-serif;font-size:20px;font-weight:500;border:1.5px solid var(--purple-mid);border-radius:8px;padding:12px 14px;background:var(--white);color:var(--ink);outline:none;width:100%;">
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('decimo')">13º Salário</button>
+    <button class="tab" onclick="setTab('ferias')">Férias</button>
+    <button class="tab" onclick="setTab('rescisao')">Rescisão</button>
+    <button class="tab" onclick="setTab('fgts')">FGTS</button>
+  </div>
+
+  <!-- 13º SALÁRIO -->
+  <div id="tab-decimo">
+    <div class="section-label">seus dados</div>
+    <div class="row">
+      <div class="field">
+        <label>meses trabalhados</label>
+        <input type="number" id="d-meses" placeholder="1–12" min="1" max="12" value="12">
+      </div>
+      <div class="field">
+        <label>dependentes (IR)</label>
+        <input type="number" id="d-dependentes" placeholder="0" min="0" value="0">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcDecimo()">calcular 13º →</button>
+    <div class="resultado" id="res-decimo"></div>
+  </div>
+
+  <!-- FÉRIAS -->
+  <div id="tab-ferias" class="hidden">
+    <div class="section-label">seus dados</div>
+    <div class="row">
+      <div class="field">
+        <label>dias de férias</label>
+        <input type="number" id="f-dias" placeholder="30" min="1" max="30" value="30">
+      </div>
+      <div class="field">
+        <label>dependentes (IR)</label>
+        <input type="number" id="f-dependentes" placeholder="0" min="0" value="0">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcFerias()">calcular férias →</button>
+    <div class="resultado" id="res-ferias"></div>
+  </div>
+
+  <!-- RESCISÃO -->
+  <div id="tab-rescisao" class="hidden">
+    <div class="section-label">seus dados</div>
+    <div class="row">
+      <div class="field">
+        <label>data de admissão</label>
+        <input type="date" id="r-admissao">
+      </div>
+      <div class="field">
+        <label>data de demissão</label>
+        <input type="date" id="r-demissao">
+      </div>
+      <div class="field full">
+        <label>tipo de rescisão</label>
+        <select id="r-tipo">
+          <option value="sem_justa">Demissão sem justa causa (empresa demite)</option>
+          <option value="pedido">Pedido de demissão (funcionário pede)</option>
+          <option value="acordo">Demissão por acordo (mútuo acordo)</option>
+          <option value="justa">Demissão por justa causa</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>férias vencidas (dias)</label>
+        <input type="number" id="r-ferias-venc" placeholder="0" min="0" max="30" value="0">
+      </div>
+      <div class="field">
+        <label>saldo FGTS (R$)</label>
+        <input type="number" id="r-fgts" placeholder="ex: 8000,00" step="0.01" min="0">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcRescisao()">calcular rescisão →</button>
+    <div class="resultado" id="res-rescisao"></div>
+  </div>
+
+  <!-- FGTS -->
+  <div id="tab-fgts" class="hidden">
+    <div class="section-label">seus dados</div>
+    <div class="row">
+      <div class="field">
+        <label>meses trabalhados</label>
+        <input type="number" id="g-meses" placeholder="ex: 24" min="1" value="12">
+      </div>
+      <div class="field full">
+        <label>tipo de contrato</label>
+        <select id="g-tipo">
+          <option value="normal">Normal (8% ao mês)</option>
+          <option value="aprendiz">Jovem aprendiz (2% ao mês)</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcFGTS()">calcular FGTS →</button>
+    <div class="resultado" id="res-fgts"></div>
+  </div>
+</div>
+
+<script>
+// ─── TABELAS 2024 ─────────────────────────────────────────────────────────────
+const INSS = [
+  { ate: 1412.00,  aliq: 0.075 },
+  { ate: 2666.68,  aliq: 0.09  },
+  { ate: 4000.03,  aliq: 0.12  },
+  { ate: 7786.02,  aliq: 0.14  },
+];
+const DEDUCAO_DEPENDENTE = 189.59;
+const IR = [
+  { ate: 2259.20,  aliq: 0,    ded: 0       },
+  { ate: 2826.65,  aliq: 0.075,ded: 169.44  },
+  { ate: 3751.05,  aliq: 0.15, ded: 381.44  },
+  { ate: 4664.68,  aliq: 0.225,ded: 662.77  },
+  { ate: Infinity, aliq: 0.275,ded: 896.00  },
+];
+
+function calcINSS(salario) {
+  let inss = 0;
+  let base = salario;
+  let anterior = 0;
+  for (const faixa of INSS) {
+    if (salario <= 0) break;
+    const teto = Math.min(salario, faixa.ate);
+    inss += (teto - anterior) * faixa.aliq;
+    anterior = faixa.ate;
+    if (salario <= faixa.ate) break;
+  }
+  return Math.min(inss, 908.86); // teto INSS 2024
+}
+
+function calcIR(baseCalculo, dependentes) {
+  const deducao = dependentes * DEDUCAO_DEPENDENTE;
+  const base    = Math.max(0, baseCalculo - deducao);
+  for (const faixa of IR) {
+    if (base <= faixa.ate) {
+      return Math.max(0, base * faixa.aliq - faixa.ded);
+    }
+  }
+  return 0;
+}
+
+const fmt  = v => 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtN = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+function setTab(t) {
+  ['decimo','ferias','rescisao','fgts'].forEach(id => {
+    document.getElementById('tab-'+id).classList.toggle('hidden', id !== t);
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active', ['decimo','ferias','rescisao','fgts'][i] === t);
+  });
+}
+
+function showResultado(id, heroVal, heroLbl, heroSub, linhas, aviso) {
+  const el = document.getElementById(id);
+  el.style.display = 'block';
+
+  const bkRows = linhas.map(l => `
+    <div class="bk-row">
+      <div><div class="bk-nome">${l.nome}</div>${l.sub ? `<div class="bk-sub">${l.sub}</div>` : ''}</div>
+      <div class="bk-val ${l.neg ? 'neg' : 'pos'}">${l.neg ? '− ' : '+ '}${fmt(l.val)}</div>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="res-hero">
+      <div class="res-lbl">${heroLbl}</div>
+      <div class="res-total">${fmt(heroVal)}</div>
+      <div class="res-sub">${heroSub}</div>
+    </div>
+    <div class="breakdown">
+      <div class="bk-header">composição</div>
+      ${bkRows}
+    </div>
+    <div class="aviso-legal">
+      <strong>⚠️ Importante:</strong> ${aviso} Os valores são estimativas com base nas tabelas vigentes em 2024. Consulte sempre o RH ou um contador para confirmação.
+    </div>
+    <button class="share-btn" onclick="compartilhar('${id}', '${fmt(heroVal)}', '${heroLbl}')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      compartilhar no whatsapp
+    </button>`;
+  el.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function sincronizarSalario(val) {
+  // não precisa mais fazer nada — todas as funções leem direto do campo global
+}
+
+function getSalario() {
+  const val = parseFloat(document.getElementById('salario-global').value) || 0;
+  if (!val) { alert('Informe o salário bruto no campo acima.'); return null; }
+  return val;
+}
+
+// ─── 13º ──────────────────────────────────────────────────────────────────────
+function calcDecimo() {
+  const salario    = getSalario(); if (!salario) return;
+  const meses      = parseInt(document.getElementById('d-meses').value) || 12;
+  const dependentes= parseInt(document.getElementById('d-dependentes').value) || 0;
+
+  const bruto      = (salario / 12) * meses;
+  const inss       = calcINSS(bruto);
+  const ir         = calcIR(bruto - inss, dependentes);
+  const liquido    = bruto - inss - ir;
+
+  showResultado('res-decimo', liquido, '13º salário líquido',
+    `${meses} mês(es) trabalhados · salário R$ ${fmtN(salario)}`,
+    [
+      { nome: '13º bruto',            sub: `${meses}/12 × R$ ${fmtN(salario)}`,                       val: bruto },
+      { nome: 'INSS descontado',      sub: 'desconto progressivo por faixa',                           val: inss,  neg: true },
+      { nome: 'IR descontado',        sub: `${dependentes} dependente(s) deduzido(s)`,                 val: ir,    neg: true },
+    ],
+    'O 13º é pago em duas parcelas: até 30/11 (50% bruto) e até 20/12 (restante com descontos).'
+  );
+}
+
+// ─── FÉRIAS ───────────────────────────────────────────────────────────────────
+function calcFerias() {
+  const salario    = getSalario(); if (!salario) return;
+  const dias       = parseInt(document.getElementById('f-dias').value) || 30;
+  const dependentes= parseInt(document.getElementById('f-dependentes').value) || 0;
+
+  const proporcional = salario * (dias / 30);
+  const adicional    = proporcional / 3; // 1/3 constitucional
+  const bruto        = proporcional + adicional;
+  const inss         = calcINSS(proporcional); // INSS só sobre férias, não sobre 1/3
+  const ir           = calcIR(bruto - inss, dependentes);
+  const liquido      = bruto - inss - ir;
+
+  showResultado('res-ferias', liquido, 'férias líquidas',
+    `${dias} dias · salário R$ ${fmtN(salario)}`,
+    [
+      { nome: 'Salário proporcional', sub: `${dias} dias de gozo`,             val: proporcional },
+      { nome: '+ 1/3 constitucional',sub: 'direito garantido pela CLT',        val: adicional },
+      { nome: 'INSS descontado',      sub: 'incide sobre salário base',         val: inss, neg: true },
+      { nome: 'IR descontado',        sub: `${dependentes} dependente(s)`,      val: ir,   neg: true },
+    ],
+    'O adicional de 1/3 de férias é isento de INSS mas incide IR. Férias vendidas (abono) têm cálculo diferente.'
+  );
+}
+
+// ─── RESCISÃO ─────────────────────────────────────────────────────────────────
+function calcRescisao() {
+  const salario   = getSalario(); if (!salario) return;
+  const admissao  = new Date(document.getElementById('r-admissao').value + 'T12:00:00');
+  const demissao  = new Date(document.getElementById('r-demissao').value + 'T12:00:00');
+  const tipo      = document.getElementById('r-tipo').value;
+  const feriasVenc= parseInt(document.getElementById('r-ferias-venc').value) || 0;
+  const fgts      = parseFloat(document.getElementById('r-fgts').value) || 0;
+  if (!document.getElementById('r-admissao').value || !document.getElementById('r-demissao').value) {
+    alert('Preencha as datas de admissão e demissão.'); return;
+  }
+
+  const msTrabalhados = (demissao - admissao) / (1000*60*60*24*30.44);
+  const mesesUltimoAno = Math.ceil(((demissao - new Date(demissao.getFullYear(), 0, 1)) / (1000*60*60*24*30.44)));
+  const mesesProporcional = Math.min(12, Math.max(1, Math.ceil(msTrabalhados % 12 || 12)));
+
+  // Saldo de salário (dias trabalhados no mês da demissão)
+  const diasMes     = demissao.getDate();
+  const saldoSalario= salario * (diasMes / 30);
+
+  // Aviso prévio
+  const anosCompletos = Math.floor(msTrabalhados / 12);
+  const diasAviso    = Math.min(90, 30 + anosCompletos * 3);
+  const avisoPrevio  = tipo === 'pedido' ? 0 : salario * (diasAviso / 30);
+
+  // 13º proporcional
+  const decimoProp   = (salario / 12) * mesesProporcional;
+
+  // Férias proporcionais + 1/3
+  const feriasProp   = (salario / 12) * mesesProporcional;
+  const adicFeriasProp = feriasProp / 3;
+
+  // Férias vencidas + 1/3
+  const feriasVencVal  = salario * (feriasVenc / 30);
+  const adicFeriasVenc = feriasVencVal / 3;
+
+  // Multa FGTS
+  const multaFGTS = tipo === 'sem_justa' ? fgts * 0.40
+                  : tipo === 'acordo'    ? fgts * 0.20
+                  : 0;
+
+  // Acordo: verbas reduzidas em 50% (aviso e FGTS)
+  const fatorAcordo = tipo === 'acordo' ? 0.5 : 1;
+
+  const linhas = [];
+  let total = 0;
+
+  const add = (nome, sub, val, neg=false) => {
+    if (Math.abs(val) < 0.01) return;
+    linhas.push({ nome, sub, val: Math.abs(val), neg });
+    total += neg ? -val : val;
+  };
+
+  add('Saldo de salário',       `${diasMes} dias trabalhados`,                         saldoSalario);
+  if (tipo !== 'justa') {
+    add('Aviso prévio',         `${diasAviso} dias (${anosCompletos} ano(s) completo(s))`, avisoPrevio * fatorAcordo);
+    add('13º proporcional',     `${mesesProporcional}/12 avos`,                         decimoProp);
+    add('Férias proporcionais', `${mesesProporcional}/12 avos`,                          feriasProp);
+    add('+ 1/3 férias prop.',   'adicional constitucional',                              adicFeriasProp);
+  }
+  if (feriasVenc > 0 && tipo !== 'justa') {
+    add('Férias vencidas',      `${feriasVenc} dias`,                                   feriasVencVal);
+    add('+ 1/3 férias vencidas','adicional constitucional',                              adicFeriasVenc);
+  }
+  if (multaFGTS > 0) {
+    add('Multa FGTS',           tipo === 'acordo' ? '20% do saldo FGTS' : '40% do saldo FGTS', multaFGTS * fatorAcordo);
+  }
+
+  const avisoTipo = {
+    sem_justa: 'Demissão sem justa causa inclui multa de 40% do FGTS e aviso prévio proporcional.',
+    pedido:    'No pedido de demissão o funcionário não tem direito à multa do FGTS nem aviso prévio indenizado.',
+    acordo:    'Na demissão por acordo, aviso e multa FGTS são reduzidos à metade.',
+    justa:     'Na justa causa só há direito a saldo de salário e FGTS sem multa.',
+  };
+
+  showResultado('res-rescisao', total, 'total da rescisão',
+    `${Math.floor(msTrabalhados/12)} ano(s) e ${Math.round(msTrabalhados%12)} mês(es) de contrato`,
+    linhas,
+    avisoTipo[tipo]
+  );
+}
+
+// ─── FGTS ─────────────────────────────────────────────────────────────────────
+function calcFGTS() {
+  const salario = getSalario(); if (!salario) return;
+  const meses   = parseInt(document.getElementById('g-meses').value) || 12;
+  const tipo    = document.getElementById('g-tipo').value;
+
+  const aliq         = tipo === 'aprendiz' ? 0.02 : 0.08;
+  const depositoMes  = salario * aliq;
+  const totalBruto   = depositoMes * meses;
+  const correcao     = totalBruto * 0.03 * (meses / 12); // TR estimada ~3% ao ano
+  const totalEstimado= totalBruto + correcao;
+
+  showResultado('res-fgts', totalEstimado, 'saldo estimado de FGTS',
+    `${meses} meses · ${(aliq*100).toFixed(0)}% ao mês`,
+    [
+      { nome: 'Depósito mensal',     sub: `${(aliq*100).toFixed(0)}% × R$ ${fmtN(salario)}`, val: depositoMes },
+      { nome: 'Total depositado',    sub: `${meses} meses`,                                   val: totalBruto },
+      { nome: 'Correção estimada',   sub: 'TR + juros ~3% ao ano (estimativa)',               val: correcao },
+    ],
+    'O saldo real do FGTS considera depósitos mês a mês com correção pela TR + 3% a.a. Valores anteriores ao emprego atual não estão incluídos.'
+  );
+}
+
+// ─── COMPARTILHAR ─────────────────────────────────────────────────────────────
+function compartilhar(id, val, tipo) {
+  const msg = `💼 *Bora CLT — ${tipo}*\n\nValor calculado: *${val}*\n\n_Calculado com Bora Apps_ 🟣\nboraapps.com.br\n\n⚠️ Valores estimados — confirme com seu RH ou contador.`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+</script>
+</body>
+</html>

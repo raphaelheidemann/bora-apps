@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Emagrecer — calculadora de calorias diárias</title>
+<meta name="description" content="Calcule suas calorias diárias para emagrecer, manter ou ganhar peso. Baseado na fórmula Mifflin-St Jeor, a mais precisa para adultos.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff8f0;--ink:#1a0a00;--muted:#7a5a3a;--border:#ead8c0;
+  --orange:#e8622a;--orange-light:#fff0e8;--orange-mid:#f07030;
+  --green:#1a7a3a;--green-light:#e8f5ec;
+  --blue:#2471a3;--blue-light:#eaf4fb;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--orange-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:20px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--orange-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input,.field select{
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 12px;background:var(--white);color:var(--ink);
+  outline:none;transition:border-color .15s;width:100%;
+}
+.field input:focus,.field select:focus{border-color:var(--orange);}
+.field input::placeholder{color:#bbb;}
+.full{grid-column:1/-1;}
+
+/* SEXO PILLS */
+.sexo-pills{display:flex;gap:8px;}
+.sexo-pill{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:8px;background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s;}
+.sexo-pill.active{background:var(--orange-light);border-color:var(--orange);color:var(--orange);}
+
+/* OBJETIVO PILLS */
+.obj-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.obj-pill{padding:10px 6px;border:1.5px solid var(--border);border-radius:10px;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s;line-height:1.4;}
+.obj-pill .obj-icon{font-size:20px;display:block;margin-bottom:4px;}
+.obj-pill.active{border-color:var(--orange);background:var(--orange-light);color:var(--orange);}
+.obj-pill.active.manter{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
+.obj-pill.active.ganhar{border-color:var(--green);background:var(--green-light);color:var(--green);}
+
+.calc-btn{margin-top:20px;width:100%;background:var(--orange-mid);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+
+/* RESULTADO */
+#resultado{display:none;margin-top:24px;}
+
+.imc-bar-wrap{margin-bottom:20px;}
+.imc-bar{height:12px;border-radius:6px;background:linear-gradient(90deg,#2ecc71 0%,#f1c40f 40%,#e67e22 65%,#e74c3c 85%,#8e44ad 100%);position:relative;margin:8px 0;}
+.imc-marker{position:absolute;top:-4px;width:20px;height:20px;border-radius:50%;background:var(--ink);border:3px solid #fff;transform:translateX(-50%);transition:left .4s;}
+.imc-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);}
+
+.meta-hero{background:var(--ink);border-radius:16px;padding:24px;color:#fff;text-align:center;margin-bottom:14px;position:relative;overflow:hidden;}
+.meta-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:var(--orange-mid);opacity:.15;}
+.meta-kcal{font-family:'Fraunces',serif;font-size:52px;font-weight:900;line-height:1;}
+.meta-lbl{font-size:12px;color:#aaa;margin-top:4px;}
+.meta-obj{font-size:13px;color:var(--orange-mid);margin-top:8px;font-weight:500;}
+
+.cards-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.mini-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;}
+.mini-val{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--ink);}
+.mini-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+
+.macros{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.macros-header{padding:12px 16px;background:var(--orange-light);font-size:10px;letter-spacing:.1em;color:var(--orange);text-transform:uppercase;}
+.macro-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);}
+.macro-row:last-child{border-bottom:none;}
+.macro-bar-wrap{flex:1;}
+.macro-nome{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.macro-bar{height:6px;border-radius:3px;}
+.macro-bar.prot{background:#e74c3c;}
+.macro-bar.carb{background:#f39c12;}
+.macro-bar.gord{background:#3498db;}
+.macro-val{font-family:'Fraunces',serif;font-size:15px;font-weight:700;min-width:60px;text-align:right;}
+
+.cenarios{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.cen-header{padding:12px 16px;background:#f5f5f5;font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.cen-row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);}
+.cen-row:last-child{border-bottom:none;}
+.cen-nome{font-size:13px;color:var(--ink);}
+.cen-sub{font-size:11px;color:var(--muted);}
+.cen-val{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--orange-mid);}
+.cen-row.atual .cen-val{color:var(--ink);font-size:17px;}
+
+.aviso{background:var(--orange-light);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.7;}
+.aviso strong{color:var(--ink);}
+
+.fonte{margin-top:16px;border-top:1px solid var(--border);padding-top:14px;font-size:11px;color:var(--muted);line-height:1.7;}
+.fonte strong{color:var(--ink);}
+
+.share-btn{margin-top:14px;width:100%;background:var(--green);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
+.share-btn:hover{opacity:.9;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora <span>Emagrecer</span></div>
+  <p class="tagline">descubra quantas calorias você precisa por dia — de verdade</p>
+
+  <div class="section-label">seus dados</div>
+
+  <div class="section-label" style="margin-top:0;">sexo biológico</div>
+  <div class="sexo-pills">
+    <button class="sexo-pill active" id="pill-m" onclick="setSexo('M')">♂ Masculino</button>
+    <button class="sexo-pill" id="pill-f" onclick="setSexo('F')">♀ Feminino</button>
+  </div>
+
+  <div class="section-label">medidas</div>
+  <div class="row">
+    <div class="field">
+      <label>idade (anos)</label>
+      <input type="number" id="idade" placeholder="ex: 30" min="15" max="90">
+    </div>
+    <div class="field">
+      <label>altura (cm)</label>
+      <input type="number" id="altura" placeholder="ex: 170" min="100" max="230">
+    </div>
+    <div class="field">
+      <label>peso atual (kg)</label>
+      <input type="number" id="peso" placeholder="ex: 75" step="0.1" min="30">
+    </div>
+    <div class="field">
+      <label>peso desejado (kg)</label>
+      <input type="number" id="peso-meta" placeholder="ex: 68" step="0.1" min="30">
+    </div>
+  </div>
+
+  <div class="section-label">nível de atividade física</div>
+  <div class="field">
+    <select id="atividade">
+      <option value="1.2">Sedentário — quase nenhuma atividade</option>
+      <option value="1.375">Levemente ativo — exercício 1–3x por semana</option>
+      <option value="1.55" selected>Moderadamente ativo — exercício 3–5x por semana</option>
+      <option value="1.725">Muito ativo — exercício intenso 6–7x por semana</option>
+      <option value="1.9">Extremamente ativo — atleta ou trabalho físico pesado</option>
+    </select>
+  </div>
+
+  <div class="section-label">objetivo</div>
+  <div class="obj-grid">
+    <button class="obj-pill active" id="obj-emagrecer" onclick="setObj('emagrecer')">
+      <span class="obj-icon">📉</span>Emagrecer
+    </button>
+    <button class="obj-pill manter" id="obj-manter" onclick="setObj('manter')">
+      <span class="obj-icon">⚖️</span>Manter peso
+    </button>
+    <button class="obj-pill ganhar" id="obj-ganhar" onclick="setObj('ganhar')">
+      <span class="obj-icon">📈</span>Ganhar massa
+    </button>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">calcular minhas calorias →</button>
+
+  <div id="resultado"></div>
+
+  <div class="fonte" id="fonte" style="display:none;">
+    <strong>📚 Base científica:</strong><br>
+    Fórmula <strong>Mifflin-St Jeor</strong> (1990) — considerada a mais precisa para adultos em estudos modernos.<br>
+    <em>Mifflin MD, et al. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr. 1990.</em><br><br>
+    Distribuição de macros: recomendações da <strong>SBEM</strong> (Sociedade Brasileira de Endocrinologia e Metabologia) para adultos saudáveis.
+  </div>
+</div>
+
+<script>
+let sexo = 'M';
+let objetivo = 'emagrecer';
+let dadosCalculo = {};
+
+function setSexo(s) {
+  sexo = s;
+  document.getElementById('pill-m').classList.toggle('active', s === 'M');
+  document.getElementById('pill-f').classList.toggle('active', s === 'F');
+}
+
+function setObj(o) {
+  objetivo = o;
+  ['emagrecer','manter','ganhar'].forEach(id => {
+    const el = document.getElementById('obj-' + id);
+    el.classList.toggle('active', id === o);
+    if (id === o) { el.classList.add(id); }
+  });
+}
+
+const fmt1 = v => v.toLocaleString('pt-BR', {maximumFractionDigits:1});
+
+function calcular() {
+  const idade   = parseFloat(document.getElementById('idade').value);
+  const altura  = parseFloat(document.getElementById('altura').value);
+  const peso    = parseFloat(document.getElementById('peso').value);
+  const pesoMeta= parseFloat(document.getElementById('peso-meta').value);
+  const fator   = parseFloat(document.getElementById('atividade').value);
+
+  if (!idade || !altura || !peso) { alert('Preencha idade, altura e peso.'); return; }
+
+  // Mifflin-St Jeor
+  const tmb = sexo === 'M'
+    ? 10 * peso + 6.25 * altura - 5 * idade + 5
+    : 10 * peso + 6.25 * altura - 5 * idade - 161;
+
+  const tdee = tmb * fator; // Total Daily Energy Expenditure
+
+  // deficit/superavit por objetivo
+  const ajuste = objetivo === 'emagrecer' ? -500
+               : objetivo === 'ganhar'    ? +300
+               : 0;
+  const meta = tdee + ajuste;
+
+  // IMC
+  const alturaM = altura / 100;
+  const imc = peso / (alturaM * alturaM);
+  const imcPct = Math.min(100, Math.max(0, ((imc - 15) / (45 - 15)) * 100));
+
+  let imcClass = '';
+  if (imc < 18.5) imcClass = 'Abaixo do peso';
+  else if (imc < 25) imcClass = 'Peso normal ✓';
+  else if (imc < 30) imcClass = 'Sobrepeso';
+  else if (imc < 35) imcClass = 'Obesidade grau I';
+  else if (imc < 40) imcClass = 'Obesidade grau II';
+  else imcClass = 'Obesidade grau III';
+
+  // Macros (% para objetivo)
+  const prot_pct = objetivo === 'ganhar' ? 0.30 : 0.35;
+  const carb_pct = objetivo === 'emagrecer' ? 0.35 : 0.40;
+  const gord_pct = 1 - prot_pct - carb_pct;
+
+  const prot_kcal = meta * prot_pct;
+  const carb_kcal = meta * carb_pct;
+  const gord_kcal = meta * gord_pct;
+
+  const prot_g = prot_kcal / 4;
+  const carb_g = carb_kcal / 4;
+  const gord_g = gord_kcal / 9;
+
+  // Cenários
+  const obj_label = { emagrecer: 'Para emagrecer (-500 kcal/dia)', manter: 'Para manter o peso', ganhar: 'Para ganhar massa (+300 kcal/dia)' };
+
+  // Tempo estimado para meta
+  let tempoHTML = '';
+  if (pesoMeta && Math.abs(pesoMeta - peso) > 0.5) {
+    const diffKg = Math.abs(pesoMeta - peso);
+    const kcalPorKg = 7700; // ~7700 kcal por kg de gordura
+    const kcalDia = Math.abs(ajuste) || 300;
+    const dias = Math.ceil((diffKg * kcalPorKg) / kcalDia);
+    const semanas = Math.ceil(dias / 7);
+    tempoHTML = `<div class="mini-card">
+      <div class="mini-val">${semanas}sem</div>
+      <div class="mini-lbl">tempo estimado</div>
+    </div>`;
+  }
+
+  dadosCalculo = { meta: Math.round(meta), tmb: Math.round(tmb), tdee: Math.round(tdee), imc, imcClass, objetivo };
+
+  const el = document.getElementById('resultado');
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div class="imc-bar-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+        <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)">seu IMC</span>
+        <span style="font-family:'Fraunces',serif;font-size:20px;font-weight:700">${fmt1(imc)} <span style="font-size:12px;font-family:'DM Sans',sans-serif;color:var(--muted)">${imcClass}</span></span>
+      </div>
+      <div class="imc-bar"><div class="imc-marker" style="left:${imcPct}%"></div></div>
+      <div class="imc-labels"><span>Baixo peso</span><span>Normal</span><span>Sobrepeso</span><span>Obeso</span></div>
+    </div>
+
+    <div class="meta-hero">
+      <div class="meta-kcal">${Math.round(meta)}</div>
+      <div class="meta-lbl">kcal por dia</div>
+      <div class="meta-obj">${obj_label[objetivo]}</div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="mini-card">
+        <div class="mini-val">${Math.round(tmb)}</div>
+        <div class="mini-lbl">kcal em repouso</div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-val">${Math.round(tdee)}</div>
+        <div class="mini-lbl">gasto total/dia</div>
+      </div>
+      ${tempoHTML || `<div class="mini-card"><div class="mini-val">${ajuste > 0 ? '+' : ''}${ajuste}</div><div class="mini-lbl">kcal de ajuste</div></div>`}
+    </div>
+
+    <div class="macros">
+      <div class="macros-header">🍽 distribuição de macronutrientes</div>
+      <div class="macro-row">
+        <div class="macro-bar-wrap">
+          <div class="macro-nome">🥩 Proteína (${(prot_pct*100).toFixed(0)}%)</div>
+          <div class="macro-bar prot" style="width:${prot_pct*100}%"></div>
+        </div>
+        <div class="macro-val">${Math.round(prot_g)}g</div>
+      </div>
+      <div class="macro-row">
+        <div class="macro-bar-wrap">
+          <div class="macro-nome">🍚 Carboidrato (${(carb_pct*100).toFixed(0)}%)</div>
+          <div class="macro-bar carb" style="width:${carb_pct*100}%"></div>
+        </div>
+        <div class="macro-val">${Math.round(carb_g)}g</div>
+      </div>
+      <div class="macro-row">
+        <div class="macro-bar-wrap">
+          <div class="macro-nome">🥑 Gordura (${(gord_pct*100).toFixed(0)}%)</div>
+          <div class="macro-bar gord" style="width:${gord_pct*100}%"></div>
+        </div>
+        <div class="macro-val">${Math.round(gord_g)}g</div>
+      </div>
+    </div>
+
+    <div class="cenarios">
+      <div class="cen-header">cenários de consumo</div>
+      <div class="cen-row atual">
+        <div><div class="cen-nome">${obj_label[objetivo]}</div><div class="cen-sub">seu objetivo atual</div></div>
+        <div class="cen-val">${Math.round(meta)} kcal</div>
+      </div>
+      <div class="cen-row">
+        <div><div class="cen-nome">Manutenção</div><div class="cen-sub">sem perder nem ganhar</div></div>
+        <div class="cen-val">${Math.round(tdee)} kcal</div>
+      </div>
+      <div class="cen-row">
+        <div><div class="cen-nome">Emagrecimento leve</div><div class="cen-sub">déficit de 250 kcal/dia</div></div>
+        <div class="cen-val">${Math.round(tdee - 250)} kcal</div>
+      </div>
+      <div class="cen-row">
+        <div><div class="cen-nome">Emagrecimento agressivo</div><div class="cen-sub">déficit de 750 kcal/dia</div></div>
+        <div class="cen-val">${Math.round(tdee - 750)} kcal</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <strong>⚠️ Importante:</strong> Este cálculo é uma estimativa baseada em fórmulas populacionais. Fatores como composição corporal, condições de saúde e metabolismo individual podem variar. Consulte um nutricionista para um plano personalizado.
+    </div>
+
+    <button class="share-btn" onclick="compartilhar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      compartilhar no whatsapp
+    </button>`;
+
+  document.getElementById('fonte').style.display = 'block';
+  el.scrollIntoView({behavior:'smooth', block:'nearest'});
+
+  // salva peso no localStorage para integração futura com Bora Hidratar e Bora Malhar
+  const pesoAtual = parseFloat(document.getElementById('peso').value);
+  if (pesoAtual) localStorage.setItem('bora_usuario_peso', pesoAtual);
+}
+
+function compartilhar() {
+  const d = dadosCalculo;
+  if (!d.meta) return;
+  const obj = { emagrecer:'emagrecer', manter:'manter o peso', ganhar:'ganhar massa' };
+  const msg = `🔥 *Bora Emagrecer — meu resultado*\n\n🎯 Objetivo: ${obj[d.objetivo]}\n📊 IMC: ${d.imc.toFixed(1)} (${d.imcClass})\n\n⚡ Calorias em repouso (TMB): ${d.tmb} kcal\n🏃 Gasto total diário: ${d.tdee} kcal\n🎯 Meta diária: *${d.meta} kcal*\n\n_Calculado com Bora Apps_ 🟠\nboraapps.com.br\n\n⚠️ Estimativa — consulte um nutricionista.`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+</script>
+</body>
+</html>
