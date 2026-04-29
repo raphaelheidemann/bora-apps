@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora no Mercado — lista de compras inteligente</title>
+<meta name="description" content="Lista de compras com categorização automática e comparação de preço com a última compra. Gratuito e sem cadastro.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f7f5;--ink:#0f180f;--muted:#5a6e5a;--border:#d0dcd0;
+  --green:#1a7a3a;--green-light:#e8f5ec;--green-mid:#27ae60;
+  --red:#e74c3c;--red-light:#fdf0ee;
+  --yellow:#f39c12;--yellow-light:#fef9e7;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--green-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:20px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--green-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+
+/* INPUT PRINCIPAL */
+.input-box{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:20px;}
+.input-row{display:flex;gap:8px;margin-bottom:10px;}
+.input-row input{
+  font-family:'DM Sans',sans-serif;font-size:15px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 12px;background:var(--bg);color:var(--ink);
+  outline:none;transition:border-color .15s;flex:1;
+}
+.input-row input:focus{border-color:var(--green);}
+.input-row input.qty{width:75px;flex:none;text-align:center;}
+.add-btn{background:var(--green-mid);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:'Fraunces',serif;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.add-btn:hover{opacity:.88;}
+
+.input-hints{display:flex;gap:6px;flex-wrap:wrap;}
+.hint{font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;cursor:pointer;transition:all .15s;}
+.hint:hover{border-color:var(--green);color:var(--green);}
+
+/* RESUMO TOPO */
+.resumo-bar{display:flex;gap:8px;margin-bottom:20px;}
+.resumo-pill{flex:1;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center;}
+.resumo-pill-val{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--ink);}
+.resumo-pill-lbl{font-size:10px;color:var(--muted);margin-top:1px;}
+.resumo-pill.variacao-pos .resumo-pill-val{color:var(--green);}
+.resumo-pill.variacao-neg .resumo-pill-val{color:var(--red);}
+
+/* LISTA */
+.categoria-section{margin-bottom:16px;}
+.categoria-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:0 2px;}
+.categoria-icon{font-size:16px;}
+.categoria-nome{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;font-weight:500;}
+.categoria-count{font-size:10px;color:var(--muted);margin-left:auto;}
+
+.item-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;transition:opacity .3s;}
+.item-card.comprado{border-color:var(--green-mid); background: var(--green-light);}
+.item-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.item-check.done{background:var(--green-mid);border-color:var(--green-mid);}
+.item-check.done::after{content:'✓';color:#fff;font-size:12px;}
+.item-info{flex:1;min-width:0;}
+.item-nome{font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-card.comprado .item-nome{text-decoration:line-through; color: var(--green);}
+.item-qty{font-size:11px;color:var(--muted);}
+.item-preco-col{text-align:right;flex-shrink:0; min-width: 80px;}
+.item-preco-atual{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--ink);}
+.item-preco-ant{font-size:9px;color:var(--muted);margin-top:1px; line-height: 1.1;}
+.item-variacao{font-size:10px;font-weight:700;margin-top:1px;}
+.item-variacao.up{color:var(--red);}
+.item-variacao.down{color:var(--green);}
+.item-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:2px 4px;flex-shrink:0;transition:color .15s;}
+.item-del:hover{color:var(--red);}
+
+/* OUTROS REPORT */
+.outros-box{margin-top:16px;background:var(--yellow-light);border:1px solid var(--yellow);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);display:none;}
+.outros-box strong{color:var(--ink);display:block;margin-bottom:4px;}
+.outros-lista{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.8;}
+.outros-copy{margin-top:8px;font-size:11px;color:var(--green);cursor:pointer;text-decoration:underline;}
+
+/* AÇÕES */
+.acoes{display:flex;gap:8px;margin-top:20px;}
+.acao-btn{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s;text-align:center;}
+.acao-btn:hover{border-color:var(--green);color:var(--green);}
+.acao-btn.danger{color:var(--red);}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="#">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="#">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora no <span>Mercado</span></div>
+  <p class="tagline">coloque o preço ao marcar o item no mercado</p>
+
+  <div class="input-box">
+    <div class="input-row">
+      <input type="text" id="inp-nome" placeholder="O que comprar?" onkeydown="if(event.key==='Enter')addItem()">
+      <input type="number" class="qty" id="inp-qty" placeholder="qtd" value="1" min="1">
+      <button class="add-btn" onclick="addItem()">+ add</button>
+    </div>
+    <div class="input-hints" id="hints"></div>
+  </div>
+
+  <div class="resumo-bar" id="resumo-bar" style="display:none;">
+    <div class="resumo-pill" id="pill-total">
+      <div class="resumo-pill-val" id="pill-total-val">R$ 0</div>
+      <div class="resumo-pill-lbl">total da compra</div>
+    </div>
+    <div class="resumo-pill" id="pill-var">
+      <div class="resumo-pill-val" id="pill-var-val">—</div>
+      <div class="resumo-pill-lbl">vs anterior</div>
+    </div>
+  </div>
+
+  <div id="lista-container"></div>
+
+  <div class="outros-box" id="outros-box">
+    <strong>📋 Itens em "Outros"</strong>
+    <div class="outros-lista" id="outros-lista"></div>
+    <div class="outros-copy" onclick="copiarOutros()">copiar para sugerir categorias</div>
+  </div>
+
+  <div class="acoes" id="acoes" style="display:none;">
+    <button class="acao-btn" onclick="compartilhar()">📲 WhatsApp</button>
+    <button class="acao-btn danger" onclick="limparTudo()">🗑 zerar</button>
+  </div>
+</div>
+
+<script>
+const CATEGORIAS = {
+  '🥩 Carnes e Frios': ['carne','frango','picanha','costela','linguiça','presunto','salsicha','bacon','peixe','atum','mortadela'],
+  '🥛 Laticínios': ['leite','queijo','iogurte','manteiga','margarina','requeijão','creme de leite','ovos','ovo'],
+  '🥦 Hortifruti': ['alface','tomate','cebola','alho','batata','cenoura','banana','maçã','laranja','limão','limao'],
+  '🍞 Padaria': ['pão','pao','pãozinho','bolo','biscoito','bolacha','torrada'],
+  '🧴 Higiene': ['shampoo','condicionador','sabonete','pasta de dente','desodorante','papel higiênico'],
+  '🧹 Limpeza': ['detergente','desinfetante','amaciante','sabão em pó','esponja','álcool'],
+  '🛒 Mercearia': ['arroz','feijão','macarrão','farinha','açúcar','sal','azeite','óleo','café','molho'],
+  '🥤 Bebidas': ['refrigerante','suco','água','cerveja','vinho'],
+  '🍫 Doces': ['chocolate','bombom','bala'],
+  '🐾 Pet': ['ração','racao','areia'],
+};
+
+const HINTS_RAPIDOS = ['arroz','feijão','leite','ovos','pão','frango','tomate','cebola','alho','café'];
+
+const SK_LISTA = 'bora_mercado_v2_lista';
+const SK_HISTORICO = 'bora_mercado_v2_historico'; // { nome: {preco: 0, data: ''} }
+
+let lista = JSON.parse(localStorage.getItem(SK_LISTA) || '[]');
+let historico = JSON.parse(localStorage.getItem(SK_HISTORICO) || '{}');
+
+function detectarCategoria(nome) {
+  const n = nome.toLowerCase().trim();
+  for (const [cat, palavras] of Object.entries(CATEGORIAS)) {
+    if (palavras.some(p => n.includes(p))) return cat;
+  }
+  return '📦 Outros';
+}
+
+function renderHints() {
+  const nomesNaLista = lista.map(i => i.nome.toLowerCase());
+  const disponiveis = HINTS_RAPIDOS.filter(h => !nomesNaLista.includes(h));
+  document.getElementById('hints').innerHTML = disponiveis.slice(0,6).map(h =>
+    `<span class="hint" onclick="addHint('${h}')">${h}</span>`
+  ).join('');
+}
+
+function addHint(nome) {
+  document.getElementById('inp-nome').value = nome;
+  addItem();
+}
+
+function addItem() {
+  const nome = document.getElementById('inp-nome').value.trim();
+  const qty = parseFloat(document.getElementById('inp-qty').value) || 1;
+  if (!nome) return;
+
+  const categoria = detectarCategoria(nome);
+  const infoAntiga = historico[nome.toLowerCase()] || null;
+
+  lista.push({ 
+    id: Date.now(), 
+    nome, 
+    qty, 
+    preco: 0, 
+    categoria, 
+    comprado: false, 
+    precoAnterior: infoAntiga ? infoAntiga.preco : null,
+    dataAnterior: infoAntiga ? infoAntiga.data : null
+  });
+
+  localStorage.setItem(SK_LISTA, JSON.stringify(lista));
+  document.getElementById('inp-nome').value = '';
+  document.getElementById('inp-qty').value = '1';
+  document.getElementById('inp-nome').focus();
+  render();
+}
+
+function toggleComprado(id) {
+  const item = lista.find(i => i.id === id);
+  if (!item) return;
+
+  if (!item.comprado) {
+    // Ao marcar como comprado, pede o preço
+    const pStr = prompt(`Qual o preço de "${item.nome}"?`, item.preco > 0 ? item.preco : "");
+    if (pStr === null) return; // cancelou o prompt
+
+    const valor = parseFloat(pStr.replace(',', '.')) || 0;
+    item.preco = valor;
+    item.comprado = true;
+    
+    // Salva no histórico com a data de hoje
+    if (valor > 0) {
+      const hoje = new Date().toLocaleDateString('pt-BR', {day: '2d', month: '2d', year: '2y'});
+      historico[item.nome.toLowerCase()] = { preco: valor, data: hoje };
+      localStorage.setItem(SK_HISTORICO, JSON.stringify(historico));
+    }
+  } else {
+    // Se desmarcar, limpa o preço desta compra
+    item.comprado = false;
+    item.preco = 0;
+  }
+
+  localStorage.setItem(SK_LISTA, JSON.stringify(lista));
+  render();
+}
+
+function removeItem(id) {
+  lista = lista.filter(i => i.id !== id);
+  localStorage.setItem(SK_LISTA, JSON.stringify(lista));
+  render();
+}
+
+function limparTudo() {
+  if (!confirm('Deseja apagar toda a lista?')) return;
+  lista = [];
+  localStorage.setItem(SK_LISTA, JSON.stringify(lista));
+  render();
+}
+
+function fmt(v) { return 'R$ ' + v.toFixed(2).replace('.', ','); }
+
+function render() {
+  renderHints();
+  const container = document.getElementById('lista-container');
+  const resumoBar = document.getElementById('resumo-bar');
+  const acoes = document.getElementById('acoes');
+
+  if (lista.length === 0) {
+    container.innerHTML = `<div style="text-align:center; padding:40px; color:#aaa">Lista vazia</div>`;
+    resumoBar.style.display = 'none';
+    acoes.style.display = 'none';
+    return;
+  }
+
+  const grupos = {};
+  lista.forEach(item => {
+    if (!grupos[item.categoria]) grupos[item.categoria] = [];
+    grupos[item.categoria].push(item);
+  });
+
+  let html = '';
+  Object.keys(grupos).sort().forEach(cat => {
+    html += `<div class="categoria-section">
+      <div class="categoria-header">
+        <span class="categoria-icon">${cat.split(' ')[0]}</span>
+        <span class="categoria-nome">${cat.split(' ').slice(1).join(' ')}</span>
+      </div>`;
+    
+    grupos[cat].forEach(item => {
+      let varHTML = '';
+      if (item.comprado && item.preco > 0 && item.precoAnterior) {
+        const diff = ((item.preco - item.precoAnterior) / item.precoAnterior * 100);
+        const cls = diff > 0 ? 'up' : 'down';
+        const seta = diff > 0 ? '↑' : '↓';
+        varHTML = `<div class="item-variacao ${cls}">${seta} ${Math.abs(diff).toFixed(1)}%</div>`;
+      }
+
+      html += `
+        <div class="item-card ${item.comprado ? 'comprado' : ''}">
+          <div class="item-check ${item.comprado ? 'done' : ''}" onclick="toggleComprado(${item.id})"></div>
+          <div class="item-info">
+            <div class="item-nome">${item.nome}</div>
+            <div class="item-qty">${item.qty} un</div>
+          </div>
+          <div class="item-preco-col">
+            <div class="item-preco-atual">${item.preco > 0 ? fmt(item.preco * item.qty) : '—'}</div>
+            ${item.dataAnterior ? `<div class="item-preco-ant">Ant: ${fmt(item.precoAnterior)} (${item.dataAnterior})</div>` : ''}
+            ${varHTML}
+          </div>
+          <button class="item-del" onclick="removeItem(${item.id})">×</button>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Resumo
+  const totalGeral = lista.reduce((s, i) => s + (i.preco * i.qty), 0);
+  document.getElementById('pill-total-val').textContent = fmt(totalGeral);
+
+  // Variação Total da Compra (dos itens que já foram marcados)
+  const itensComPreco = lista.filter(i => i.comprado && i.preco > 0 && i.precoAnterior);
+  if (itensComPreco.length > 0) {
+    const sumAtual = itensComPreco.reduce((s, i) => s + (i.preco * i.qty), 0);
+    const sumAnt = itensComPreco.reduce((s, i) => s + (i.precoAnterior * i.qty), 0);
+    const vTotal = ((sumAtual - sumAnt) / sumAnt * 100);
+    const pillVar = document.getElementById('pill-var');
+    pillVar.className = 'resumo-pill ' + (vTotal > 0 ? 'variacao-neg' : 'variacao-pos');
+    document.getElementById('pill-var-val').textContent = (vTotal > 0 ? '↑ ' : '↓ ') + Math.abs(vTotal).toFixed(1) + '%';
+  } else {
+    document.getElementById('pill-var-val').textContent = '—';
+    document.getElementById('pill-var').className = 'resumo-pill';
+  }
+
+  resumoBar.style.display = 'flex';
+  acoes.style.display = 'flex';
+}
+
+function compartilhar() {
+  let msg = '🛒 *Minha Lista de Mercado*\n\n';
+  lista.forEach(i => {
+    const status = i.comprado ? '✅' : '⬜';
+    const preco = i.preco > 0 ? ` - ${fmt(i.preco * i.qty)}` : '';
+    msg += `${status} ${i.nome} (${i.qty}un)${preco}\n`;
+  });
+  const total = lista.reduce((s, i) => s + (i.preco * i.qty), 0);
+  if (total > 0) msg += `\n💰 *Total: ${fmt(total)}*`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+render();
+</script>
+</body>
+</html>
