@@ -28,7 +28,7 @@ Sim, isso é um projeto hobby. Feito nas horas vagas, com carinho, por alguém q
 ### 🛒 Cotidiano
 | App | Descrição | Status |
 |-----|-----------|--------|
-| 🛒 **Bora no Mercado** | Lista de compras com campo de preço e comparação automática com a última compra de cada item | 🔜 Em breve |
+| 🛒 **Bora no Mercado** | Lista de compras com campo de preço e comparação automática com a última compra de cada item | ✅ Disponível |
 
 ### 🌿 Saúde e bem-estar
 | App | Descrição | Status |
@@ -63,10 +63,10 @@ bora-apps/
 ├── bora-lanchar.html       # App de rachar conta
 ├── bora-viajar.html        # (em breve)
 ├── bora-dividir.html       # (em breve)
-├── bora-no-mercado.html    # (em breve)
+├── bora-no-mercado.html    # App com lista de compras e comparação de preço histórico
 ├── bora-hidratar.html      # (em breve)
 ├── bora-remediar.html      # (em breve)
-└── bora-dormir.html        # (em breve)
+└── bora-dormir.html        # Para ajudar a saber o exato horário do seu despertador
 ```
 
 ---
