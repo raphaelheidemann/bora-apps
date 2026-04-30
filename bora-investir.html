@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Investir — simulador de rendimentos e juros compostos</title>
+<meta name="description" content="Simule o rendimento de CDB, Tesouro Selic, poupança e juros compostos. Descubra quanto seu dinheiro vai render ao longo do tempo.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f7f0;--ink:#081408;--muted:#4a6a4a;--border:#c8dcc8;
+  --green:#1a7a3a;--green-light:#e8f5ec;--green-mid:#27ae60;
+  --blue:#1a5a8a;--blue-light:#e8f0f8;
+  --yellow:#e8a020;--yellow-light:#fef5e0;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--green-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+.app{max-width:480px;margin:0 auto;padding:24px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--green-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+.tabs{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;}
+.tab{flex:1;padding:10px 4px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;}
+.tab.active{background:var(--ink);color:#fff;}
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input,.field select{font-family:'DM Sans',sans-serif;font-size:14px;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s;width:100%;}
+.field input:focus,.field select:focus{border-color:var(--green);}
+.field input::placeholder{color:#bbb;}
+.full{grid-column:1/-1;}
+.calc-btn{margin-top:20px;width:100%;background:var(--green-mid);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+.resultado{display:none;margin-top:24px;}
+.res-hero{background:var(--ink);border-radius:16px;padding:24px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden;}
+.res-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:var(--green-mid);opacity:.12;}
+.res-lbl{font-size:10px;letter-spacing:.12em;color:#aaa;margin-bottom:6px;}
+.res-total{font-family:'Fraunces',serif;font-size:44px;font-weight:900;line-height:1;margin-bottom:4px;}
+.res-sub{font-size:12px;color:#aaa;}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.mini-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:14px;}
+.mini-val{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--ink);}
+.mini-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.mini-card.destaque{border-color:var(--green);background:var(--green-light);}
+.mini-card.destaque .mini-val{color:var(--green);}
+.breakdown{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.bk-header{padding:12px 16px;background:var(--green-light);font-size:10px;letter-spacing:.1em;color:var(--green);text-transform:uppercase;}
+.bk-row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);}
+.bk-row:last-child{border-bottom:none;}
+.bk-nome{font-size:13px;color:var(--ink);}
+.bk-sub{font-size:11px;color:var(--muted);}
+.bk-val{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--green);}
+.bk-val.neg{color:var(--muted);}
+.evolucao{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.evol-header{padding:12px 16px;background:var(--green-light);font-size:10px;letter-spacing:.1em;color:var(--green);text-transform:uppercase;}
+.evol-row{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);}
+.evol-row:last-child{border-bottom:none;}
+.evol-per{font-size:12px;color:var(--muted);}
+.evol-val{font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--ink);}
+.evol-rend{font-size:11px;color:var(--green);}
+.aviso{background:var(--green-light);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.7;}
+.aviso strong{color:var(--ink);}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+<div class="app">
+  <div class="logo">Bora <span>Investir</span></div>
+  <p class="tagline">simule rendimentos e descubra quanto seu dinheiro pode crescer</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('compostos')">📈 Juros Compostos</button>
+    <button class="tab" onclick="setTab('comparar')">⚖️ Comparar</button>
+  </div>
+
+  <!-- JUROS COMPOSTOS -->
+  <div id="tab-compostos">
+    <div class="section-label">seu investimento</div>
+    <div class="row">
+      <div class="field full">
+        <label>valor inicial (R$)</label>
+        <input type="number" id="c-inicial" placeholder="ex: 10000" step="0.01" min="0">
+      </div>
+      <div class="field full">
+        <label>aporte mensal (R$) — opcional</label>
+        <input type="number" id="c-aporte" placeholder="ex: 500" step="0.01" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>taxa de juros (% ao mês)</label>
+        <input type="number" id="c-taxa" placeholder="ex: 1.0" step="0.01" min="0" value="1.0">
+      </div>
+      <div class="field">
+        <label>período (meses)</label>
+        <input type="number" id="c-periodo" placeholder="ex: 24" min="1" value="12">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcCompostos()">simular rendimento →</button>
+    <div class="resultado" id="res-compostos"></div>
+  </div>
+
+  <!-- COMPARAR -->
+  <div id="tab-comparar" class="hidden">
+    <div class="section-label">valor a investir</div>
+    <div class="row">
+      <div class="field full">
+        <label>valor inicial (R$)</label>
+        <input type="number" id="cp-valor" placeholder="ex: 10000" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>período (meses)</label>
+        <input type="number" id="cp-periodo" placeholder="ex: 12" min="1" value="12">
+      </div>
+      <div class="field">
+        <label>CDI atual (% ao ano)</label>
+        <input type="number" id="cp-cdi" placeholder="ex: 10.5" step="0.1" value="10.5">
+      </div>
+    </div>
+    <div class="section-label">taxas dos investimentos</div>
+    <div class="row">
+      <div class="field">
+        <label>CDB (% do CDI)</label>
+        <input type="number" id="cp-cdb" placeholder="ex: 110" step="1" value="110">
+      </div>
+      <div class="field">
+        <label>Poupança (% a.a.)</label>
+        <input type="number" id="cp-poup" placeholder="ex: 6.17" step="0.01" value="6.17">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcComparar()">comparar agora →</button>
+    <div class="resultado" id="res-comparar"></div>
+  </div>
+</div>
+
+<script>
+const fmt  = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtN = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function setTab(t) {
+  document.getElementById('tab-compostos').classList.toggle('hidden', t !== 'compostos');
+  document.getElementById('tab-comparar').classList.toggle('hidden', t !== 'comparar');
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', ['compostos','comparar'][i] === t));
+}
+
+function calcCompostos() {
+  const inicial = parseFloat(document.getElementById('c-inicial').value) || 0;
+  const aporte  = parseFloat(document.getElementById('c-aporte').value) || 0;
+  const taxa    = (parseFloat(document.getElementById('c-taxa').value) || 0) / 100;
+  const meses   = parseInt(document.getElementById('c-periodo').value) || 12;
+  if (!inicial && !aporte) { alert('Informe o valor inicial ou o aporte mensal.'); return; }
+
+  let saldo = inicial;
+  let totalAportado = inicial;
+  const evolucao = [];
+
+  for (let m = 1; m <= meses; m++) {
+    saldo = saldo * (1 + taxa) + aporte;
+    totalAportado += aporte;
+    if (m === 1 || m % Math.max(1, Math.floor(meses/6)) === 0 || m === meses) {
+      evolucao.push({ mes: m, saldo, rendimento: saldo - totalAportado });
+    }
+  }
+
+  const rendimento  = saldo - totalAportado;
+  const rentabilidade = ((saldo / (inicial || 1)) - 1) * 100;
+  const taxaAnual   = (Math.pow(1 + taxa, 12) - 1) * 100;
+
+  const evRows = evolucao.map(e => `
+    <div class="evol-row">
+      <div><div class="evol-per">Mês ${e.mes}</div></div>
+      <div style="text-align:right">
+        <div class="evol-val">${fmt(e.saldo)}</div>
+        <div class="evol-rend">+${fmt(e.rendimento)}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('res-compostos').style.display = 'block';
+  document.getElementById('res-compostos').innerHTML = `
+    <div class="res-hero">
+      <div class="res-lbl">saldo final após ${meses} meses</div>
+      <div class="res-total">${fmt(saldo)}</div>
+      <div class="res-sub">rendimento de ${fmt(rendimento)} · ${fmtN(rentabilidade)}% de retorno</div>
+    </div>
+    <div class="cards-grid">
+      <div class="mini-card"><div class="mini-val">${fmt(totalAportado)}</div><div class="mini-lbl">total investido</div></div>
+      <div class="mini-card destaque"><div class="mini-val">${fmt(rendimento)}</div><div class="mini-lbl">rendimento total</div></div>
+      <div class="mini-card"><div class="mini-val">${fmtN(taxa*100)}% a.m.</div><div class="mini-lbl">taxa mensal</div></div>
+      <div class="mini-card"><div class="mini-val">${fmtN(taxaAnual)}% a.a.</div><div class="mini-lbl">taxa anual equiv.</div></div>
+    </div>
+    <div class="evolucao">
+      <div class="evol-header">evolução do investimento</div>
+      ${evRows}
+    </div>
+    <div class="aviso"><strong>⚠️ Atenção:</strong> Esta simulação não considera IR (15–22,5% sobre o rendimento para renda fixa), IOF nos primeiros 30 dias, inflação nem taxas de administração. Consulte sempre um assessor de investimentos.</div>`;
+  document.getElementById('res-compostos').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function calcComparar() {
+  const valor  = parseFloat(document.getElementById('cp-valor').value) || 0;
+  const meses  = parseInt(document.getElementById('cp-periodo').value) || 12;
+  const cdi    = (parseFloat(document.getElementById('cp-cdi').value) || 10.5) / 100;
+  const pctCDB = (parseFloat(document.getElementById('cp-cdb').value) || 110) / 100;
+  const poup   = (parseFloat(document.getElementById('cp-poup').value) || 6.17) / 100;
+  if (!valor) { alert('Informe o valor a investir.'); return; }
+
+  const taxaCDI  = Math.pow(1 + cdi, 1/12) - 1;
+  const taxaCDB  = taxaCDI * pctCDB;
+  const taxaSelic= taxaCDI; // Selic ≈ CDI
+  const taxaPoup = Math.pow(1 + poup, 1/12) - 1;
+
+  const calc = (taxa) => {
+    let s = valor;
+    for (let m = 0; m < meses; m++) s *= (1+taxa);
+    return s;
+  };
+
+  // IR progressivo renda fixa (simplificado por prazo)
+  const aliqIR = meses <= 6 ? 0.225 : meses <= 12 ? 0.20 : meses <= 24 ? 0.175 : 0.15;
+
+  const brCDB  = calc(taxaCDB);
+  const rendCDB= brCDB - valor;
+  const liqCDB = brCDB - rendCDB * aliqIR;
+
+  const brSelic  = calc(taxaSelic);
+  const rendSelic= brSelic - valor;
+  const liqSelic = brSelic - rendSelic * aliqIR;
+
+  const liqPoup = calc(taxaPoup); // poupança isenta de IR
+
+  const investimentos = [
+    { nome: 'CDB', pct: `${(pctCDB*100).toFixed(0)}% CDI`, liquido: liqCDB, bruto: brCDB, ir: rendCDB*aliqIR },
+    { nome: 'Tesouro Selic', pct: '100% CDI', liquido: liqSelic, bruto: brSelic, ir: rendSelic*aliqIR },
+    { nome: 'Poupança', pct: `${(poup*100).toFixed(2)}% a.a.`, liquido: liqPoup, bruto: liqPoup, ir: 0 },
+  ].sort((a,b) => b.liquido - a.liquido);
+
+  const melhor = investimentos[0];
+
+  document.getElementById('res-comparar').style.display = 'block';
+  document.getElementById('res-comparar').innerHTML = `
+    <div class="res-hero">
+      <div class="res-lbl">melhor opção após ${meses} meses</div>
+      <div class="res-total">${melhor.nome}</div>
+      <div class="res-sub">${fmt(melhor.liquido)} líquido · rendeu ${fmt(melhor.liquido - valor)}</div>
+    </div>
+    <div class="breakdown">
+      <div class="bk-header">comparativo líquido (após IR)</div>
+      ${investimentos.map((inv,i) => `
+      <div class="bk-row">
+        <div>
+          <div class="bk-nome">${i===0?'🥇 ':''}${inv.nome}</div>
+          <div class="bk-sub">${inv.pct} · IR: ${fmt(inv.ir)}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="bk-val">${fmt(inv.liquido)}</div>
+          <div style="font-size:11px;color:var(--green)">+${fmt(inv.liquido-valor)}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="aviso"><strong>⚠️ Atenção:</strong> Simulação simplificada com IR estimado de ${(aliqIR*100).toFixed(1)}% (prazo ${meses} meses). Não considera IOF, inflação, spread bancário nem garantias do FGC. Consulte um assessor de investimentos.</div>`;
+  document.getElementById('res-comparar').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+</script>
+</body>
+</html>

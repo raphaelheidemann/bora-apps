@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Financiar — simulador de financiamento e parcelas</title>
+<meta name="description" content="Simule parcelas, juros e custo total de um financiamento de carro, imóvel ou qualquer crédito. Calcule pelo sistema Price ou SAC.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5ff;--ink:#08080f;--muted:#5a5a7a;--border:#d8d8ee;
+  --blue:#2a4aaa;--blue-light:#eeeeff;--blue-mid:#4a6aee;
+  --green:#1a7a3a;--green-light:#e8f5ec;
+  --red:#c0392b;--red-light:#fdf0ee;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--blue-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+.app{max-width:480px;margin:0 auto;padding:24px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--blue-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input,.field select{font-family:'DM Sans',sans-serif;font-size:14px;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s;width:100%;}
+.field input:focus,.field select:focus{border-color:var(--blue);}
+.field input::placeholder{color:#bbb;}
+.full{grid-column:1/-1;}
+.sistema-pills{display:flex;gap:8px;}
+.sist-pill{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:8px;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s;}
+.sist-pill.active{background:var(--blue-light);border-color:var(--blue);color:var(--blue);}
+.calc-btn{margin-top:20px;width:100%;background:var(--blue-mid);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+#resultado{display:none;margin-top:24px;}
+.res-hero{background:var(--ink);border-radius:16px;padding:24px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden;}
+.res-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:var(--blue-mid);opacity:.15;}
+.res-lbl{font-size:10px;letter-spacing:.12em;color:#aaa;margin-bottom:6px;}
+.res-total{font-family:'Fraunces',serif;font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;}
+.res-sub{font-size:12px;color:#aaa;}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.mini-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:14px;}
+.mini-val{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--ink);}
+.mini-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.mini-card.negativo{border-color:var(--red);background:var(--red-light);}
+.mini-card.negativo .mini-val{color:var(--red);}
+.mini-card.positivo{border-color:var(--green);background:var(--green-light);}
+.mini-card.positivo .mini-val{color:var(--green);}
+.parcelas-lista{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.parc-header{padding:12px 16px;background:var(--blue-light);font-size:10px;letter-spacing:.1em;color:var(--blue);text-transform:uppercase;display:flex;justify-content:space-between;}
+.parc-row{display:grid;grid-template-columns:40px 1fr 1fr 1fr;gap:4px;padding:9px 16px;border-bottom:1px solid var(--border);font-size:12px;align-items:center;}
+.parc-row:last-child{border-bottom:none;}
+.parc-row.primeira{background:var(--blue-light);}
+.parc-row.ultima{background:var(--green-light);}
+.parc-num{color:var(--muted);font-size:11px;}
+.parc-val{font-family:'Fraunces',serif;font-weight:700;color:var(--ink);}
+.parc-juros{color:var(--red);font-size:11px;}
+.parc-amort{color:var(--green);font-size:11px;}
+.ver-mais{width:100%;padding:10px;background:transparent;border:none;font-size:12px;color:var(--blue);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.aviso{background:var(--blue-light);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.7;}
+.aviso strong{color:var(--ink);}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+<div class="app">
+  <div class="logo">Bora <span>Financiar</span></div>
+  <p class="tagline">simule parcelas, juros e custo total antes de assinar qualquer contrato</p>
+
+  <div class="section-label">dados do financiamento</div>
+  <div class="row">
+    <div class="field full">
+      <label>valor financiado (R$)</label>
+      <input type="number" id="f-valor" placeholder="ex: 50000" step="0.01" min="0">
+    </div>
+    <div class="field">
+      <label>taxa de juros (% ao mês)</label>
+      <input type="number" id="f-taxa" placeholder="ex: 1.5" step="0.01" min="0" value="1.5">
+    </div>
+    <div class="field">
+      <label>prazo (meses)</label>
+      <input type="number" id="f-prazo" placeholder="ex: 48" min="1" value="48">
+    </div>
+    <div class="field full">
+      <label>entrada (R$) — opcional</label>
+      <input type="number" id="f-entrada" placeholder="ex: 10000" step="0.01" min="0" value="0">
+    </div>
+  </div>
+
+  <div class="section-label">sistema de amortização</div>
+  <div class="sistema-pills">
+    <button class="sist-pill active" id="pill-price" onclick="setSistema('price')">
+      Tabela Price<br><span style="font-size:10px;font-weight:400;">parcelas fixas</span>
+    </button>
+    <button class="sist-pill" id="pill-sac" onclick="setSistema('sac')">
+      SAC<br><span style="font-size:10px;font-weight:400;">parcelas decrescentes</span>
+    </button>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">simular financiamento →</button>
+  <div id="resultado"></div>
+</div>
+
+<script>
+let sistema = 'price';
+let todasParcelas = [];
+let mostrando = false;
+
+function setSistema(s) {
+  sistema = s;
+  document.getElementById('pill-price').classList.toggle('active', s==='price');
+  document.getElementById('pill-sac').classList.toggle('active', s==='sac');
+}
+
+const fmt  = v => 'R$ ' + Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtN = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function calcular() {
+  const valorTotal = parseFloat(document.getElementById('f-valor').value) || 0;
+  const entrada    = parseFloat(document.getElementById('f-entrada').value) || 0;
+  const taxa       = (parseFloat(document.getElementById('f-taxa').value) || 0) / 100;
+  const prazo      = parseInt(document.getElementById('f-prazo').value) || 0;
+  if (!valorTotal || !taxa || !prazo) { alert('Preencha todos os campos obrigatórios.'); return; }
+
+  const pv = valorTotal - entrada;
+  todasParcelas = [];
+
+  if (sistema === 'price') {
+    // PMT = PV × i / (1-(1+i)^-n)
+    const pmt = pv * taxa / (1 - Math.pow(1+taxa, -prazo));
+    let saldo = pv;
+    for (let m = 1; m <= prazo; m++) {
+      const juros = saldo * taxa;
+      const amort = pmt - juros;
+      saldo -= amort;
+      todasParcelas.push({ num:m, pmt, juros, amort, saldo: Math.max(0,saldo) });
+    }
+  } else {
+    // SAC: amortização fixa, juros decrescentes
+    const amortFixa = pv / prazo;
+    let saldo = pv;
+    for (let m = 1; m <= prazo; m++) {
+      const juros = saldo * taxa;
+      const pmt   = amortFixa + juros;
+      saldo -= amortFixa;
+      todasParcelas.push({ num:m, pmt, juros, amort:amortFixa, saldo: Math.max(0,saldo) });
+    }
+  }
+
+  const totalPago  = todasParcelas.reduce((s,p) => s+p.pmt, 0) + entrada;
+  const totalJuros = todasParcelas.reduce((s,p) => s+p.juros, 0);
+  const primeiraParc = todasParcelas[0].pmt;
+  const ultimaParc   = todasParcelas[todasParcelas.length-1].pmt;
+  const taxaAnual    = (Math.pow(1+taxa,12)-1)*100;
+
+  const el = document.getElementById('resultado');
+  el.style.display = 'block';
+  mostrando = false;
+
+  el.innerHTML = `
+    <div class="res-hero">
+      <div class="res-lbl">${sistema==='price'?'parcela fixa (Price)':'1ª parcela (SAC)'}</div>
+      <div class="res-total">${fmt(primeiraParc)}</div>
+      <div class="res-sub">por ${prazo} meses · ${fmtN(taxa*100)}% a.m. · ${fmtN(taxaAnual)}% a.a.</div>
+    </div>
+    <div class="cards-grid">
+      <div class="mini-card"><div class="mini-val">${fmt(pv)}</div><div class="mini-lbl">valor financiado</div></div>
+      <div class="mini-card"><div class="mini-val">${fmt(entrada)}</div><div class="mini-lbl">entrada</div></div>
+      <div class="mini-card negativo"><div class="mini-val">${fmt(totalJuros)}</div><div class="mini-lbl">total em juros</div></div>
+      <div class="mini-card negativo"><div class="mini-val">${fmt(totalPago)}</div><div class="mini-lbl">custo total</div></div>
+    </div>
+    <div class="parcelas-lista" id="parcelas-lista">
+      <div class="parc-header">
+        <span>Nº</span><span>Parcela</span><span style="color:var(--red)">Juros</span><span style="color:var(--green)">Amort.</span>
+      </div>
+      ${renderParcelas(6)}
+    </div>
+    <button class="ver-mais" onclick="toggleParcelas()">ver todas as ${prazo} parcelas ↓</button>
+    <div class="aviso"><strong>⚠️ Atenção:</strong> Simulação baseada em juros simples mensais (${fmtN(taxa*100)}% a.m.). Financiamentos reais podem incluir seguros obrigatórios, tarifas, IOF e correção monetária. Exija o CET (Custo Efetivo Total) antes de contratar.</div>`;
+
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function renderParcelas(limite) {
+  const lista = limite ? todasParcelas.slice(0, limite) : todasParcelas;
+  return lista.map(p => `
+    <div class="parc-row ${p.num===1?'primeira':p.num===todasParcelas.length?'ultima':''}">
+      <span class="parc-num">${p.num}</span>
+      <span class="parc-val">${fmt(p.pmt)}</span>
+      <span class="parc-juros">${fmt(p.juros)}</span>
+      <span class="parc-amort">${fmt(p.amort)}</span>
+    </div>`).join('');
+}
+
+function toggleParcelas() {
+  mostrando = !mostrando;
+  document.getElementById('parcelas-lista').innerHTML = `
+    <div class="parc-header">
+      <span>Nº</span><span>Parcela</span><span style="color:var(--red)">Juros</span><span style="color:var(--green)">Amort.</span>
+    </div>` + renderParcelas(mostrando ? 0 : 6);
+  document.querySelector('.ver-mais').textContent = mostrando
+    ? 'mostrar menos ↑'
+    : `ver todas as ${todasParcelas.length} parcelas ↓`;
+}
+</script>
+</body>
+</html>

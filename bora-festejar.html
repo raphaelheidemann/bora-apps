@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Festejar — calculadora de festa e aniversário</title>
+<meta name="description" content="Calcule salgados, doces, bolo, refrigerante e bebidas para a sua festa. Informe o número de convidados e receba a lista de compras pronta.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff5fc;--ink:#1a0818;--muted:#8a4878;--border:#f0c8e8;
+  --pink:#c832a0;--pink-light:#fff0fa;--pink-mid:#e050b8;
+  --yellow:#d4a020;--yellow-light:#fff8e0;
+  --green:#1a7a3a;--green-light:#e8f5ec;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--pink-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+.app{max-width:480px;margin:0 auto;padding:24px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--pink-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;margin-top:18px;}
+
+/* TIPO DE FESTA */
+.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.tipo-pill{padding:12px 8px;border:1.5px solid var(--border);border-radius:10px;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s;line-height:1.5;}
+.tipo-pill .tipo-icon{font-size:22px;display:block;margin-bottom:4px;}
+.tipo-pill.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink);}
+
+/* CONTADORES */
+.pessoas-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.pessoa-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;}
+.pessoa-emoji{font-size:24px;margin-bottom:4px;}
+.pessoa-label{font-size:10px;color:var(--muted);margin-bottom:8px;}
+.contador{display:flex;align-items:center;justify-content:center;gap:8px;}
+.cnt-btn{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:transparent;color:var(--ink);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.cnt-btn:hover{border-color:var(--pink);color:var(--pink);}
+.cnt-val{font-family:'Fraunces',serif;font-size:20px;font-weight:700;min-width:26px;text-align:center;}
+
+/* OPÇÕES */
+.opcoes-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.opcao-pill{display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s;}
+.opcao-pill.active{border-color:var(--pink);background:var(--pink-light);}
+.opcao-pill input[type=checkbox]{accent-color:var(--pink);width:14px;height:14px;flex-shrink:0;}
+.opcao-label{font-size:13px;color:var(--ink);}
+
+.calc-btn{margin-top:24px;width:100%;background:var(--pink-mid);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+
+/* RESULTADO */
+#resultado{display:none;margin-top:28px;}
+.res-titulo{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:4px;}
+.res-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.lista-compras{display:flex;flex-direction:column;gap:8px;}
+.item-grupo{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;}
+.item-grupo-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;}
+.item-linha{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);}
+.item-linha:last-child{border-bottom:none;}
+.item-nome{font-size:14px;color:var(--ink);}
+.item-detalhe{font-size:11px;color:var(--muted);margin-top:1px;}
+.item-qtd{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--pink-mid);}
+.aviso{background:var(--pink-light);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.7;margin-top:14px;}
+.aviso strong{color:var(--ink);}
+.share-btn{margin-top:14px;width:100%;background:var(--green);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
+.share-btn:hover{opacity:.9;}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+<div class="app">
+  <div class="logo">Bora <span>Festejar</span></div>
+  <p class="tagline">lista de compras certa para a sua festa — sem faltar nem sobrar</p>
+
+  <div class="section-label">tipo de festa</div>
+  <div class="tipo-grid">
+    <button class="tipo-pill active" id="tipo-aniversario" onclick="setTipo('aniversario')">
+      <span class="tipo-icon">🎂</span>Aniversário
+    </button>
+    <button class="tipo-pill" id="tipo-infantil" onclick="setTipo('infantil')">
+      <span class="tipo-icon">🎈</span>Infantil
+    </button>
+    <button class="tipo-pill" id="tipo-confraternizacao" onclick="setTipo('confraternizacao')">
+      <span class="tipo-icon">🥂</span>Confraternização
+    </button>
+    <button class="tipo-pill" id="tipo-cha" onclick="setTipo('cha')">
+      <span class="tipo-icon">👶</span>Chá de bebê / fraldas
+    </button>
+  </div>
+
+  <div class="section-label">quantos convidados?</div>
+  <div class="pessoas-grid">
+    <div class="pessoa-card">
+      <div class="pessoa-emoji">🧑</div>
+      <div class="pessoa-label">adultos</div>
+      <div class="contador">
+        <button class="cnt-btn" onclick="adj('a',-1)">−</button>
+        <span class="cnt-val" id="cnt-a">20</span>
+        <button class="cnt-btn" onclick="adj('a',1)">+</button>
+      </div>
+    </div>
+    <div class="pessoa-card">
+      <div class="pessoa-emoji">👶</div>
+      <div class="pessoa-label">crianças</div>
+      <div class="contador">
+        <button class="cnt-btn" onclick="adj('c',-1)">−</button>
+        <span class="cnt-val" id="cnt-c">10</span>
+        <button class="cnt-btn" onclick="adj('c',1)">+</button>
+      </div>
+    </div>
+    <div class="pessoa-card">
+      <div class="pessoa-emoji">⏱</div>
+      <div class="pessoa-label">horas de festa</div>
+      <div class="contador">
+        <button class="cnt-btn" onclick="adj('h',-1)">−</button>
+        <span class="cnt-val" id="cnt-h">4</span>
+        <button class="cnt-btn" onclick="adj('h',1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">o que vai ter?</div>
+  <div class="opcoes-grid">
+    <label class="opcao-pill active" id="pill-salgado"><input type="checkbox" id="opt-salgado" checked onchange="togglePill('salgado')"> <span class="opcao-label">🥟 Salgados</span></label>
+    <label class="opcao-pill active" id="pill-doce"><input type="checkbox" id="opt-doce" checked onchange="togglePill('doce')"> <span class="opcao-label">🍬 Docinhos</span></label>
+    <label class="opcao-pill active" id="pill-bolo"><input type="checkbox" id="opt-bolo" checked onchange="togglePill('bolo')"> <span class="opcao-label">🎂 Bolo</span></label>
+    <label class="opcao-pill active" id="pill-refri"><input type="checkbox" id="opt-refri" checked onchange="togglePill('refri')"> <span class="opcao-label">🥤 Refrigerante</span></label>
+    <label class="opcao-pill active" id="pill-suco"><input type="checkbox" id="opt-suco" checked onchange="togglePill('suco')"> <span class="opcao-label">🍹 Suco/água</span></label>
+    <label class="opcao-pill" id="pill-alcool"><input type="checkbox" id="opt-alcool" onchange="togglePill('alcool')"> <span class="opcao-label">🍾 Bebida alcoólica</span></label>
+    <label class="opcao-pill active" id="pill-prato"><input type="checkbox" id="opt-prato" checked onchange="togglePill('prato')"> <span class="opcao-label">🍽 Pratos/copos</span></label>
+    <label class="opcao-pill" id="pill-lembr"><input type="checkbox" id="opt-lembr" onchange="togglePill('lembr')"> <span class="opcao-label">🎁 Lembranças</span></label>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">montar lista da festa →</button>
+  <div id="resultado"></div>
+</div>
+
+<script>
+let qtd = { a:20, c:10, h:4 };
+let tipoFesta = 'aniversario';
+let listaResultado = [];
+
+function adj(t, d) { qtd[t] = Math.max(t==='h'?1:0, qtd[t]+d); document.getElementById('cnt-'+t).textContent = qtd[t]; }
+function togglePill(n) { document.getElementById('pill-'+n).classList.toggle('active', document.getElementById('opt-'+n).checked); }
+function setTipo(t) {
+  tipoFesta = t;
+  document.querySelectorAll('.tipo-pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('tipo-'+t).classList.add('active');
+}
+
+const arred = (v, base=1) => Math.ceil(v/base)*base;
+
+function calcular() {
+  const a = qtd.a, c = qtd.c, h = qtd.h;
+  const total = a + c;
+  if (total === 0) { alert('Adicione pelo menos 1 convidado.'); return; }
+
+  // multiplicadores por tipo de festa
+  const isCha = tipoFesta === 'cha';
+  const isInfantil = tipoFesta === 'infantil';
+  const multSalgado = isCha ? 1.2 : isInfantil ? 0.8 : 1.0;
+  const multDoce = isCha ? 1.5 : isInfantil ? 1.3 : 1.0;
+  const multAlcool = isCha ? 0 : isInfantil ? 0 : 1.0;
+
+  const grupos = [];
+
+  // SALGADOS: adulto ~12 un, criança ~8 un por pessoa, proporcional às horas
+  if (document.getElementById('opt-salgado').checked) {
+    const fatorHora = Math.min(1.5, 0.6 + h * 0.1);
+    const qtdSalgado = arred((a*12 + c*8) * multSalgado * fatorHora, 25);
+    const miniPizza  = arred(qtdSalgado * 0.2, 5);
+    const coxinha    = arred(qtdSalgado * 0.3, 5);
+    const outros     = qtdSalgado - miniPizza - coxinha;
+    grupos.push({
+      header: '🥟 salgados',
+      itens: [
+        { nome:'Total de salgados', detalhe:`~${Math.round(qtdSalgado/total)} por pessoa · ${h}h de festa`, qtd: qtdSalgado+' un' },
+        { nome:'Sugestão: coxinha/kibe', detalhe:'30% do total', qtd: coxinha+' un' },
+        { nome:'Sugestão: mini pizza', detalhe:'20% do total', qtd: miniPizza+' un' },
+        { nome:'Sugestão: outros', detalhe:'50% do total — misture tipos', qtd: outros+' un' },
+      ]
+    });
+  }
+
+  // DOCINHOS: adulto ~4, criança ~5
+  if (document.getElementById('opt-doce').checked) {
+    const qtdDoce = arred((a*4 + c*5) * multDoce, 10);
+    const brigadeiro = arred(qtdDoce * 0.4, 5);
+    grupos.push({
+      header: '🍬 docinhos',
+      itens: [
+        { nome:'Total de docinhos', detalhe:`~${Math.round(qtdDoce/total)} por pessoa`, qtd: qtdDoce+' un' },
+        { nome:'Sugestão: brigadeiro', detalhe:'40% do total', qtd: brigadeiro+' un' },
+        { nome:'Sugestão: outros', detalhe:'casadinho, beijinho, cajuzinho...', qtd: (qtdDoce-brigadeiro)+' un' },
+      ]
+    });
+  }
+
+  // BOLO
+  if (document.getElementById('opt-bolo').checked) {
+    const kgBolo = arred(total * (isInfantil ? 0.08 : 0.06), 0.5);
+    const andares = kgBolo <= 2 ? 1 : kgBolo <= 4 ? 2 : 3;
+    grupos.push({
+      header: '🎂 bolo',
+      itens: [
+        { nome:'Bolo', detalhe:`${andares} andar(es) · ~60-80g por fatia`, qtd: kgBolo+' kg' },
+      ]
+    });
+  }
+
+  // BEBIDAS
+  const beb = [];
+  if (document.getElementById('opt-refri').checked) {
+    const litrosRefri = arred((a*0.4 + c*0.5) * (h/4), 0.5);
+    beb.push({ nome:'Refrigerante', detalhe:'garrafa 2L: '+Math.ceil(litrosRefri/2)+' un', qtd: litrosRefri+'L' });
+  }
+  if (document.getElementById('opt-suco').checked) {
+    const litrosSuco = arred((a*0.3 + c*0.4) * (h/4), 0.5);
+    beb.push({ nome:'Suco / água', detalhe:'inclua garrafinhas individuais para crianças', qtd: litrosSuco+'L' });
+  }
+  if (document.getElementById('opt-alcool').checked && multAlcool > 0) {
+    const lataCerveja = arred(a * 2.5 * (h/4));
+    const garrafaVinho = arred(a * 0.15 * (h/4), 1);
+    beb.push({ nome:'Cerveja', detalhe:'latas 350ml', qtd: lataCerveja+' latas' });
+    beb.push({ nome:'Vinho/espumante', detalhe:'garrafa 750ml', qtd: garrafaVinho+' un' });
+  }
+  if (beb.length) grupos.push({ header:'🥤 bebidas', itens: beb });
+
+  // DESCARTÁVEIS
+  if (document.getElementById('opt-prato').checked) {
+    grupos.push({
+      header: '🍽 descartáveis',
+      itens: [
+        { nome:'Pratos', detalhe:'compre 20% a mais que o número de pessoas', qtd: arred(total*1.2, 10)+' un' },
+        { nome:'Copos (bebida)', detalhe:'~2-3 por pessoa', qtd: arred(total*2.5, 10)+' un' },
+        { nome:'Garfos / colheres', detalhe:'1,5 por pessoa', qtd: arred(total*1.5, 10)+' un' },
+        { nome:'Guardanapos', detalhe:'pacote com 50 por 20 pessoas', qtd: Math.ceil(total/20)+' pct (50 un)' },
+      ]
+    });
+  }
+
+  // LEMBRANÇAS
+  if (document.getElementById('opt-lembr').checked) {
+    grupos.push({
+      header: '🎁 lembranças',
+      itens: [
+        { nome:'Lembrancinhas', detalhe:'1 por convidado + 10% de reserva', qtd: arred(total*1.1, 5)+' un' },
+      ]
+    });
+  }
+
+  // EXTRAS UNIVERSAIS
+  grupos.push({
+    header: '✨ não esqueça',
+    itens: [
+      { nome:'Velas / numeral', detalhe:'para o bolo', qtd: '1 kit' },
+      { nome:'Toalha de mesa', detalhe:'tamanho conforme mesas disponíveis', qtd: 'a verificar' },
+      { nome:'Saco de gelo', detalhe:'~1kg por 5 pessoas', qtd: Math.ceil(total/5)+' kg' },
+      { nome:'Isopor / caixa de bebida', detalhe:'para manter bebidas geladas', qtd: Math.ceil(total/20)+' un' },
+    ]
+  });
+
+  listaResultado = grupos;
+  const tipoNome = {aniversario:'Aniversário', infantil:'Festa Infantil', confraternizacao:'Confraternização', cha:'Chá de Bebê'};
+
+  let html = grupos.map(g => `
+    <div class="item-grupo">
+      <div class="item-grupo-header">${g.header}</div>
+      ${g.itens.map(i => `
+      <div class="item-linha">
+        <div><div class="item-nome">${i.nome}</div><div class="item-detalhe">${i.detalhe}</div></div>
+        <div class="item-qtd">${i.qtd}</div>
+      </div>`).join('')}
+    </div>`).join('');
+
+  const el = document.getElementById('resultado');
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div class="res-titulo">🎉 Lista da Festa</div>
+    <div class="res-sub">${tipoNome[tipoFesta]} · ${total} convidados · ${h}h</div>
+    <div class="lista-compras">${html}</div>
+    <div class="aviso"><strong>💡 Dica:</strong> Sempre arredonde para cima na hora de comprar. Para ${total} pessoas é melhor sobrar um pouco do que faltar na hora H. Confirme a presença com antecedência para ter um número mais preciso.</div>
+    <button class="share-btn" onclick="compartilhar()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      mandar lista no whatsapp
+    </button>`;
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function compartilhar() {
+  const tipoNome = {aniversario:'Aniversário', infantil:'Festa Infantil', confraternizacao:'Confraternização', cha:'Chá de Bebê'};
+  let msg = `🎉 *Lista da Festa — Bora Festejar*\n${tipoNome[tipoFesta]} · ${qtd.a+qtd.c} convidados · ${qtd.h}h\n\n`;
+  listaResultado.forEach(g => {
+    msg += `*${g.header}*\n`;
+    g.itens.forEach(i => msg += `  • ${i.nome}: ${i.qtd}\n`);
+    msg += '\n';
+  });
+  msg += `_Calculado com Bora Apps_ 🎀\nboraapps.com.br`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+</script>
+</body>
+</html>
