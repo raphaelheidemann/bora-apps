@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Mamãe — semanas de gestação e data provável do parto</title>
+<meta name="description" content="Calcule as semanas de gestação, a data provável do parto e acompanhe os marcos importantes da gravidez semana a semana.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff8fc;--ink:#1a0814;--muted:#8a5878;--border:#f0d0e8;
+  --pink:#d63384;--pink-light:#fff0f8;--pink-mid:#e8559a;
+  --purple:#7c52d9;--purple-light:#f0ebff;
+  --green:#1a7a3a;--green-light:#e8f5ec;
+  --blue:#2471a3;--blue-light:#eaf4fb;
+  --yellow:#f39c12;--yellow-light:#fef9e7;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--pink-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:24px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--pink-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:28px;margin-top:4px;}
+
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input{font-family:'DM Sans',sans-serif;font-size:14px;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s;width:100%;}
+.field input:focus{border-color:var(--pink);}
+
+/* MODO DE ENTRADA */
+.modo-pills{display:flex;gap:8px;margin-bottom:20px;}
+.modo-pill{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:8px;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s;line-height:1.4;}
+.modo-pill.active{background:var(--pink-light);border-color:var(--pink);color:var(--pink);}
+
+/* IMPORTADO */
+.import-box{background:var(--green-light);border:1.5px solid var(--green);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--green);margin-bottom:16px;display:none;}
+.import-box strong{color:var(--ink);display:block;margin-bottom:2px;}
+
+.calc-btn{margin-top:20px;width:100%;background:var(--pink-mid);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+
+/* RESULTADO */
+#resultado{display:none;margin-top:28px;}
+
+/* HERO */
+.gest-hero{background:linear-gradient(135deg,var(--pink) 0%,#9b2770 100%);border-radius:20px;padding:24px;color:#fff;text-align:center;margin-bottom:16px;position:relative;overflow:hidden;}
+.gest-hero::before{content:'👶';position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.15;}
+.gest-semanas{font-family:'Fraunces',serif;font-size:56px;font-weight:900;line-height:1;}
+.gest-lbl{font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;}
+.gest-dpp{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-top:12px;}
+.gest-dpp-lbl{font-size:11px;color:rgba(255,255,255,.7);}
+
+/* BARRA PROGRESSO */
+.progresso-wrap{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px;}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:8px;}
+.prog-bar-bg{height:12px;background:#f0d0e8;border-radius:6px;overflow:hidden;}
+.prog-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--pink),#9b2770);transition:width .5s;}
+.prog-trimestres{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--muted);}
+.prog-tri-item{text-align:center;flex:1;}
+.prog-tri-item.atual{color:var(--pink);font-weight:500;}
+
+/* CARDS RESUMO */
+.resumo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.res-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:14px;}
+.res-val{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--ink);}
+.res-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.res-card.destaque{border-color:var(--pink);background:var(--pink-light);}
+.res-card.destaque .res-val{color:var(--pink);}
+
+/* MARCO ATUAL */
+.marco-atual{background:var(--pink-light);border:2px solid var(--pink);border-radius:14px;padding:18px;margin-bottom:16px;}
+.marco-semana{font-size:10px;letter-spacing:.1em;color:var(--pink);text-transform:uppercase;margin-bottom:6px;}
+.marco-titulo{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+.marco-bebe{font-size:13px;color:var(--ink);line-height:1.6;margin-bottom:6px;}
+.marco-mae{font-size:12px;color:var(--muted);line-height:1.6;}
+.marco-tamanho{display:inline-flex;align-items:center;gap:6px;background:var(--white);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--pink);margin-bottom:10px;border:1px solid var(--border);}
+
+/* LINHA DO TEMPO */
+.timeline{display:flex;flex-direction:column;gap:0;margin-bottom:16px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;}
+.tl-header{padding:12px 16px;background:var(--pink-light);font-size:10px;letter-spacing:.1em;color:var(--pink);text-transform:uppercase;}
+.tl-item{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);position:relative;}
+.tl-item:last-child{border-bottom:none;}
+.tl-item.passado .tl-icon{opacity:.4;}
+.tl-item.passado .tl-nome{color:var(--muted);}
+.tl-item.atual{background:var(--pink-light);}
+.tl-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;margin-top:5px;}
+.tl-item.passado .tl-dot{background:var(--green);}
+.tl-item.atual .tl-dot{background:var(--pink);width:10px;height:10px;margin-top:4px;}
+.tl-icon{font-size:16px;flex-shrink:0;}
+.tl-content{flex:1;}
+.tl-semana{font-size:10px;color:var(--muted);}
+.tl-nome{font-size:13px;font-weight:500;color:var(--ink);}
+.tl-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.tl-badge{font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px;}
+.badge-pass{background:var(--green-light);color:var(--green);}
+.badge-atual{background:var(--pink-light);color:var(--pink);}
+.badge-fut{background:#f5f5f5;color:var(--muted);}
+
+.share-btn{width:100%;background:var(--pink-mid);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;margin-bottom:16px;}
+.share-btn:hover{opacity:.9;}
+
+.aviso{background:var(--pink-light);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.7;}
+.aviso strong{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora <span>Mamãe</span></div>
+  <p class="tagline">semanas de gestação, data do parto e marcos da gravidez semana a semana</p>
+
+  <!-- IMPORTAÇÃO DO BORA ENGRAVIDAR -->
+  <div class="import-box" id="import-box">
+    <strong>📲 Dados importados do Bora Engravidar</strong>
+    <span id="import-desc"></span>
+  </div>
+
+  <div class="section-label">como deseja calcular?</div>
+  <div class="modo-pills">
+    <button class="modo-pill active" id="modo-dum" onclick="setModo('dum')">📅 Data da última menstruação</button>
+    <button class="modo-pill" id="modo-concep" onclick="setModo('concep')">🌸 Data da concepção</button>
+    <button class="modo-pill" id="modo-semanas" onclick="setModo('semanas')">🏥 Já sei as semanas</button>
+  </div>
+
+  <div id="campo-dum">
+    <div class="section-label">primeiro dia da última menstruação</div>
+    <div class="field"><input type="date" id="inp-dum" max=""></div>
+  </div>
+  <div id="campo-concep" style="display:none;">
+    <div class="section-label">data da concepção estimada</div>
+    <div class="field"><input type="date" id="inp-concep" max=""></div>
+  </div>
+  <div id="campo-semanas" style="display:none;">
+    <div class="section-label">semanas e dias de gestação hoje</div>
+    <div style="display:flex;gap:10px;">
+      <div class="field" style="flex:1;"><input type="number" id="inp-semanas" placeholder="semanas" min="1" max="42"></div>
+      <div class="field" style="flex:1;"><input type="number" id="inp-dias-gest" placeholder="dias (0–6)" min="0" max="6" value="0"></div>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">calcular gestação →</button>
+  <div id="resultado"></div>
+</div>
+
+<script>
+// ─── MARCOS DA GRAVIDEZ ───────────────────────────────────────────────────────
+const MARCOS = [
+  { semana:4,  icon:'🌱', nome:'Implantação confirmada',    bebe:'Embrião do tamanho de uma semente de papoula. Coração começa a se formar.',         mae:'Possível falta de menstruação. Primeiros sinais podem aparecer.',        tamanho:'~2mm' },
+  { semana:6,  icon:'💓', nome:'Batimento cardíaco',        bebe:'Coração já bate! Braços e pernas começam a brotar.',                                 mae:'Náuseas matinais frequentes. Seios sensíveis.',                           tamanho:'~6mm' },
+  { semana:8,  icon:'🫘', nome:'Todos os órgãos presentes', bebe:'Feto do tamanho de um feijão. Todos os órgãos principais já se formaram.',           mae:'Útero dobrou de tamanho. Fadiga intensa é normal.',                      tamanho:'~1,6cm' },
+  { semana:10, icon:'🍓', nome:'Reflexos aparecem',         bebe:'Tamanho de um morango. Dedos separados, unhas surgindo.',                            mae:'Risco de aborto espontâneo cai significativamente após essa semana.',    tamanho:'~3cm' },
+  { semana:12, icon:'🍋', nome:'Fim do 1º trimestre',       bebe:'Tamanho de um limão. Rins funcionam, produz urina.',                                 mae:'Náuseas geralmente diminuem. Barriga começa a aparecer.',                tamanho:'~5,4cm' },
+  { semana:16, icon:'🥑', nome:'Sexo pode ser identificado',bebe:'Tamanho de um abacate. Movimentos mais coordenados.',                                mae:'Algumas mamães sentem os primeiros movimentos (quickening).',            tamanho:'~11,6cm' },
+  { semana:20, icon:'🍌', nome:'Meio da gestação 🎉',       bebe:'Tamanho de uma banana. Ultrassom morfológico revela detalhes.',                     mae:'Barriga bem visível. Ultrassom morfológico recomendado.',                tamanho:'~16,4cm' },
+  { semana:24, icon:'🌽', nome:'Viabilidade extrauterina',  bebe:'Tamanho de um milho. Pulmões se desenvolvem, abre e fecha os olhos.',               mae:'Possível dor lombar. Barriga cresce rapidamente.',                       tamanho:'~21cm' },
+  { semana:28, icon:'🥦', nome:'Início do 3º trimestre',    bebe:'Tamanho de um brócolis. Cérebro se desenvolve intensamente.',                       mae:'Exame de diabetes gestacional recomendado. Movimentos mais intensos.',   tamanho:'~25cm' },
+  { semana:32, icon:'🥐', nome:'Posição de encaixe',        bebe:'Provavelmente já na posição cefálica (cabeça para baixo). Pulmões quase prontos.',  mae:'Braxton Hicks frequentes. Dificuldade para dormir.',                     tamanho:'~28cm' },
+  { semana:36, icon:'🍍', nome:'A termo precoce',           bebe:'Tamanho de um abacaxi. Praticamente pronto para nascer.',                           mae:'Consultas semanais. Possível descida do bebê na pelve.',                 tamanho:'~33cm' },
+  { semana:38, icon:'🎀', nome:'A termo completo',          bebe:'Totalmente desenvolvido. Apenas ganhando peso.',                                    mae:'Pode nascer a qualquer momento. Bolsa preparada?',                      tamanho:'~35cm' },
+  { semana:40, icon:'👶', nome:'Data provável do parto',    bebe:'Pronto para nascer! Peso médio de 3,4kg.',                                          mae:'Apenas 5% dos bebês nascem exatamente na DPP. Aguardar sinais.',        tamanho:'~36cm' },
+];
+
+let modo = 'dum';
+
+// datas máximas = hoje
+const hoje = new Date(); hoje.setHours(12,0,0,0);
+const hojeStr = hoje.toISOString().split('T')[0];
+['inp-dum','inp-concep'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.max = hojeStr;
+});
+
+// verifica importação do Bora Engravidar
+(function() {
+  const saved = JSON.parse(localStorage.getItem('bora_engravidar_dados') || 'null');
+  if (saved && saved.ultimaMens) {
+    document.getElementById('inp-dum').value = saved.ultimaMens;
+    const box  = document.getElementById('import-box');
+    const desc = document.getElementById('import-desc');
+    const dpp  = new Date(saved.proxMens);
+    dpp.setDate(dpp.getDate() + 280 - saved.ciclo); // ajuste pelo ciclo
+    box.style.display = 'block';
+    desc.textContent  = `Última menstruação: ${new Date(saved.ultimaMens+'T12:00:00').toLocaleDateString('pt-BR')} · Ciclo de ${saved.ciclo} dias`;
+  }
+})();
+
+function setModo(m) {
+  modo = m;
+  document.getElementById('campo-dum').style.display     = m === 'dum'     ? 'block' : 'none';
+  document.getElementById('campo-concep').style.display  = m === 'concep'  ? 'block' : 'none';
+  document.getElementById('campo-semanas').style.display = m === 'semanas' ? 'block' : 'none';
+  document.querySelectorAll('.modo-pill').forEach((el,i) => {
+    el.classList.toggle('active', ['dum','concep','semanas'][i] === m);
+  });
+}
+
+const addDias = (d,n) => { const r = new Date(d); r.setDate(r.getDate()+n); return r; };
+const fmt     = d => d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+const fmtCurto= d => d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});
+
+function calcular() {
+  let dum; // data da última menstruação como base
+
+  if (modo === 'dum') {
+    const val = document.getElementById('inp-dum').value;
+    if (!val) { alert('Informe a data da última menstruação.'); return; }
+    dum = new Date(val + 'T12:00:00');
+  } else if (modo === 'concep') {
+    const val = document.getElementById('inp-concep').value;
+    if (!val) { alert('Informe a data da concepção.'); return; }
+    dum = addDias(new Date(val + 'T12:00:00'), -14);
+  } else {
+    const sem  = parseInt(document.getElementById('inp-semanas').value) || 0;
+    const dias = parseInt(document.getElementById('inp-dias-gest').value) || 0;
+    if (!sem) { alert('Informe as semanas de gestação.'); return; }
+    const totalDias = sem * 7 + dias;
+    dum = addDias(hoje, -totalDias);
+  }
+
+  // cálculo base (Naegele)
+  const dpp        = addDias(dum, 280);
+  const diasGest   = Math.floor((hoje - dum) / (1000*60*60*24));
+  const semanasGest= Math.floor(diasGest / 7);
+  const diasRest   = diasGest % 7;
+  const diasFaltam = Math.ceil((dpp - hoje) / (1000*60*60*24));
+  const pct        = Math.min(100, Math.max(0, (diasGest / 280) * 100));
+
+  const trimestre  = semanasGest < 13 ? 1 : semanasGest < 27 ? 2 : 3;
+  const triNome    = ['1º Trimestre','2º Trimestre','3º Trimestre'];
+
+  // marco atual e próximo
+  let marcoAtual = MARCOS[0];
+  let marcoProx  = MARCOS[1];
+  for (let i = 0; i < MARCOS.length; i++) {
+    if (semanasGest >= MARCOS[i].semana) {
+      marcoAtual = MARCOS[i];
+      marcoProx  = MARCOS[i+1] || null;
+    }
+  }
+
+  // ─── RENDER ──────────────────────────────────────────────────────────────────
+  const el = document.getElementById('resultado');
+  el.style.display = 'block';
+
+  // timeline
+  let tlHTML = MARCOS.map(m => {
+    const passado = semanasGest >  m.semana;
+    const atual   = semanasGest >= m.semana && (!marcoProx || semanasGest < marcoProx.semana);
+    const cls     = passado ? 'passado' : atual ? 'atual' : '';
+    const badge   = passado ? '<span class="tl-badge badge-pass">✓ passou</span>'
+                  : atual   ? '<span class="tl-badge badge-atual">← você está aqui</span>'
+                  :           `<span class="tl-badge badge-fut">semana ${m.semana}</span>`;
+    return `<div class="tl-item ${cls}">
+      <div class="tl-dot"></div>
+      <div class="tl-icon">${m.icon}</div>
+      <div class="tl-content">
+        <div class="tl-semana">Semana ${m.semana} ${badge}</div>
+        <div class="tl-nome">${m.nome}</div>
+        <div class="tl-desc">${m.bebe}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="gest-hero">
+      <div style="font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.7);text-transform:uppercase;margin-bottom:6px;">${triNome[trimestre-1]}</div>
+      <div class="gest-semanas">${semanasGest}<span style="font-size:24px;font-weight:400;">sem</span> ${diasRest}<span style="font-size:18px;font-weight:400;">d</span></div>
+      <div class="gest-lbl">de gestação hoje</div>
+      <div style="margin-top:16px;width:100%;background:rgba(255,255,255,.2);height:6px;border-radius:3px;">
+        <div style="width:${pct}%;height:100%;background:#fff;border-radius:3px;"></div>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:4px;">${pct.toFixed(0)}% da gestação</div>
+      <div class="gest-dpp">${fmtCurto(dpp)}</div>
+      <div class="gest-dpp-lbl">data provável do parto · ${diasFaltam > 0 ? 'faltam '+diasFaltam+' dias' : 'data atingida! 🎉'}</div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="res-card destaque">
+        <div class="res-val">${semanasGest}s ${diasRest}d</div>
+        <div class="res-lbl">gestação atual</div>
+      </div>
+      <div class="res-card">
+        <div class="res-val">${diasFaltam > 0 ? diasFaltam+'d' : '🎉'}</div>
+        <div class="res-lbl">dias para o parto</div>
+      </div>
+      <div class="res-card">
+        <div class="res-val">${fmt(dpp)}</div>
+        <div class="res-lbl">data provável do parto</div>
+      </div>
+      <div class="res-card">
+        <div class="res-val">${trimestre}º tri</div>
+        <div class="res-lbl">trimestre atual</div>
+      </div>
+    </div>
+
+    <div class="marco-atual">
+      <div class="marco-semana">📍 semana ${marcoAtual.semana} — marco atual</div>
+      <div class="marco-titulo">${marcoAtual.icon} ${marcoAtual.nome}</div>
+      <div class="marco-tamanho">📏 bebê: ${marcoAtual.tamanho}</div>
+      <div class="marco-bebe"><strong>Bebê:</strong> ${marcoAtual.bebe}</div>
+      <div class="marco-mae" style="margin-top:6px;"><strong>Mamãe:</strong> ${marcoAtual.mae}</div>
+      ${marcoProx ? `<div style="margin-top:10px;font-size:11px;color:var(--muted);">Próximo marco: <strong>${marcoProx.icon} ${marcoProx.nome}</strong> na semana ${marcoProx.semana}</div>` : ''}
+    </div>
+
+    <div class="timeline">
+      <div class="tl-header">📅 linha do tempo da gestação</div>
+      ${tlHTML}
+    </div>
+
+    <button class="share-btn" onclick="compartilhar(${semanasGest}, ${diasRest}, '${fmt(dpp)}', ${diasFaltam})">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      compartilhar no whatsapp
+    </button>
+
+    <div class="aviso">
+      <strong>⚠️ Importante:</strong> A data provável do parto é uma estimativa baseada na Regra de Naegele (DUM + 280 dias). Apenas <strong>5% dos bebês nascem exatamente na DPP</strong>. O acompanhamento com obstetra e os exames de ultrassom são indispensáveis para uma gestação saudável.
+    </div>`;
+
+  el.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function compartilhar(sem, dias, dpp, faltam) {
+  const msg = `🤰 *Bora Mamãe — minha gestação*\n\n👶 ${sem} semanas e ${dias} dias de gestação\n📅 Data provável do parto: *${dpp}*\n⏳ ${faltam > 0 ? 'Faltam '+faltam+' dias!' : 'Chegou a hora! 🎉'}\n\n_Calculado com Bora Apps_ 🩷\nboraapps.com.br\n\n⚠️ Acompanhe sempre com seu obstetra.`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+</script>
+</body>
+</html>

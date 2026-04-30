@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Engravidar — calculadora de período fértil e ovulação</title>
+<meta name="description" content="Calcule seu período fértil, janela de ovulação e dias de maior chance de engravidar. Baseado no ciclo menstrual. Integra com o Bora Mamãe.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff5f9;--ink:#1a0810;--muted:#8a5870;--border:#f0d0e0;
+  --pink:#d63384;--pink-light:#fff0f5;--pink-mid:#e8559a;
+  --purple:#7c52d9;--purple-light:#f0ebff;
+  --green:#1a7a3a;--green-light:#e8f5ec;
+  --yellow:#f39c12;--yellow-light:#fef9e7;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--pink-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:24px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--pink-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:28px;margin-top:4px;}
+
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input,.field select{
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 12px;background:var(--white);color:var(--ink);
+  outline:none;transition:border-color .15s;width:100%;
+}
+.field input:focus,.field select:focus{border-color:var(--pink);}
+.full{grid-column:1/-1;}
+
+/* CICLOS */
+.ciclos-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.ciclo-pill{padding:7px 14px;border:1.5px solid var(--border);border-radius:20px;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;}
+.ciclo-pill:hover{border-color:var(--pink);color:var(--pink);}
+.ciclo-pill.active{background:var(--pink-light);border-color:var(--pink);color:var(--pink);}
+
+.calc-btn{margin-top:24px;width:100%;background:var(--pink-mid);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.calc-btn:hover{opacity:.88;}
+
+/* RESULTADO */
+#resultado{display:none;margin-top:28px;}
+
+/* OVULAÇÃO HERO */
+.ovul-hero{background:linear-gradient(135deg, var(--pink) 0%, #c0236e 100%);border-radius:20px;padding:24px;color:#fff;text-align:center;margin-bottom:16px;position:relative;overflow:hidden;}
+.ovul-hero::before{content:'🌸';position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.15;}
+.ovul-lbl{font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.7);margin-bottom:6px;text-transform:uppercase;}
+.ovul-data{font-family:'Fraunces',serif;font-size:32px;font-weight:900;line-height:1;margin-bottom:4px;}
+.ovul-sub{font-size:12px;color:rgba(255,255,255,.75);}
+
+/* CARDS DE FASE */
+.fases{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.fase-card{border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;}
+.fase-icon{font-size:24px;flex-shrink:0;}
+.fase-info{flex:1;}
+.fase-nome{font-size:13px;font-weight:500;margin-bottom:3px;}
+.fase-datas{font-family:'Fraunces',serif;font-size:16px;font-weight:700;}
+.fase-desc{font-size:11px;margin-top:2px;}
+
+.fase-menstruacao{background:#fde8ee;border:1.5px solid #f0b8cc;}
+.fase-menstruacao .fase-nome{color:#c0236e;}
+.fase-menstruacao .fase-datas{color:var(--pink);}
+.fase-menstruacao .fase-desc{color:var(--muted);}
+
+.fase-fertil{background:#e8f5ec;border:1.5px solid #a8d8b8;}
+.fase-fertil .fase-nome{color:var(--green);}
+.fase-fertil .fase-datas{color:var(--green);}
+.fase-fertil .fase-desc{color:#4a7a5a;}
+
+.fase-ovulacao{background:#fff0f5;border:2px solid var(--pink);}
+.fase-ovulacao .fase-nome{color:var(--pink);}
+.fase-ovulacao .fase-datas{color:var(--pink-mid);}
+.fase-ovulacao .fase-desc{color:var(--muted);}
+
+.fase-lutea{background:#f0ebff;border:1.5px solid #c8b8f0;}
+.fase-lutea .fase-nome{color:var(--purple);}
+.fase-lutea .fase-datas{color:var(--purple);}
+.fase-lutea .fase-desc{color:#7a6a9a;}
+
+/* CALENDÁRIO VISUAL */
+.cal-wrap{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.cal-header{padding:12px 16px;background:var(--pink-light);font-size:10px;letter-spacing:.1em;color:var(--pink);text-transform:uppercase;font-weight:500;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:12px;}
+.cal-dia-header{font-size:9px;color:var(--muted);text-align:center;padding:2px;font-weight:500;}
+.cal-dia{width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;cursor:default;}
+.cal-dia.vazio{background:transparent;color:transparent;}
+.cal-dia.normal{background:transparent;color:var(--muted);}
+.cal-dia.menstruacao{background:#fde8ee;color:var(--pink);}
+.cal-dia.fertil{background:#e8f5ec;color:var(--green);font-weight:600;}
+.cal-dia.ovulacao{background:var(--pink);color:#fff;font-weight:700;transform:scale(1.1);}
+.cal-dia.hoje{box-shadow:0 0 0 2px var(--ink);}
+
+/* LEGENDA */
+.legenda{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 12px;}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* PRÓXIMOS CICLOS */
+.proximos{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.prox-header{padding:12px 16px;background:#f5f5f5;font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.prox-row{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);}
+.prox-row:last-child{border-bottom:none;}
+.prox-ciclo{font-size:12px;color:var(--muted);}
+.prox-data{font-size:13px;font-weight:500;color:var(--ink);}
+.prox-fertil{font-size:11px;color:var(--green);}
+
+/* INTEGRAÇÃO */
+.integracao-box{background:var(--green-light);border:1.5px solid var(--green);border-radius:12px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
+.integ-info strong{font-size:13px;color:var(--ink);display:block;margin-bottom:2px;}
+.integ-info span{font-size:11px;color:var(--muted);}
+.integ-btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.integ-btn:hover{opacity:.88;}
+
+/* FONTE */
+.fonte{border-top:1px solid var(--border);padding-top:14px;margin-top:4px;font-size:11px;color:var(--muted);line-height:1.7;}
+.fonte strong{color:var(--ink);}
+
+.share-btn{width:100%;background:var(--pink-mid);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;margin-bottom:16px;}
+.share-btn:hover{opacity:.9;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora <span>Engravidar</span></div>
+  <p class="tagline">descubra seu período fértil e a janela de ovulação com precisão</p>
+
+  <div class="section-label">primeiro dia da última menstruação</div>
+  <div class="field">
+    <input type="date" id="ultima-mens" max="">
+  </div>
+
+  <div class="section-label">duração do seu ciclo menstrual</div>
+  <div class="ciclos-pills" id="ciclos-pills">
+    <button class="ciclo-pill" onclick="setCiclo(21)">21 dias</button>
+    <button class="ciclo-pill" onclick="setCiclo(24)">24 dias</button>
+    <button class="ciclo-pill" onclick="setCiclo(26)">26 dias</button>
+    <button class="ciclo-pill active" onclick="setCiclo(28)">28 dias</button>
+    <button class="ciclo-pill" onclick="setCiclo(30)">30 dias</button>
+    <button class="ciclo-pill" onclick="setCiclo(32)">32 dias</button>
+    <button class="ciclo-pill" onclick="setCiclo(35)">35 dias</button>
+  </div>
+  <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+    <span style="font-size:12px;color:var(--muted);">outro:</span>
+    <input type="number" id="ciclo-custom" placeholder="dias" min="21" max="45"
+      style="font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid var(--border);border-radius:8px;padding:7px 10px;width:80px;background:var(--white);color:var(--ink);outline:none;"
+      oninput="setCicloCustom(this.value)">
+  </div>
+
+  <div class="section-label">duração da menstruação</div>
+  <div class="row">
+    <div class="field">
+      <select id="dur-mens">
+        <option value="3">3 dias</option>
+        <option value="4">4 dias</option>
+        <option value="5" selected>5 dias</option>
+        <option value="6">6 dias</option>
+        <option value="7">7 dias</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">calcular período fértil →</button>
+
+  <div id="resultado"></div>
+</div>
+
+<script>
+let cicloSelecionado = 28;
+
+// data máxima = hoje
+document.getElementById('ultima-mens').max = new Date().toISOString().split('T')[0];
+// default = ~28 dias atrás
+const defaultDate = new Date();
+defaultDate.setDate(defaultDate.getDate() - 14);
+document.getElementById('ultima-mens').value = defaultDate.toISOString().split('T')[0];
+
+function setCiclo(dias) {
+  cicloSelecionado = dias;
+  document.querySelectorAll('.ciclo-pill').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('ciclo-custom').value = '';
+}
+
+function setCicloCustom(val) {
+  const dias = parseInt(val);
+  if (dias >= 21 && dias <= 45) {
+    cicloSelecionado = dias;
+    document.querySelectorAll('.ciclo-pill').forEach(p => p.classList.remove('active'));
+  }
+}
+
+const fmt   = d => d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
+const fmtFull = d => d.toLocaleDateString('pt-BR', {day:'2-digit', month:'long'});
+const addDias = (d, n) => { const r = new Date(d); r.setDate(r.getDate()+n); return r; };
+
+function calcular() {
+  const mens = document.getElementById('ultima-mens').value;
+  if (!mens) { alert('Informe o primeiro dia da última menstruação.'); return; }
+
+  const inicio     = new Date(mens + 'T12:00:00');
+  const durMens    = parseInt(document.getElementById('dur-mens').value) || 5;
+  const ciclo      = cicloSelecionado;
+
+  // Ovulação: ciclo - 14 dias (fase lútea padrão)
+  const diaOvulacao   = ciclo - 14;
+  const ovulacao      = addDias(inicio, diaOvulacao);
+
+  // Janela fértil: 5 dias antes + dia da ovulação + 1 dia depois
+  const inicioFertil  = addDias(ovulacao, -5);
+  const fimFertil     = addDias(ovulacao, 1);
+
+  // Próxima menstruação
+  const proxMens      = addDias(inicio, ciclo);
+  const fimMens       = addDias(inicio, durMens - 1);
+
+  // Fase lútea
+  const inicioLutea   = addDias(ovulacao, 2);
+  const fimLutea      = addDias(proxMens, -1);
+
+  // Próximos 3 ciclos
+  const proxCiclos = [1,2,3].map(i => {
+    const ini  = addDias(inicio, ciclo * i);
+    const ovul = addDias(ini, diaOvulacao);
+    const iF   = addDias(ovul, -5);
+    const fF   = addDias(ovul, 1);
+    return { mens: ini, ovul, inicioFertil: iF, fimFertil: fF };
+  });
+
+  // salva para integração com Bora Mamãe
+  localStorage.setItem('bora_engravidar_dados', JSON.stringify({
+    ultimaMens: mens,
+    ciclo,
+    ovulacao: ovulacao.toISOString(),
+    proxMens: proxMens.toISOString(),
+  }));
+
+  // ─── CALENDÁRIO VISUAL ───────────────────────────────────────────────────────
+  const hoje = new Date(); hoje.setHours(12,0,0,0);
+  // mostra mês atual e seguinte se necessário
+  const mesRef   = new Date(inicio.getFullYear(), inicio.getMonth(), 1);
+  const diasMes  = new Date(mesRef.getFullYear(), mesRef.getMonth()+1, 0).getDate();
+  const primDia  = new Date(mesRef).getDay(); // 0=dom
+
+  const nomeMes = inicio.toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
+  const diasSemana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+  let calHTML = `<div class="cal-grid">`;
+  diasSemana.forEach(d => calHTML += `<div class="cal-dia-header">${d}</div>`);
+
+  // células vazias antes do dia 1
+  for (let i = 0; i < primDia; i++) calHTML += `<div class="cal-dia vazio"></div>`;
+
+  for (let d = 1; d <= diasMes; d++) {
+    const data = new Date(mesRef.getFullYear(), mesRef.getMonth(), d, 12);
+    let cls = 'normal';
+    if (data >= inicio && data <= fimMens) cls = 'menstruacao';
+    else if (data.getTime() === ovulacao.getTime()) cls = 'ovulacao';
+    else if (data >= inicioFertil && data <= fimFertil) cls = 'fertil';
+    const isHoje = data.toDateString() === hoje.toDateString() ? ' hoje' : '';
+    calHTML += `<div class="cal-dia ${cls}${isHoje}">${d}</div>`;
+  }
+  calHTML += `</div>
+    <div class="legenda">
+      <div class="leg-item"><div class="leg-dot" style="background:#fde8ee;border:1px solid #f0b8cc"></div>Menstruação</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#e8f5ec;border:1px solid #a8d8b8"></div>Período fértil</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--pink)"></div>Ovulação</div>
+    </div>`;
+
+  // ─── PRÓXIMOS CICLOS ─────────────────────────────────────────────────────────
+  let proxHTML = proxCiclos.map((c,i) => `
+    <div class="prox-row">
+      <div>
+        <div class="prox-ciclo">${i+2}º ciclo</div>
+        <div class="prox-data">Menstruação: ${fmt(c.mens)}</div>
+        <div class="prox-fertil">Fértil: ${fmt(c.inicioFertil)} – ${fmt(c.fimFertil)} · Ovulação: ${fmt(c.ovul)}</div>
+      </div>
+    </div>`).join('');
+
+  // ─── RENDER ──────────────────────────────────────────────────────────────────
+  document.getElementById('resultado').style.display = 'block';
+  document.getElementById('resultado').innerHTML = `
+
+    <div class="ovul-hero">
+      <div class="ovul-lbl">dia estimado da ovulação</div>
+      <div class="ovul-data">🌸 ${fmtFull(ovulacao)}</div>
+      <div class="ovul-sub">ciclo de ${ciclo} dias · fase lútea de 14 dias</div>
+    </div>
+
+    <div class="fases">
+      <div class="fase-card fase-menstruacao">
+        <div class="fase-icon">🔴</div>
+        <div class="fase-info">
+          <div class="fase-nome">Menstruação</div>
+          <div class="fase-datas">${fmt(inicio)} – ${fmt(fimMens)}</div>
+          <div class="fase-desc">${durMens} dias · baixa chance de gravidez</div>
+        </div>
+      </div>
+      <div class="fase-card fase-fertil">
+        <div class="fase-icon">🟢</div>
+        <div class="fase-info">
+          <div class="fase-nome">Janela fértil</div>
+          <div class="fase-datas">${fmt(inicioFertil)} – ${fmt(fimFertil)}</div>
+          <div class="fase-desc">7 dias · maior chance de engravidar</div>
+        </div>
+      </div>
+      <div class="fase-card fase-ovulacao">
+        <div class="fase-icon">🌸</div>
+        <div class="fase-info">
+          <div class="fase-nome">Pico de ovulação</div>
+          <div class="fase-datas">${fmtFull(ovulacao)}</div>
+          <div class="fase-desc">dia ${diaOvulacao} do ciclo · chance máxima</div>
+        </div>
+      </div>
+      <div class="fase-card fase-lutea">
+        <div class="fase-icon">🟣</div>
+        <div class="fase-info">
+          <div class="fase-nome">Fase lútea</div>
+          <div class="fase-datas">${fmt(inicioLutea)} – ${fmt(fimLutea)}</div>
+          <div class="fase-desc">14 dias · baixa chance · próxima mens: ${fmt(proxMens)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cal-wrap">
+      <div class="cal-header">📅 ${nomeMes}</div>
+      ${calHTML}
+    </div>
+
+    <div class="proximos">
+      <div class="prox-header">próximos ciclos previstos</div>
+      ${proxHTML}
+    </div>
+
+    <button class="share-btn" onclick="compartilhar('${fmt(ovulacao)}','${fmt(inicioFertil)}','${fmt(fimFertil)}','${fmt(proxMens)}')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      compartilhar no whatsapp
+    </button>
+
+    <div class="integracao-box">
+      <div class="integ-info">
+        <strong>🤰 Engravidei! E agora?</strong>
+        <span>Abra o Bora Mamãe com os dados já preenchidos</span>
+      </div>
+      <button class="integ-btn" onclick="irParaMamae()">abrir →</button>
+    </div>
+
+    <div class="fonte">
+      <strong>📚 Base científica:</strong><br>
+      O cálculo usa o método do <strong>ritmo de Ogino-Knaus</strong> combinado com a <strong>fase lútea padrão de 14 dias</strong>. A ovulação ocorre tipicamente 14 dias antes do início da próxima menstruação.<br><br>
+      <em>Ref: Wilcox AJ, et al. Timing of sexual intercourse in relation to ovulation. NEJM, 1995.</em><br><br>
+      ⚠️ Este cálculo é uma estimativa para ciclos regulares. Ciclos irregulares, condições de saúde e outros fatores podem alterar significativamente a ovulação. Consulte sempre um ginecologista.
+    </div>`;
+
+  document.getElementById('resultado').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function compartilhar(ovul, iF, fF, prox) {
+  const msg = `🌸 *Bora Engravidar — meu período fértil*\n\n🟢 Janela fértil: *${iF} – ${fF}*\n🌸 Ovulação estimada: *${ovul}*\n🔴 Próxima menstruação: ${prox}\n\n_Calculado com Bora Apps_ 🩷\nboraapps.com.br\n\n⚠️ Estimativa — consulte seu ginecologista.`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function irParaMamae() {
+  window.location.href = 'bora-mamae.html';
+}
+</script>
+</body>
+</html>
