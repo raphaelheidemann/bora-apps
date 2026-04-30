@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Sortear — sorteador de nomes, números e times</title>
+<meta name="description" content="Sorteie nomes, números ou divida times de forma aleatória e justa. Ideal para pelada, churrasco, amigo secreto e qualquer racha.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a14;--ink:#f0eeff;--muted:#7a749a;--border:#2a2840;
+  --purple:#7c52d9;--purple-light:#1e1a40;--purple-mid:#9b7ff0;
+  --green:#27ae60;--green-light:#0a2010;
+  --orange:#e8622a;--yellow:#f39c12;
+  --white:#fff;--card:#13112a;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;overflow-x:hidden;}
+
+/* ESTRELAS */
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:300px;background:radial-gradient(ellipse at 50% 0%,rgba(124,82,217,.2) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:rgba(10,10,20,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--purple-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+.top-nav-back:hover{color:var(--ink);}
+
+.app{max-width:480px;margin:0 auto;padding:24px 16px;position:relative;z-index:1;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);line-height:1;}
+.logo span{color:var(--purple-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+
+/* TABS */
+.tabs{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;}
+.tab{flex:1;padding:10px 4px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;}
+.tab.active{background:var(--purple);color:#fff;}
+
+/* FORM */
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input,.field select{
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 12px;background:var(--card);color:var(--ink);
+  outline:none;transition:border-color .15s;width:100%;
+  color-scheme:dark;
+}
+.field input:focus{border-color:var(--purple);}
+.field input::placeholder{color:#444;}
+.full{grid-column:1/-1;}
+
+/* LISTA DE NOMES */
+.nomes-input-row{display:flex;gap:8px;margin-bottom:10px;}
+.nomes-input-row input{
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 12px;background:var(--card);color:var(--ink);
+  outline:none;flex:1;transition:border-color .15s;
+}
+.nomes-input-row input:focus{border-color:var(--purple);}
+.nomes-input-row input::placeholder{color:#444;}
+.add-nome-btn{background:var(--purple);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:opacity .15s;}
+.add-nome-btn:hover{opacity:.88;}
+
+.nomes-lista{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:20px;}
+.nome-tag{display:flex;align-items:center;gap:6px;background:var(--purple-light);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:13px;color:var(--ink);}
+.nome-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;padding:0;transition:color .15s;}
+.nome-del:hover{color:var(--orange);}
+.nome-count{font-size:11px;color:var(--muted);margin-bottom:8px;}
+
+/* BOTÃO SORTEAR */
+.sortear-btn{width:100%;background:var(--purple);border:none;border-radius:12px;padding:16px;font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:#fff;cursor:pointer;transition:all .2s;letter-spacing:.02em;margin-top:8px;position:relative;overflow:hidden;}
+.sortear-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);pointer-events:none;}
+.sortear-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,82,217,.4);}
+.sortear-btn:active{transform:scale(.98);}
+
+/* RESULTADO */
+#resultado{margin-top:24px;display:none;}
+
+/* SORTEIO ÚNICO */
+.sorteio-hero{background:var(--card);border:2px solid var(--purple);border-radius:20px;padding:32px 24px;text-align:center;position:relative;overflow:hidden;}
+.sorteio-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:var(--purple);opacity:.08;}
+.sorteio-emoji{font-size:48px;margin-bottom:12px;display:block;}
+.sorteio-valor{font-family:'Fraunces',serif;font-size:48px;font-weight:900;color:var(--purple-mid);line-height:1;margin-bottom:6px;word-break:break-word;}
+.sorteio-sub{font-size:12px;color:var(--muted);}
+
+/* TIMES */
+.times-grid{display:flex;flex-direction:column;gap:10px;}
+.time-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;}
+.time-header{padding:12px 16px;font-size:12px;font-weight:500;letter-spacing:.05em;}
+.time-a .time-header{background:rgba(231,76,60,.15);color:#e74c3c;border-bottom:1px solid var(--border);}
+.time-b .time-header{background:rgba(52,152,219,.15);color:#3498db;border-bottom:1px solid var(--border);}
+.time-c .time-header{background:rgba(39,174,96,.15);color:#27ae60;border-bottom:1px solid var(--border);}
+.time-d .time-header{background:rgba(243,156,18,.15);color:#f39c12;border-bottom:1px solid var(--border);}
+.time-membros{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;}
+.membro-tag{background:var(--purple-light);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--ink);}
+
+/* SEQUÊNCIA */
+.seq-lista{display:flex;flex-direction:column;gap:6px;}
+.seq-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;}
+.seq-num{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--purple-mid);min-width:28px;text-align:center;}
+.seq-nome{font-size:14px;color:var(--ink);}
+.seq-pos{font-size:11px;color:var(--muted);}
+
+/* NOVAMENTE + SHARE */
+.acoes{display:flex;gap:8px;margin-top:16px;}
+.acao-btn{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s;}
+.acao-btn:hover{border-color:var(--purple);color:var(--purple-mid);}
+.acao-btn.primary{background:var(--green);border-color:var(--green);color:#fff;}
+.acao-btn.primary:hover{opacity:.88;}
+
+/* ANIMAÇÃO */
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.animado{animation:pop .4s ease forwards;}
+
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div class="app">
+  <div class="logo">Bora <span>Sortear</span></div>
+  <p class="tagline">sorteio justo para pelada, amigo secreto, churrasco e qualquer racha</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('nome')">👤 Nome</button>
+    <button class="tab" onclick="setTab('numero')">🎲 Número</button>
+    <button class="tab" onclick="setTab('time')">⚽ Times</button>
+    <button class="tab" onclick="setTab('ordem')">📋 Ordem</button>
+  </div>
+
+  <!-- ABA NOME -->
+  <div id="tab-nome">
+    <div class="section-label">adicione os participantes</div>
+    <div class="nomes-input-row">
+      <input type="text" id="nome-inp" placeholder="nome da pessoa..." onkeydown="if(event.key==='Enter')addNome('nome')">
+      <button class="add-nome-btn" onclick="addNome('nome')">+ add</button>
+    </div>
+    <div class="nome-count" id="nome-count">0 participantes</div>
+    <div class="nomes-lista" id="nome-lista"></div>
+    <button class="sortear-btn" onclick="sortearNome()">🎰 sortear!</button>
+  </div>
+
+  <!-- ABA NÚMERO -->
+  <div id="tab-numero" class="hidden">
+    <div class="section-label">intervalo</div>
+    <div class="row">
+      <div class="field">
+        <label>de</label>
+        <input type="number" id="num-de" value="1" min="0">
+      </div>
+      <div class="field">
+        <label>até</label>
+        <input type="number" id="num-ate" value="100" min="1">
+      </div>
+      <div class="field full">
+        <label>quantos números sortear</label>
+        <input type="number" id="num-qtd" value="1" min="1">
+      </div>
+    </div>
+    <button class="sortear-btn" onclick="sortearNumero()">🎲 sortear!</button>
+  </div>
+
+  <!-- ABA TIMES -->
+  <div id="tab-time" class="hidden">
+    <div class="section-label">adicione os jogadores</div>
+    <div class="nomes-input-row">
+      <input type="text" id="time-inp" placeholder="nome do jogador..." onkeydown="if(event.key==='Enter')addNome('time')">
+      <button class="add-nome-btn" onclick="addNome('time')">+ add</button>
+    </div>
+    <div class="nome-count" id="time-count">0 jogadores</div>
+    <div class="nomes-lista" id="time-lista"></div>
+    <div class="section-label">configuração</div>
+    <div class="row">
+      <div class="field">
+        <label>número de times</label>
+        <select id="time-qtd">
+          <option value="2">2 times</option>
+          <option value="3">3 times</option>
+          <option value="4">4 times</option>
+        </select>
+      </div>
+      <div class="field" style="align-self:end;">
+        <label style="font-size:10px;color:var(--muted);">distribuição equilibrada automática</label>
+      </div>
+    </div>
+    <button class="sortear-btn" onclick="sortearTimes()">⚽ sortear times!</button>
+  </div>
+
+  <!-- ABA ORDEM -->
+  <div id="tab-ordem" class="hidden">
+    <div class="section-label">adicione os participantes</div>
+    <div class="nomes-input-row">
+      <input type="text" id="ordem-inp" placeholder="nome da pessoa..." onkeydown="if(event.key==='Enter')addNome('ordem')">
+      <button class="add-nome-btn" onclick="addNome('ordem')">+ add</button>
+    </div>
+    <div class="nome-count" id="ordem-count">0 participantes</div>
+    <div class="nomes-lista" id="ordem-lista"></div>
+    <button class="sortear-btn" onclick="sortearOrdem()">📋 definir ordem!</button>
+  </div>
+
+  <!-- RESULTADO -->
+  <div id="resultado"></div>
+</div>
+
+<script>
+let listas = { nome: [], time: [], ordem: [] };
+
+function setTab(t) {
+  ['nome','numero','time','ordem'].forEach(id => {
+    document.getElementById('tab-'+id).classList.toggle('hidden', id !== t);
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active', ['nome','numero','time','ordem'][i] === t);
+  });
+  document.getElementById('resultado').style.display = 'none';
+}
+
+// ─── GERENCIAR NOMES ──────────────────────────────────────────────────────────
+function addNome(lista) {
+  const inp  = document.getElementById(lista+'-inp');
+  const nome = inp.value.trim();
+  if (!nome) return;
+  if (listas[lista].includes(nome)) { inp.value=''; return; }
+  listas[lista].push(nome);
+  inp.value = '';
+  inp.focus();
+  renderLista(lista);
+}
+
+function removeNome(lista, nome) {
+  listas[lista] = listas[lista].filter(n => n !== nome);
+  renderLista(lista);
+}
+
+function renderLista(lista) {
+  const el    = document.getElementById(lista+'-lista');
+  const count = document.getElementById(lista+'-count');
+  const n     = listas[lista].length;
+  const label = lista === 'time' ? 'jogador' : 'participante';
+  count.textContent = n + ' ' + (n === 1 ? label : label+'s');
+  el.innerHTML = listas[lista].map(nome => `
+    <span class="nome-tag">
+      ${nome}
+      <button class="nome-del" onclick="removeNome('${lista}','${nome}')">×</button>
+    </span>`).join('');
+}
+
+// ─── SHUFFLE ──────────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ─── SORTEAR NOME ─────────────────────────────────────────────────────────────
+function sortearNome() {
+  const lista = listas['nome'];
+  if (lista.length < 2) { alert('Adicione pelo menos 2 participantes.'); return; }
+  const vencedor = lista[Math.floor(Math.random() * lista.length)];
+  mostrarResultado(`
+    <div class="sorteio-hero animado">
+      <span class="sorteio-emoji">🎉</span>
+      <div class="sorteio-valor">${vencedor}</div>
+      <div class="sorteio-sub">sorteado entre ${lista.length} participantes</div>
+    </div>`, vencedor, 'Nome sorteado');
+}
+
+// ─── SORTEAR NÚMERO ───────────────────────────────────────────────────────────
+function sortearNumero() {
+  const de  = parseInt(document.getElementById('num-de').value) || 1;
+  const ate = parseInt(document.getElementById('num-ate').value) || 100;
+  const qtd = parseInt(document.getElementById('num-qtd').value) || 1;
+  if (de >= ate) { alert('O valor "até" deve ser maior que "de".'); return; }
+  const range = ate - de + 1;
+  if (qtd > range) { alert(`Só há ${range} números disponíveis nesse intervalo.`); return; }
+
+  // gera qtd números únicos
+  const pool = Array.from({length: range}, (_,i) => de+i);
+  const sorteados = shuffle(pool).slice(0, qtd).sort((a,b) => a-b);
+
+  const display = qtd === 1
+    ? `<div class="sorteio-hero animado"><span class="sorteio-emoji">🎲</span><div class="sorteio-valor">${sorteados[0]}</div><div class="sorteio-sub">entre ${de} e ${ate}</div></div>`
+    : `<div class="sorteio-hero animado"><span class="sorteio-emoji">🎲</span><div class="sorteio-valor" style="font-size:32px;">${sorteados.join(' · ')}</div><div class="sorteio-sub">${qtd} números entre ${de} e ${ate}</div></div>`;
+
+  mostrarResultado(display, sorteados.join(', '), 'Número(s) sorteado(s)');
+}
+
+// ─── SORTEAR TIMES ────────────────────────────────────────────────────────────
+function sortearTimes() {
+  const jogadores = listas['time'];
+  const nTimes    = parseInt(document.getElementById('time-qtd').value) || 2;
+  if (jogadores.length < nTimes) { alert(`Adicione pelo menos ${nTimes} jogadores.`); return; }
+
+  const embaralhados = shuffle(jogadores);
+  const times = Array.from({length: nTimes}, () => []);
+  embaralhados.forEach((j, i) => times[i % nTimes].push(j));
+
+  const cores  = ['time-a','time-b','time-c','time-d'];
+  const nomes  = ['🔴 Time A','🔵 Time B','🟢 Time C','🟡 Time D'];
+  const letras = ['A','B','C','D'];
+
+  const html = `<div class="times-grid animado">${times.map((t,i) => `
+    <div class="time-card ${cores[i]}">
+      <div class="time-header">${nomes[i]} — ${t.length} jogador(es)</div>
+      <div class="time-membros">${t.map(j => `<span class="membro-tag">${j}</span>`).join('')}</div>
+    </div>`).join('')}</div>`;
+
+  const shareText = times.map((t,i) => `Time ${letras[i]}: ${t.join(', ')}`).join('\n');
+  mostrarResultado(html, shareText, 'Times sorteados');
+}
+
+// ─── SORTEAR ORDEM ────────────────────────────────────────────────────────────
+function sortearOrdem() {
+  const lista = listas['ordem'];
+  if (lista.length < 2) { alert('Adicione pelo menos 2 participantes.'); return; }
+  const ordenados = shuffle(lista);
+
+  const html = `<div class="seq-lista animado">${ordenados.map((nome, i) => `
+    <div class="seq-item">
+      <div class="seq-num">${i+1}</div>
+      <div>
+        <div class="seq-nome">${nome}</div>
+        <div class="seq-pos">${i === 0 ? '🥇 começa primeiro' : i === ordenados.length-1 ? '🏁 fecha a rodada' : `${i+1}º na fila`}</div>
+      </div>
+    </div>`).join('')}</div>`;
+
+  const shareText = ordenados.map((n,i) => `${i+1}º ${n}`).join(', ');
+  mostrarResultado(html, shareText, 'Ordem sorteada');
+}
+
+// ─── MOSTRAR RESULTADO ────────────────────────────────────────────────────────
+let _shareText = '';
+let _shareTipo = '';
+
+function mostrarResultado(html, shareText, tipo) {
+  _shareText = shareText;
+  _shareTipo = tipo;
+  const el = document.getElementById('resultado');
+  el.style.display = 'block';
+  el.innerHTML = html + `
+    <div class="acoes">
+      <button class="acao-btn" onclick="sortearNovamente()">🔄 sortear de novo</button>
+      <button class="acao-btn primary" onclick="compartilhar()">📲 WhatsApp</button>
+    </div>`;
+  el.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function sortearNovamente() {
+  // re-executa o sorteio da aba ativa
+  const aba = document.querySelector('.tab.active');
+  const idx = [...document.querySelectorAll('.tab')].indexOf(aba);
+  [sortearNome, sortearNumero, sortearTimes, sortearOrdem][idx]();
+}
+
+function compartilhar() {
+  const msg = `🎰 *Bora Sortear — ${_shareTipo}*\n\n${_shareText}\n\n_Sorteado com Bora Apps_ 🟣\nboraapps.com.br`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+</script>
+</body>
+</html>
