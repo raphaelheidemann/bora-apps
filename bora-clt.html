@@ -97,14 +97,48 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="setTab('decimo')">13º Salário</button>
+    <button class="tab active" onclick="setTab('liquido')">💰 Líquido</button>
+    <button class="tab" onclick="setTab('decimo')">13º</button>
     <button class="tab" onclick="setTab('ferias')">Férias</button>
     <button class="tab" onclick="setTab('rescisao')">Rescisão</button>
     <button class="tab" onclick="setTab('fgts')">FGTS</button>
   </div>
 
+  <!-- SALÁRIO LÍQUIDO -->
+  <div id="tab-liquido">
+    <div class="section-label">descontos adicionais</div>
+    <div class="row">
+      <div class="field">
+        <label>dependentes (IR)</label>
+        <input type="number" id="l-dependentes" placeholder="0" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>plano de saúde (R$)</label>
+        <input type="number" id="l-saude" placeholder="0,00" step="0.01" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>vale refeição desc. (R$)</label>
+        <input type="number" id="l-vr" placeholder="0,00" step="0.01" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>vale transporte desc. (R$)</label>
+        <input type="number" id="l-vt" placeholder="0,00" step="0.01" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>previdência privada (R$)</label>
+        <input type="number" id="l-prev" placeholder="0,00" step="0.01" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>outros descontos (R$)</label>
+        <input type="number" id="l-outros" placeholder="0,00" step="0.01" min="0" value="0">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcLiquido()">calcular salário líquido →</button>
+    <div class="resultado" id="res-liquido"></div>
+  </div>
+
   <!-- 13º SALÁRIO -->
-  <div id="tab-decimo">
+  <div id="tab-decimo" class="hidden">
     <div class="section-label">seus dados</div>
     <div class="row">
       <div class="field">
@@ -238,11 +272,11 @@ const fmt  = v => 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDi
 const fmtN = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 
 function setTab(t) {
-  ['decimo','ferias','rescisao','fgts'].forEach(id => {
+  ['liquido','decimo','ferias','rescisao','fgts'].forEach(id => {
     document.getElementById('tab-'+id).classList.toggle('hidden', id !== t);
   });
   document.querySelectorAll('.tab').forEach((el,i) => {
-    el.classList.toggle('active', ['decimo','ferias','rescisao','fgts'][i] === t);
+    el.classList.toggle('active', ['liquido','decimo','ferias','rescisao','fgts'][i] === t);
   });
 }
 
@@ -276,9 +310,7 @@ function showResultado(id, heroVal, heroLbl, heroSub, linhas, aviso) {
   el.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-function sincronizarSalario(val) {
-  // não precisa mais fazer nada — todas as funções leem direto do campo global
-}
+function sincronizarSalario(val) {}
 
 function getSalario() {
   const val = parseFloat(document.getElementById('salario-global').value) || 0;
@@ -286,7 +318,38 @@ function getSalario() {
   return val;
 }
 
-// ─── 13º ──────────────────────────────────────────────────────────────────────
+// ─── SALÁRIO LÍQUIDO ──────────────────────────────────────────────────────────
+function calcLiquido() {
+  const salario    = getSalario(); if (!salario) return;
+  const dependentes= parseInt(document.getElementById('l-dependentes').value) || 0;
+  const saude      = parseFloat(document.getElementById('l-saude').value) || 0;
+  const vr         = parseFloat(document.getElementById('l-vr').value) || 0;
+  const vt         = parseFloat(document.getElementById('l-vt').value) || 0;
+  const prev       = parseFloat(document.getElementById('l-prev').value) || 0;
+  const outros     = parseFloat(document.getElementById('l-outros').value) || 0;
+
+  const inss       = calcINSS(salario);
+  const baseIR     = salario - inss - prev;
+  const ir         = calcIR(baseIR, dependentes);
+  const descontos  = inss + ir + saude + vr + vt + prev + outros;
+  const liquido    = salario - descontos;
+  const pctDesconto= (descontos / salario * 100);
+
+  showResultado('res-liquido', liquido, 'salário líquido',
+    `bruto R$ ${fmtN(salario)} · ${pctDesconto.toFixed(1)}% de desconto total`,
+    [
+      { nome: 'Salário bruto',         sub: '',                                              val: salario },
+      { nome: 'INSS',                  sub: 'desconto progressivo por faixa 2024',          val: inss,  neg: true },
+      { nome: 'Imposto de Renda',      sub: `${dependentes} dependente(s) — tabela 2024`,  val: ir,    neg: true },
+      ...(prev  > 0 ? [{ nome: 'Previdência privada', sub: 'deduz da base do IR',           val: prev,  neg: true }] : []),
+      ...(saude > 0 ? [{ nome: 'Plano de saúde',      sub: 'desconto em folha',             val: saude, neg: true }] : []),
+      ...(vr    > 0 ? [{ nome: 'Vale refeição',        sub: 'desconto em folha',             val: vr,    neg: true }] : []),
+      ...(vt    > 0 ? [{ nome: 'Vale transporte',      sub: 'desconto em folha',             val: vt,    neg: true }] : []),
+      ...(outros> 0 ? [{ nome: 'Outros descontos',     sub: '',                              val: outros,neg: true }] : []),
+    ],
+    'O VT tem desconto limitado a 6% do salário bruto por lei. Plano de saúde e previdência privada não reduzem a base do INSS, mas a previdência privada (PGBL) reduz a base do IR.'
+  );
+}
 function calcDecimo() {
   const salario    = getSalario(); if (!salario) return;
   const meses      = parseInt(document.getElementById('d-meses').value) || 12;
