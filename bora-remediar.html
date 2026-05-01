@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bora Remediar — controle de medicamentos e lembretes</title>
+<meta name="description" content="Organize seus remédios, defina horários automáticos e acompanhe se tomou cada dose. Histórico de adesão por remédio e por dia.">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7831385824431254" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f0ff;--ink:#100820;--muted:#6a5a8a;--border:#ddd0f0;
+  --purple:#6c3fc5;--purple-light:#f0ebff;--purple-mid:#8855dd;
+  --green:#1a7a3a;--green-light:#e8f5ec;
+  --red:#c0392b;--red-light:#fdf0ee;
+  --yellow:#d4a020;--yellow-light:#fff8e0;
+  --white:#fff;--card:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0 0 80px;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:20;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--purple-mid);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;}
+.app{max-width:480px;margin:0 auto;padding:20px 16px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);}
+.logo span{color:var(--purple-mid);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+.tabs{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.tab{flex:1;padding:10px 4px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;}
+.tab.active{background:var(--purple);color:#fff;}
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:16px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input,.field select{font-family:'DM Sans',sans-serif;font-size:14px;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--white);color:var(--ink);outline:none;transition:border-color .15s;width:100%;}
+.field input:focus,.field select:focus{border-color:var(--purple);}
+.field input::placeholder{color:#bbb;}
+.full{grid-column:1/-1;}
+.add-btn{margin-top:14px;width:100%;background:var(--purple-mid);border:none;border-radius:10px;padding:13px;font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.add-btn:hover{opacity:.88;}
+
+/* ROTINA */
+.rotina-box{background:var(--purple-light);border:1.5px solid var(--purple);border-radius:12px;padding:14px 16px;margin-bottom:16px;}
+.rotina-titulo{font-size:13px;font-weight:500;margin-bottom:10px;}
+.rotina-row{display:flex;gap:10px;}
+
+/* REMÉDIOS CADASTRADOS */
+.rem-lista{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.rem-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:14px;}
+.rem-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.rem-nome{font-size:15px;font-weight:500;color:var(--ink);}
+.rem-dose{font-size:12px;color:var(--muted);}
+.rem-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;}
+.rem-del:hover{color:var(--red);}
+.rem-horarios{display:flex;flex-wrap:wrap;gap:6px;}
+.rem-hora-tag{font-size:12px;background:var(--purple-light);border:1px solid var(--border);border-radius:20px;padding:3px 10px;color:var(--purple);}
+.rem-adesao{font-size:11px;color:var(--muted);margin-top:6px;}
+.rem-adesao span{color:var(--green);font-weight:500;}
+
+/* AGENDA DO DIA */
+.agenda-lista{display:flex;flex-direction:column;gap:8px;}
+.dose-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .15s;}
+.dose-card.tomado{opacity:.5;background:#f8f8f8;}
+.dose-card.atrasado{border-color:var(--red);}
+.dose-card.proximo{border-color:var(--yellow);}
+.dose-hora{font-family:'Fraunces',serif;font-size:20px;font-weight:700;min-width:52px;color:var(--purple);}
+.dose-card.atrasado .dose-hora{color:var(--red);}
+.dose-info{flex:1;}
+.dose-nome{font-size:14px;font-weight:500;}
+.dose-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.dose-status{font-size:11px;margin-top:4px;}
+.dose-status.atrasado{color:var(--red);}
+.dose-status.proximo{color:var(--yellow);}
+.tomar-btn{padding:8px 14px;border-radius:8px;border:1.5px solid var(--purple);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--purple);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.tomar-btn:hover{background:var(--purple);color:#fff;}
+.tomar-btn.tomado{background:var(--green-light);border-color:var(--green);color:var(--green);}
+.agenda-vazio{text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;}
+
+/* LEMBRETE */
+.lembrete-box{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;}
+.lembrete-row{display:flex;justify-content:space-between;align-items:center;}
+.lembrete-titulo{font-size:13px;font-weight:500;}
+.toggle-sw{position:relative;width:44px;height:24px;}
+.toggle-sw input{opacity:0;width:0;height:0;}
+.toggle-sw .slider{position:absolute;inset:0;background:#ccc;border-radius:12px;cursor:pointer;transition:.3s;}
+.toggle-sw input:checked + .slider{background:var(--purple);}
+.toggle-sw .slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle-sw input:checked + .slider::before{transform:translateX(20px);}
+.lembrete-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* HISTÓRICO */
+.hist-lista{display:flex;flex-direction:column;gap:8px;}
+.hist-dia-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.hist-dia-header{padding:10px 14px;background:var(--purple-light);display:flex;justify-content:space-between;font-size:12px;}
+.hist-dia-data{font-weight:500;color:var(--ink);}
+.hist-dia-pct{color:var(--purple);font-weight:500;}
+.hist-dose-row{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid var(--border);font-size:12px;}
+.hist-dose-row:last-child{border-bottom:none;}
+.hist-dose-nome{color:var(--ink);}
+.hist-dose-status{padding:2px 8px;border-radius:10px;font-size:11px;}
+.hist-dose-status.sim{background:var(--green-light);color:var(--green);}
+.hist-dose-status.nao{background:var(--red-light);color:var(--red);}
+
+.empty-state{text-align:center;padding:32px;color:var(--muted);font-size:13px;}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+<div class="app">
+  <div class="logo">Bora <span>Remediar</span></div>
+  <p class="tagline">nunca mais esqueça um remédio — horários automáticos e histórico de adesão</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('agenda')">📋 Agenda</button>
+    <button class="tab" onclick="setTab('remedios')">💊 Remédios</button>
+    <button class="tab" onclick="setTab('historico')">📊 Histórico</button>
+  </div>
+
+  <!-- ABA AGENDA -->
+  <div id="tab-agenda">
+    <div class="lembrete-box">
+      <div class="lembrete-row">
+        <span class="lembrete-titulo">🔔 Alertas sonoros</span>
+        <label class="toggle-sw"><input type="checkbox" id="toggle-alerta" onchange="toggleAlerta()"><span class="slider"></span></label>
+      </div>
+      <div class="lembrete-sub">Mantenha esta aba aberta para receber os alertas nos horários certos</div>
+    </div>
+    <div class="section-label">doses de hoje</div>
+    <div class="agenda-lista" id="agenda-lista"></div>
+  </div>
+
+  <!-- ABA REMÉDIOS -->
+  <div id="tab-remedios" class="hidden">
+
+    <div class="section-label" style="margin-top:0;">sua rotina</div>
+    <div class="rotina-box">
+      <div class="rotina-titulo">⏰ Que horas você acorda e dorme?</div>
+      <div class="rotina-row">
+        <div class="field">
+          <label>acorda às</label>
+          <input type="time" id="hora-acorda" value="07:00">
+        </div>
+        <div class="field">
+          <label>dorme às</label>
+          <input type="time" id="hora-dorme" value="23:00">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">adicionar remédio</div>
+    <div class="row">
+      <div class="field full">
+        <label>nome do remédio</label>
+        <input type="text" id="rem-nome" placeholder="ex: Losartana 50mg">
+      </div>
+      <div class="field">
+        <label>dose / observação</label>
+        <input type="text" id="rem-dose" placeholder="ex: 1 comprimido">
+      </div>
+      <div class="field">
+        <label>frequência</label>
+        <select id="rem-freq">
+          <option value="1">1x ao dia</option>
+          <option value="2">2x ao dia</option>
+          <option value="3">3x ao dia</option>
+          <option value="4">4x ao dia</option>
+          <option value="6">6x ao dia</option>
+          <option value="8">8x ao dia</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>com ou sem alimento?</label>
+        <select id="rem-alimento">
+          <option value="">Indiferente</option>
+          <option value="com">Com alimento</option>
+          <option value="sem">Em jejum</option>
+        </select>
+      </div>
+    </div>
+    <button class="add-btn" onclick="addRemedio()">+ adicionar remédio</button>
+
+    <div class="section-label" style="margin-top:20px;">remédios cadastrados</div>
+    <div class="rem-lista" id="rem-lista"></div>
+  </div>
+
+  <!-- ABA HISTÓRICO -->
+  <div id="tab-historico" class="hidden">
+    <div class="section-label" style="margin-top:0;">últimos 7 dias</div>
+    <div class="hist-lista" id="hist-lista"></div>
+  </div>
+</div>
+
+<script>
+const SK_REM  = 'bora_remediar_remedios';
+const SK_LOG  = 'bora_remediar_log';
+const SK_ROT  = 'bora_remediar_rotina';
+
+let remedios = JSON.parse(localStorage.getItem(SK_REM)||'[]');
+let log      = JSON.parse(localStorage.getItem(SK_LOG)||'{}');
+let alertaInterval = null;
+
+// carrega rotina
+(function(){
+  const rot = JSON.parse(localStorage.getItem(SK_ROT)||'null');
+  if (rot) {
+    document.getElementById('hora-acorda').value = rot.acorda||'07:00';
+    document.getElementById('hora-dorme').value  = rot.dorme||'23:00';
+  }
+})();
+
+function salvarRotina() {
+  localStorage.setItem(SK_ROT, JSON.stringify({
+    acorda: document.getElementById('hora-acorda').value,
+    dorme:  document.getElementById('hora-dorme').value,
+  }));
+}
+
+function setTab(t) {
+  ['agenda','remedios','historico'].forEach(id => {
+    document.getElementById('tab-'+id).classList.toggle('hidden', id!==t);
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active',['agenda','remedios','historico'][i]===t);
+  });
+  if (t==='agenda')    renderAgenda();
+  if (t==='remedios')  renderRemedios();
+  if (t==='historico') renderHistorico();
+}
+
+// ─── HORÁRIOS AUTOMÁTICOS ────────────────────────────────────────────────────
+function gerarHorarios(freq, acorda, dorme) {
+  const [hA, mA] = acorda.split(':').map(Number);
+  const [hD, mD] = dorme.split(':').map(Number);
+  const minAcorda = hA*60+mA;
+  const minDorme  = hD*60+mD;
+  const janela    = minDorme - minAcorda;
+  const intervalo = Math.floor(janela / (freq > 1 ? freq-1 : 1));
+  const horarios  = [];
+  for (let i=0; i<freq; i++) {
+    const min = minAcorda + (freq===1 ? Math.floor(janela/2) : i*intervalo);
+    const h   = Math.floor(min/60).toString().padStart(2,'0');
+    const m   = (min%60).toString().padStart(2,'0');
+    horarios.push(h+':'+m);
+  }
+  return horarios;
+}
+
+// ─── ADD REMÉDIO ──────────────────────────────────────────────────────────────
+function addRemedio() {
+  salvarRotina();
+  const nome    = document.getElementById('rem-nome').value.trim();
+  const dose    = document.getElementById('rem-dose').value.trim();
+  const freq    = parseInt(document.getElementById('rem-freq').value)||1;
+  const alimento= document.getElementById('rem-alimento').value;
+  const acorda  = document.getElementById('hora-acorda').value||'07:00';
+  const dorme   = document.getElementById('hora-dorme').value||'23:00';
+  if (!nome) { alert('Informe o nome do remédio.'); return; }
+
+  const horarios = gerarHorarios(freq, acorda, dorme);
+  remedios.push({ id: Date.now(), nome, dose, freq, alimento, horarios });
+  localStorage.setItem(SK_REM, JSON.stringify(remedios));
+  document.getElementById('rem-nome').value='';
+  document.getElementById('rem-dose').value='';
+  renderRemedios();
+  setTab('agenda');
+}
+
+function removerRemedio(id) {
+  if(!confirm('Remover este remédio?')) return;
+  remedios = remedios.filter(r=>r.id!==id);
+  localStorage.setItem(SK_REM, JSON.stringify(remedios));
+  renderRemedios();
+  renderAgenda();
+}
+
+// ─── RENDER REMÉDIOS ──────────────────────────────────────────────────────────
+function renderRemedios() {
+  const lista = document.getElementById('rem-lista');
+  if (!remedios.length) {
+    lista.innerHTML='<div class="empty-state">Nenhum remédio cadastrado ainda.<br>Adicione acima 💊</div>';
+    return;
+  }
+  lista.innerHTML = remedios.map(r => {
+    const adesao = calcAdesao(r.id);
+    return `<div class="rem-card">
+      <div class="rem-top">
+        <div>
+          <div class="rem-nome">💊 ${r.nome}</div>
+          <div class="rem-dose">${r.dose||''}${r.alimento?' · '+(r.alimento==='com'?'com alimento':'em jejum'):''}</div>
+        </div>
+        <button class="rem-del" onclick="removerRemedio(${r.id})">×</button>
+      </div>
+      <div class="rem-horarios">${r.horarios.map(h=>`<span class="rem-hora-tag">${h}</span>`).join('')}</div>
+      <div class="rem-adesao">Adesão 7 dias: <span>${adesao}%</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ─── RENDER AGENDA ────────────────────────────────────────────────────────────
+function dataHoje() { return new Date().toISOString().split('T')[0]; }
+
+function chaveLog(remedioId, hora, data) { return `${data}_${remedioId}_${hora}`; }
+
+function marcarTomado(remedioId, hora) {
+  const key = chaveLog(remedioId, hora, dataHoje());
+  log[key] = { tomado:true, hora: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) };
+  localStorage.setItem(SK_LOG, JSON.stringify(log));
+  renderAgenda();
+}
+
+function renderAgenda() {
+  const lista = document.getElementById('agenda-lista');
+  if (!remedios.length) {
+    lista.innerHTML='<div class="agenda-vazio">Nenhum remédio cadastrado.<br>Vá em 💊 Remédios para adicionar.</div>';
+    return;
+  }
+
+  const agora  = new Date();
+  const hAtual = agora.getHours()*60+agora.getMinutes();
+  const hoje   = dataHoje();
+
+  // monta todas as doses do dia
+  const doses = [];
+  remedios.forEach(r => {
+    r.horarios.forEach(h => {
+      const [hh,mm]   = h.split(':').map(Number);
+      const minDose   = hh*60+mm;
+      const key       = chaveLog(r.id, h, hoje);
+      const tomado    = log[key]?.tomado||false;
+      const atrasado  = !tomado && minDose < hAtual - 15;
+      const proximo   = !tomado && Math.abs(minDose - hAtual) <= 30;
+      doses.push({r, h, minDose, key, tomado, atrasado, proximo});
+    });
+  });
+  doses.sort((a,b)=>a.minDose-b.minDose);
+
+  lista.innerHTML = doses.map(d => {
+    const cls = d.tomado?'tomado':d.atrasado?'atrasado':d.proximo?'proximo':'';
+    const btnCls = d.tomado?'tomado':'';
+    const statusTxt = d.tomado
+      ? `✅ Tomado às ${log[d.key].hora}`
+      : d.atrasado ? '⚠️ Atrasado!' : d.proximo ? '🔔 Próxima dose' : '';
+    const statusCls = d.atrasado?'atrasado':d.proximo?'proximo':'';
+    const aliTxt = d.r.alimento ? (d.r.alimento==='com'?' · com alimento':' · em jejum') : '';
+    return `<div class="dose-card ${cls}">
+      <div class="dose-hora">${d.h}</div>
+      <div class="dose-info">
+        <div class="dose-nome">${d.r.nome}</div>
+        <div class="dose-sub">${d.r.dose||''}${aliTxt}</div>
+        ${statusTxt?`<div class="dose-status ${statusCls}">${statusTxt}</div>`:''}
+      </div>
+      <button class="tomar-btn ${btnCls}" onclick="marcarTomado(${d.r.id},'${d.h}')" ${d.tomado?'disabled':''}>
+        ${d.tomado?'✓ Tomei':'Tomei'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ─── HISTÓRICO ────────────────────────────────────────────────────────────────
+function calcAdesao(remedioId) {
+  let total=0, tomados=0;
+  for (let i=0; i<7; i++) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const data = d.toISOString().split('T')[0];
+    const rem  = remedios.find(r=>r.id===remedioId);
+    if (!rem) continue;
+    rem.horarios.forEach(h => {
+      total++;
+      if (log[chaveLog(remedioId,h,data)]?.tomado) tomados++;
+    });
+  }
+  return total>0 ? Math.round(tomados/total*100) : 0;
+}
+
+function renderHistorico() {
+  const lista = document.getElementById('hist-lista');
+  if (!remedios.length) { lista.innerHTML='<div class="empty-state">Nenhum remédio cadastrado.</div>'; return; }
+
+  const dias = [];
+  for (let i=0;i<7;i++) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    dias.push(d.toISOString().split('T')[0]);
+  }
+
+  lista.innerHTML = dias.map(data => {
+    const doses = [];
+    remedios.forEach(r => {
+      r.horarios.forEach(h => {
+        const tomado = log[chaveLog(r.id,h,data)]?.tomado||false;
+        doses.push({nome:r.nome+' '+h, tomado});
+      });
+    });
+    const tot = doses.length;
+    const tom = doses.filter(d=>d.tomado).length;
+    const pct = tot>0?Math.round(tom/tot*100):0;
+    const dataFmt = new Date(data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
+    return `<div class="hist-dia-card">
+      <div class="hist-dia-header">
+        <span class="hist-dia-data">${dataFmt}</span>
+        <span class="hist-dia-pct">${tom}/${tot} doses · ${pct}%</span>
+      </div>
+      ${doses.map(d=>`
+      <div class="hist-dose-row">
+        <span class="hist-dose-nome">💊 ${d.nome}</span>
+        <span class="hist-dose-status ${d.tomado?'sim':'nao'}">${d.tomado?'✓ Tomei':'✗ Esqueci'}</span>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ─── ALERTA ───────────────────────────────────────────────────────────────────
+function toggleAlerta() {
+  const ativo = document.getElementById('toggle-alerta').checked;
+  if (ativo) {
+    alertaInterval = setInterval(verificarAlertas, 30000);
+    verificarAlertas();
+  } else {
+    clearInterval(alertaInterval);
+  }
+}
+
+function verificarAlertas() {
+  const agora  = new Date();
+  const hAtual = agora.getHours()*60+agora.getMinutes();
+  const hoje   = dataHoje();
+  remedios.forEach(r => {
+    r.horarios.forEach(h => {
+      const [hh,mm] = h.split(':').map(Number);
+      const minDose = hh*60+mm;
+      const key     = chaveLog(r.id,h,hoje);
+      if (!log[key]?.tomado && Math.abs(minDose-hAtual) <= 1) {
+        beep();
+        alert(`💊 Hora do remédio!\n\n${r.nome}\n${r.dose||''}`);
+      }
+    });
+  });
+}
+
+function beep() {
+  try {
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator();const g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=660;g.gain.value=0.25;
+    o.start();setTimeout(()=>{o.frequency.value=880;setTimeout(()=>o.stop(),300)},300);
+  } catch(e){}
+}
+
+// init
+renderAgenda();
+renderRemedios();
+</script>
+</body>
+</html>

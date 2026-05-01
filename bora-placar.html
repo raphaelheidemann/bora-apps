@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Bora Placar — marcador de placar esportivo</title>
+<meta name="description" content="Marcador de placar esportivo gratuito. Futsal, vôlei, basquete, tênis e mais. Modo paisagem, controle de tempo e faltas.">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7831385824431254" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c10;--ink:#f0f4f8;--muted:#6a7a8a;--border:#1a2430;
+  --blue:#2a7aee;--blue-light:#0a1a3a;
+  --red:#e83a2a;--green:#27ae60;--yellow:#f39c12;
+  --card:#0e1620;--white:#fff;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+
+/* NAV */
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:30;}
+.top-nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none;}
+.top-nav-logo span{color:var(--blue);}
+.top-nav-back{font-size:13px;color:var(--muted);text-decoration:none;}
+
+/* SETUP */
+.setup{max-width:480px;margin:0 auto;padding:20px 16px 60px;}
+.logo{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--ink);}
+.logo span{color:var(--blue);}
+.tagline{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+
+.section-label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:18px;}
+.esportes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.esporte-pill{padding:12px 4px;border:1.5px solid var(--border);border-radius:10px;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s;}
+.esporte-pill .esp-icon{font-size:22px;display:block;margin-bottom:4px;}
+.esporte-pill.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
+
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.field label{font-size:11px;color:var(--muted);}
+.field input{font-family:'DM Sans',sans-serif;font-size:14px;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--card);color:var(--ink);outline:none;width:100%;transition:border-color .15s;}
+.field input:focus{border-color:var(--blue);}
+.field input::placeholder{color:#333;}
+
+/* IMPORTAR DO SORTEAR */
+.import-box{background:var(--blue-light);border:1px solid var(--blue);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-bottom:16px;display:none;}
+.import-box strong{color:var(--ink);display:block;margin-bottom:6px;}
+.import-times{display:flex;gap:8px;}
+.import-btn{flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--ink);cursor:pointer;transition:all .15s;}
+.import-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+.start-btn{margin-top:20px;width:100%;background:var(--blue);border:none;border-radius:10px;padding:14px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:opacity .15s;}
+.start-btn:hover{opacity:.88;}
+
+/* ═══ PLACAR ═══ */
+#placar{display:none;min-height:100vh;}
+
+/* MODO RETRATO */
+.placar-portrait{padding:16px;}
+.esporte-badge{text-align:center;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;}
+
+.times-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:16px;}
+.time-col{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px 10px;text-align:center;}
+.time-nome{font-size:12px;color:var(--muted);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.time-placar{font-family:'Fraunces',serif;font-size:64px;font-weight:900;line-height:1;color:var(--ink);}
+.time-col.liderando .time-placar{color:var(--blue);}
+.placar-sep{font-family:'Fraunces',serif;font-size:32px;color:var(--muted);text-align:center;}
+
+.btn-score{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.btn-add{width:100%;background:var(--blue);border:none;border-radius:8px;padding:12px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:#fff;cursor:pointer;transition:all .15s;}
+.btn-add:active{transform:scale(.96);}
+.btn-sub{width:100%;background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:8px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;}
+.btn-sub:hover{border-color:var(--red);color:var(--red);}
+
+/* STATS */
+.stats-row{display:flex;gap:8px;margin-bottom:12px;}
+.stat-card{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;}
+.stat-val{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--ink);}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.stat-btns{display:flex;gap:4px;margin-top:6px;justify-content:center;}
+.stat-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;font-size:12px;color:var(--muted);cursor:pointer;}
+.stat-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+/* TIMER */
+.timer-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;margin-bottom:12px;}
+.timer-display{font-family:'Fraunces',serif;font-size:42px;font-weight:900;color:var(--ink);letter-spacing:2px;}
+.timer-btns{display:flex;gap:8px;justify-content:center;margin-top:10px;}
+.timer-btn{padding:8px 20px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s;}
+.timer-btn.play{background:var(--green);border-color:var(--green);color:#fff;}
+.timer-btn.stop{background:var(--red);border-color:var(--red);color:#fff;}
+
+/* SETS */
+.sets-row{display:flex;gap:8px;margin-bottom:12px;}
+.set-item{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;font-size:11px;color:var(--muted);}
+.set-score{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--ink);}
+
+/* AÇÕES */
+.acoes-row{display:flex;gap:8px;}
+.acao-btn{flex:1;padding:11px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center;}
+.acao-btn:hover{border-color:var(--blue);color:var(--blue);}
+.acao-btn.danger{color:var(--red);}
+.acao-btn.danger:hover{border-color:var(--red);}
+
+/* LANDSCAPE */
+@media(orientation:landscape){
+  .top-nav{display:none;}
+  .placar-portrait{padding:8px 12px;}
+  .time-placar{font-size:80px;}
+  .stats-row{margin-bottom:6px;}
+  .timer-box{padding:10px;}
+  .timer-display{font-size:32px;}
+}
+
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<!-- SETUP -->
+<div class="setup" id="setup">
+  <div class="logo">Bora <span>Placar</span></div>
+  <p class="tagline">marcador de placar esportivo — gire o celular para modo paisagem</p>
+
+  <div class="section-label">esporte</div>
+  <div class="esportes-grid">
+    <button class="esporte-pill active" onclick="setEsporte('futsal')"><span class="esp-icon">⚽</span>Futsal</button>
+    <button class="esporte-pill" onclick="setEsporte('volei')"><span class="esp-icon">🏐</span>Vôlei</button>
+    <button class="esporte-pill" onclick="setEsporte('basquete')"><span class="esp-icon">🏀</span>Basquete</button>
+    <button class="esporte-pill" onclick="setEsporte('tenis')"><span class="esp-icon">🎾</span>Tênis</button>
+    <button class="esporte-pill" onclick="setEsporte('sinuca')"><span class="esp-icon">🎱</span>Sinuca</button>
+    <button class="esporte-pill" onclick="setEsporte('outro')"><span class="esp-icon">🏆</span>Outro</button>
+  </div>
+
+  <!-- IMPORTAR DO BORA SORTEAR -->
+  <div class="import-box" id="import-box">
+    <strong>📲 Times do Bora Sortear detectados!</strong>
+    <div class="import-times" id="import-times"></div>
+  </div>
+
+  <div class="section-label">nomes dos times</div>
+  <div class="field"><label>Time A</label><input type="text" id="nome-a" placeholder="ex: Corinthians / Azul" value="Time A"></div>
+  <div class="field"><label>Time B</label><input type="text" id="nome-b" placeholder="ex: Flamengo / Vermelho" value="Time B"></div>
+
+  <button class="start-btn" onclick="iniciarPlacar()">🏆 iniciar partida →</button>
+</div>
+
+<!-- PLACAR -->
+<div id="placar">
+  <div class="placar-portrait">
+    <div class="esporte-badge" id="esporte-badge">⚽ FUTSAL</div>
+
+    <!-- TIMER (futsal/basquete) -->
+    <div class="timer-box" id="timer-box">
+      <div class="timer-display" id="timer-display">20:00</div>
+      <div class="timer-btns">
+        <button class="timer-btn play" id="btn-timer" onclick="toggleTimer()">▶ iniciar</button>
+        <button class="timer-btn" onclick="resetTimer()">↺ reset</button>
+      </div>
+    </div>
+
+    <!-- SETS (vôlei/tênis) -->
+    <div class="sets-row hidden" id="sets-row" id="sets-display"></div>
+
+    <!-- PLACAR PRINCIPAL -->
+    <div class="times-row">
+      <div class="time-col" id="col-a">
+        <div class="time-nome" id="label-a">Time A</div>
+        <div class="time-placar" id="score-a">0</div>
+        <div class="btn-score">
+          <button class="btn-add" onclick="addPonto('a')">+1</button>
+          <button class="btn-sub" onclick="subPonto('a')">−1</button>
+        </div>
+      </div>
+      <div class="placar-sep">×</div>
+      <div class="time-col" id="col-b">
+        <div class="time-nome" id="label-b">Time B</div>
+        <div class="time-placar" id="score-b">0</div>
+        <div class="btn-score">
+          <button class="btn-add" onclick="addPonto('b')">+1</button>
+          <button class="btn-sub" onclick="subPonto('b')">−1</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS (faltas/games) -->
+    <div class="stats-row" id="stats-faltas">
+      <div class="stat-card">
+        <div class="stat-val" id="faltas-a">0</div>
+        <div class="stat-lbl" id="lbl-faltas-a">Faltas A</div>
+        <div class="stat-btns">
+          <button class="stat-btn" onclick="addFalta('a')">+</button>
+          <button class="stat-btn" onclick="subFalta('a')">−</button>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="periodo-display">1º</div>
+        <div class="stat-lbl" id="lbl-periodo">período</div>
+        <div class="stat-btns">
+          <button class="stat-btn" onclick="nextPeriodo()">→</button>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="faltas-b">0</div>
+        <div class="stat-lbl" id="lbl-faltas-b">Faltas B</div>
+        <div class="stat-btns">
+          <button class="stat-btn" onclick="addFalta('b')">+</button>
+          <button class="stat-btn" onclick="subFalta('b')">−</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="acoes-row">
+      <button class="acao-btn" onclick="compartilhar()">📲 WhatsApp</button>
+      <button class="acao-btn" onclick="novaPartida()">🔄 nova partida</button>
+      <button class="acao-btn danger" onclick="resetPlacar()">↺ zerar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIGURAÇÕES POR ESPORTE ────────────────────────────────────────────────
+const CONFIG = {
+  futsal:   { icon:'⚽', timer:20*60, temTempo:true,  temFaltas:true,  periodos:['1º Tempo','2º Tempo','Prorrogação'], labelFalta:'Faltas', pontoLabel:'+1' },
+  volei:    { icon:'🏐', timer:0,     temTempo:false, temFaltas:false, periodos:['Set 1','Set 2','Set 3','Set 4','Set 5'], labelFalta:'', pontoLabel:'+1', temSets:true },
+  basquete: { icon:'🏀', timer:10*60, temTempo:true,  temFaltas:true,  periodos:['1º Q','2º Q','3º Q','4º Q'], labelFalta:'Faltas', pontoLabel:'+2' },
+  tenis:    { icon:'🎾', timer:0,     temTempo:false, temFaltas:false, periodos:['Set 1','Set 2','Set 3'], labelFalta:'', pontoLabel:'+1', temSets:true },
+  sinuca:   { icon:'🎱', timer:0,     temTempo:false, temFaltas:false, periodos:['Frame 1','Frame 2','Frame 3'], labelFalta:'Faltas' },
+  outro:    { icon:'🏆', timer:0,     temTempo:false, temFaltas:false, periodos:['1º Tempo','2º Tempo','Prorrogação'], labelFalta:'' },
+};
+
+let esporteSel = 'futsal';
+let estado = { scoreA:0, scoreB:0, faltasA:0, faltasB:0, periodo:0, sets:[], timerSeg:0, timerRodando:false };
+let timerInterval = null;
+let cfg = CONFIG.futsal;
+
+function setEsporte(e) {
+  esporteSel = e;
+  document.querySelectorAll('.esporte-pill').forEach((p,i) => {
+    p.classList.toggle('active', ['futsal','volei','basquete','tenis','sinuca','outro'][i] === e);
+  });
+}
+
+// verifica times do Bora Sortear
+(function(){
+  try {
+    const dados = localStorage.getItem('bora_sortear_times');
+    if (!dados) return;
+    const times = JSON.parse(dados);
+    if (!times || times.length < 2) return;
+    const box = document.getElementById('import-box');
+    box.style.display = 'block';
+    document.getElementById('import-times').innerHTML = times.slice(0,4).map((t,i) =>
+      `<button class="import-btn" onclick="importarTime('${i===0?'a':'b'}','${t.nome}')">${t.nome}</button>`
+    ).join('');
+  } catch(e){}
+})();
+
+function importarTime(lado, nome) {
+  document.getElementById('nome-'+lado).value = nome;
+}
+
+function iniciarPlacar() {
+  cfg = CONFIG[esporteSel];
+  estado = { scoreA:0, scoreB:0, faltasA:0, faltasB:0, periodo:0, sets:[], timerSeg:cfg.timer, timerRodando:false };
+
+  document.getElementById('label-a').textContent = document.getElementById('nome-a').value || 'Time A';
+  document.getElementById('label-b').textContent = document.getElementById('nome-b').value || 'Time B';
+  document.getElementById('esporte-badge').textContent = cfg.icon + ' ' + esporteSel.toUpperCase();
+
+  // timer
+  const timerBox = document.getElementById('timer-box');
+  timerBox.classList.toggle('hidden', !cfg.temTempo);
+  if (cfg.temTempo) atualizaTimer();
+
+  // faltas
+  document.getElementById('stats-faltas').classList.toggle('hidden', !cfg.temFaltas && !cfg.periodos);
+  document.getElementById('lbl-faltas-a').textContent = cfg.labelFalta + ' ' + (document.getElementById('nome-a').value || 'A');
+  document.getElementById('lbl-faltas-b').textContent = cfg.labelFalta + ' ' + (document.getElementById('nome-b').value || 'B');
+  if (!cfg.temFaltas) {
+    document.getElementById('faltas-a').parentElement.style.visibility = 'hidden';
+    document.getElementById('faltas-b').parentElement.style.visibility = 'hidden';
+  }
+
+  document.getElementById('lbl-periodo').textContent = cfg.periodos[0];
+  document.getElementById('periodo-display').textContent = '1';
+
+  atualizaPlacar();
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('placar').style.display = 'block';
+}
+
+function atualizaPlacar() {
+  document.getElementById('score-a').textContent = estado.scoreA;
+  document.getElementById('score-b').textContent = estado.scoreB;
+  document.getElementById('faltas-a').textContent = estado.faltasA;
+  document.getElementById('faltas-b').textContent = estado.faltasB;
+  document.getElementById('col-a').classList.toggle('liderando', estado.scoreA > estado.scoreB);
+  document.getElementById('col-b').classList.toggle('liderando', estado.scoreB > estado.scoreA);
+}
+
+function addPonto(lado) {
+  const pts = esporteSel === 'basquete' ? 2 : 1;
+  if (lado==='a') estado.scoreA += pts; else estado.scoreB += pts;
+  atualizaPlacar();
+}
+function subPonto(lado) {
+  if (lado==='a') estado.scoreA = Math.max(0, estado.scoreA-1); else estado.scoreB = Math.max(0, estado.scoreB-1);
+  atualizaPlacar();
+}
+function addFalta(lado) { if (lado==='a') estado.faltasA++; else estado.faltasB++; atualizaPlacar(); }
+function subFalta(lado) { if (lado==='a') estado.faltasA=Math.max(0,estado.faltasA-1); else estado.faltasB=Math.max(0,estado.faltasB-1); atualizaPlacar(); }
+
+function nextPeriodo() {
+  estado.periodo = Math.min(cfg.periodos.length-1, estado.periodo+1);
+  document.getElementById('lbl-periodo').textContent = cfg.periodos[estado.periodo];
+  document.getElementById('periodo-display').textContent = estado.periodo+1;
+  if (cfg.temTempo) { estado.timerSeg = cfg.timer; pararTimer(); atualizaTimer(); }
+  if (cfg.temFaltas) { estado.faltasA=0; estado.faltasB=0; atualizaPlacar(); }
+}
+
+// ─── TIMER ────────────────────────────────────────────────────────────────────
+function toggleTimer() {
+  if (estado.timerRodando) pararTimer(); else iniciarTimer();
+}
+function iniciarTimer() {
+  estado.timerRodando = true;
+  document.getElementById('btn-timer').textContent = '⏸ pausar';
+  document.getElementById('btn-timer').className = 'timer-btn stop';
+  timerInterval = setInterval(() => {
+    if (estado.timerSeg > 0) { estado.timerSeg--; atualizaTimer(); }
+    else { pararTimer(); beep(); }
+  }, 1000);
+}
+function pararTimer() {
+  estado.timerRodando = false;
+  clearInterval(timerInterval);
+  document.getElementById('btn-timer').textContent = '▶ iniciar';
+  document.getElementById('btn-timer').className = 'timer-btn play';
+}
+function resetTimer() { pararTimer(); estado.timerSeg = cfg.timer; atualizaTimer(); }
+function atualizaTimer() {
+  const m = Math.floor(estado.timerSeg/60).toString().padStart(2,'0');
+  const s = (estado.timerSeg%60).toString().padStart(2,'0');
+  document.getElementById('timer-display').textContent = m+':'+s;
+}
+function resetPlacar() { if(confirm('Zerar o placar?')){ estado.scoreA=0;estado.scoreB=0;estado.faltasA=0;estado.faltasB=0;estado.periodo=0;resetTimer();atualizaPlacar();document.getElementById('lbl-periodo').textContent=cfg.periodos[0];document.getElementById('periodo-display').textContent='1';} }
+function novaPartida() { pararTimer(); document.getElementById('setup').style.display='block'; document.getElementById('placar').style.display='none'; }
+
+function beep() {
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = 880; g.gain.value = 0.3;
+    o.start(); setTimeout(()=>o.stop(),600);
+  } catch(e){}
+}
+
+function compartilhar() {
+  const nA = document.getElementById('label-a').textContent;
+  const nB = document.getElementById('label-b').textContent;
+  const msg = `${cfg.icon} *Bora Placar — ${esporteSel.toUpperCase()}*\n\n${nA}: *${estado.scoreA}*\n${nB}: *${estado.scoreB}*\n\n_Marcado com Bora Apps_ 🏆\nboraapps.com.br`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+</script>
+</body>
+</html>
