@@ -50,6 +50,29 @@ h1 em{font-style:italic;color:var(--orange);}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
+/* ─── VISITADOS RECENTEMENTE ─── */
+#recentes-wrap{
+  max-width:960px;margin:0 auto;
+  padding:0 40px 32px;
+  display:none; /* mostrado via JS quando há histórico */
+}
+.recentes-label{
+  font-size:10px;letter-spacing:.12em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:12px;
+}
+.recentes-lista{display:flex;gap:10px;flex-wrap:wrap;}
+.recente-item{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:8px 14px;
+  text-decoration:none;color:var(--ink);
+  font-size:13px;font-weight:500;
+  transition:border-color .15s, transform .15s;
+}
+.recente-item:hover{border-color:var(--orange);transform:translateY(-1px);}
+.recente-item .r-icon{font-size:18px;line-height:1;}
+.recente-item .r-nome{white-space:nowrap;}
+
 /* APPS GRID */
 .apps-section{padding:20px 40px 80px;max-width:960px;margin:0 auto;}
 .section-title{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:24px;}
@@ -73,6 +96,7 @@ h1 em{font-style:italic;color:var(--orange);}
 }
 .app-card:hover{border-color:var(--accent);transform:translateY(-2px);}
 .app-card:hover::before{opacity:1;}
+.app-card.disabled{pointer-events:none;opacity:.45;}
 
 .app-card[data-color="orange"]{--accent:var(--orange);}
 .app-card[data-color="green"]{--accent:var(--green);}
@@ -109,6 +133,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
   .about-section{padding:40px 20px;}
   footer{padding:20px;flex-direction:column;text-align:center;}
   .nav-links{display:none;}
+  #recentes-wrap{padding:0 20px 24px;}
 }
 </style>
 </head>
@@ -118,6 +143,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
   <a class="nav-logo" href="index.html">Bora <span>Apps</span></a>
   <div class="nav-links">
     <a href="#apps">ferramentas</a>
+    <a href="faq.html">FAQ</a>
     <a href="sobre.html">sobre</a>
     <a href="privacidade.html">privacidade</a>
   </div>
@@ -133,12 +159,18 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
   </div>
 </section>
 
+<!-- VISITADOS RECENTEMENTE -->
+<div id="recentes-wrap">
+  <div class="recentes-label">⚡ visitados por último</div>
+  <div class="recentes-lista" id="recentes-lista"></div>
+</div>
+
 <section class="apps-section" id="apps">
 
   <div class="section-title">💰 finanças e divisão</div>
   <div class="apps-grid">
 
-    <a class="app-card" href="bora-junto.html" data-color="green">
+    <a class="app-card" href="bora-junto.html" data-color="green" data-nome="Bora Junto" data-icon="🚗">
       <div class="app-icon">🚗</div>
       <div class="app-name">Bora Junto</div>
       <div class="app-desc">Calcula quanto cobrar de carona no mês — combustível, depreciação e manutenção incluídos.</div>
@@ -146,7 +178,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-lanchar.html" data-color="orange">
+    <a class="app-card" href="bora-lanchar.html" data-color="orange" data-nome="Bora Lanchar" data-icon="🍻">
       <div class="app-icon">🍻</div>
       <div class="app-name">Bora Lanchar</div>
       <div class="app-desc">Racha a conta do bar ou lanchonete de forma justa — separa quem bebeu álcool de quem não bebeu.</div>
@@ -154,7 +186,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-clt.html" data-color="blue">
+    <a class="app-card" href="bora-clt.html" data-color="blue" data-nome="Bora CLT" data-icon="💼">
       <div class="app-icon">💼</div>
       <div class="app-name">Bora CLT</div>
       <div class="app-desc">Calcule salário líquido, 13º, férias, rescisão e FGTS. Simples e sem juridiquês.</div>
@@ -162,7 +194,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-investir.html" data-color="yellow">
+    <a class="app-card" href="bora-investir.html" data-color="yellow" data-nome="Bora Investir" data-icon="📈">
       <div class="app-icon">📈</div>
       <div class="app-name">Bora Investir</div>
       <div class="app-desc">Simula rendimento de CDB, Selic e juros compostos. Descubra quanto seu dinheiro vai render.</div>
@@ -170,7 +202,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-financiar.html" data-color="yellow">
+    <a class="app-card" href="bora-financiar.html" data-color="yellow" data-nome="Bora Financiar" data-icon="🏦">
       <div class="app-icon">🏦</div>
       <div class="app-name">Bora Financiar</div>
       <div class="app-desc">Simula parcelas, juros e custo total de um financiamento. Antes de assinar, calcule.</div>
@@ -183,7 +215,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
   <div class="section-title" style="margin-top:40px;">🚘 automóvel</div>
   <div class="apps-grid">
 
-    <a class="app-card" href="bora-abastecer.html" data-color="green">
+    <a class="app-card" href="bora-abastecer.html" data-color="green" data-nome="Bora Abastecer" data-icon="⛽">
       <div class="app-icon">⛽</div>
       <div class="app-name">Bora Abastecer</div>
       <div class="app-desc">Histórico de abastecimentos com consumo real, gasto mensal e comparador etanol vs gasolina.</div>
@@ -196,7 +228,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
   <div class="section-title" style="margin-top:40px;">🛒 cotidiano</div>
   <div class="apps-grid">
 
-    <a class="app-card" href="bora-no-mercado.html" data-color="green">
+    <a class="app-card" href="bora-no-mercado.html" data-color="green" data-nome="Bora no Mercado" data-icon="🛒">
       <div class="app-icon">🛒</div>
       <div class="app-name">Bora no Mercado</div>
       <div class="app-desc">Lista de compras inteligente com categorização automática e comparação de preço com a última compra.</div>
@@ -204,7 +236,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-churrasquear.html" data-color="orange">
+    <a class="app-card" href="bora-churrasquear.html" data-color="orange" data-nome="Bora Churrasquear" data-icon="🥩">
       <div class="app-icon">🥩</div>
       <div class="app-name">Bora Churrasquear</div>
       <div class="app-desc">Calcula carne, bebida, carvão e acompanhamentos na medida certa por número de homens, mulheres e crianças.</div>
@@ -212,7 +244,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-festejar.html" data-color="yellow">
+    <a class="app-card" href="bora-festejar.html" data-color="yellow" data-nome="Bora Festejar" data-icon="🎂">
       <div class="app-icon">🎂</div>
       <div class="app-name">Bora Festejar</div>
       <div class="app-desc">Salgado, doce e bebida na medida certa para a sua festa — calculado por número de convidados.</div>
@@ -220,15 +252,15 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-placar.html" data-color="yellow">
+    <a class="app-card" href="bora-placar.html" data-color="yellow" data-nome="Bora Placar" data-icon="🏆">
       <div class="app-icon">🏆</div>
       <div class="app-name">Bora Placar</div>
       <div class="app-desc">Marcador de placar em modo paisagem, adaptado por esporte — futsal, vôlei, basquete e mais. Integra com o Bora Sortear.</div>
-       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
+      <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-sortear.html" data-color="blue">
+    <a class="app-card" href="bora-sortear.html" data-color="blue" data-nome="Bora Sortear" data-icon="🎰">
       <div class="app-icon">🎰</div>
       <div class="app-name">Bora Sortear</div>
       <div class="app-desc">Sorteador de nomes, números e times para pelada ou qualquer racha. Integra com o Bora Placar.</div>
@@ -241,7 +273,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
   <div class="section-title" style="margin-top:40px;">🌿 saúde e bem-estar</div>
   <div class="apps-grid">
 
-    <a class="app-card" href="bora-emagrecer.html" data-color="orange">
+    <a class="app-card" href="bora-emagrecer.html" data-color="orange" data-nome="Bora Emagrecer" data-icon="🔥">
       <div class="app-icon">🔥</div>
       <div class="app-name">Bora Emagrecer</div>
       <div class="app-desc">Calcule suas calorias diárias com base em altura, peso, idade e atividade física. Com IMC e distribuição de macros.</div>
@@ -249,7 +281,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-dormir.html" data-color="blue">
+    <a class="app-card" href="bora-dormir.html" data-color="blue" data-nome="Bora Dormir" data-icon="😴">
       <div class="app-icon">😴</div>
       <div class="app-name">Bora Dormir</div>
       <div class="app-desc">Calcula os melhores horários para acordar com base nos ciclos de sono — sem aquela sensação de ressaca.</div>
@@ -257,15 +289,15 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="#" data-color="green">
+    <a class="app-card disabled" href="#" data-color="green">
       <div class="app-icon">💧</div>
       <div class="app-name">Bora Hidratar</div>
       <div class="app-desc">Meta diária de água personalizada por peso e rotina, com lembretes configuráveis ao longo do dia.</div>
-      <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> em breve</div>
+      <div class="app-tag tag-soon">em breve</div>
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-engravidar.html" data-color="green">
+    <a class="app-card" href="bora-engravidar.html" data-color="green" data-nome="Bora Engravidar" data-icon="🌸">
       <div class="app-icon">🌸</div>
       <div class="app-name">Bora Engravidar</div>
       <div class="app-desc">Calcula o ciclo fértil e a janela de ovulação. Integra direto com o Bora Mamãe quando a gravidez for confirmada.</div>
@@ -273,7 +305,7 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="bora-mamae.html" data-color="yellow">
+    <a class="app-card" href="bora-mamae.html" data-color="yellow" data-nome="Bora Mamãe" data-icon="🤰">
       <div class="app-icon">🤰</div>
       <div class="app-name">Bora Mamãe</div>
       <div class="app-desc">Calcula semanas de gestação, data provável do parto e marcos importantes da gravidez semana a semana.</div>
@@ -281,11 +313,11 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
       <div class="app-arrow">↗</div>
     </a>
 
-    <a class="app-card" href="#" data-color="orange">
+    <a class="app-card disabled" href="#" data-color="orange">
       <div class="app-icon">💊</div>
       <div class="app-name">Bora Remediar</div>
       <div class="app-desc">Controle de horários de medicamentos com alertas configuráveis — nunca mais esqueça um remédio.</div>
-      <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> em breve</div>
+      <div class="app-tag tag-soon">em breve</div>
       <div class="app-arrow">↗</div>
     </a>
 
@@ -301,11 +333,63 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
 <footer>
   <div class="footer-logo">Bora <span>Apps</span></div>
   <div class="footer-links">
+    <a href="faq.html">FAQ</a>
     <a href="sobre.html">sobre</a>
     <a href="privacidade.html">privacidade</a>
   </div>
   <div class="footer-copy">© 2025 Bora Apps</div>
 </footer>
+
+<script>
+// ─── VISITADOS RECENTEMENTE ───────────────────────────────────────────────────
+const SK_RECENTES = 'bora_recentes';
+const MAX_RECENTES = 5;
+
+// Registra o app atual se vier de um app (não da home)
+// (executado nos apps individuais — aqui apenas lemos e exibimos)
+
+function carregarRecentes() {
+  try {
+    const lista = JSON.parse(localStorage.getItem(SK_RECENTES) || '[]');
+    if (!lista.length) return;
+
+    const wrap = document.getElementById('recentes-wrap');
+    const listaEl = document.getElementById('recentes-lista');
+
+    listaEl.innerHTML = lista.map(item => `
+      <a class="recente-item" href="${item.href}">
+        <span class="r-icon">${item.icon}</span>
+        <span class="r-nome">${item.nome}</span>
+      </a>
+    `).join('');
+
+    wrap.style.display = 'block';
+  } catch(e) {}
+}
+
+// Adiciona listeners nos cards para gravar visita
+document.querySelectorAll('.app-card[data-nome]').forEach(card => {
+  card.addEventListener('click', function() {
+    try {
+      const item = {
+        nome: this.dataset.nome,
+        icon: this.dataset.icon,
+        href: this.getAttribute('href'),
+      };
+      let lista = JSON.parse(localStorage.getItem(SK_RECENTES) || '[]');
+      // remove duplicata
+      lista = lista.filter(i => i.href !== item.href);
+      // insere no início
+      lista.unshift(item);
+      // mantém só os últimos MAX_RECENTES
+      lista = lista.slice(0, MAX_RECENTES);
+      localStorage.setItem(SK_RECENTES, JSON.stringify(lista));
+    } catch(e) {}
+  });
+});
+
+carregarRecentes();
+</script>
 
 </body>
 </html>

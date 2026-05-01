@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7831385824431254"
+     crossorigin="anonymous"></script>
+  <!-- Favicon navegador -->
+  <link rel="icon" type="image/png" href="icon.png">
+  <!-- Ícone tela inicial iOS -->
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- PWA - Android -->
+  <link rel="manifest" href="manifest.json">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Perguntas Frequentes sobre Cálculos do Dia a Dia | Bora Apps</title>
+  <meta name="description" content="Respostas para as dúvidas mais comuns: como calcular carona, dividir conta, comparar etanol e gasolina, calcular 13º salário, férias, rescisão e muito mais.">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="FAQ — Perguntas Frequentes | Bora Apps">
+  <meta property="og:description" content="Como calcular carona justa, dividir conta no bar, comparar etanol vs gasolina, 13º salário, férias e muito mais.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://boraapps.com.br/faq.html">
+
+  <!-- Schema.org FAQ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Como calcular o valor justo de uma carona?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O valor justo de carona considera três fatores: combustível (km rodados ÷ consumo do carro × preço do litro), depreciação do veículo (baseada no valor FIPE e anos de uso) e manutenção estimada (~R$ 0,06 por km). Some tudo e divida pelo número total de pessoas no carro (motorista + passageiros)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Vale mais a pena abastecer com etanol ou gasolina?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use a regra dos 70%: se o preço do etanol for menor do que 70% do preço da gasolina, o etanol é mais barato por km rodado. Isso acontece porque carros flex consomem cerca de 30% mais etanol para percorrer a mesma distância. Exemplo: gasolina a R$ 6,20 → limite para etanol = R$ 4,34/l."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como dividir a conta do bar de forma justa quando nem todo mundo bebeu álcool?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Separe o total da conta em duas partes: o valor gasto em bebidas alcoólicas e o restante (comida e não-alcoólicos). O valor das bebidas é dividido apenas entre quem bebeu; o restante é dividido igualmente entre todos. Gorjeta (se houver) incide proporcionalmente sobre cada parte."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como calcular o 13º salário?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O 13º salário bruto é calculado dividindo o salário por 12 e multiplicando pelos meses trabalhados no ano. Exemplo: salário de R$ 3.000, trabalhando 12 meses = R$ 3.000 bruto. Sobre esse valor incidem INSS (desconto progressivo por faixa) e IR (se aplicável). É pago em duas parcelas: até 30/11 (50% bruto) e até 20/12 (restante com descontos)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como calcular férias CLT?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "As férias equivalem a um salário proporcional aos dias de gozo (até 30 dias) mais o adicional de 1/3 constitucional obrigatório. Exemplo com salário de R$ 3.000 e 30 dias: R$ 3.000 + R$ 1.000 (1/3) = R$ 4.000 bruto. Sobre esse valor incide INSS (sobre os R$ 3.000) e IR (sobre o total menos INSS)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quanto tempo leva para dormir e quantas horas são ideais?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A maioria dos adultos leva em média 14 minutos para pegar no sono (latência do sono). O sono é dividido em ciclos de 90 minutos — acordar no fim de um ciclo evita a inércia do sono (aquela sensação de ressaca). O ideal são 5 ou 6 ciclos completos (7h30 ou 9h). Acordar no meio de um ciclo causa mais cansaço do que dormir menos, mas em ciclo completo."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quanta água devo beber por dia?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A recomendação geral é 35ml por kg de peso corporal por dia, ajustado pelo nível de atividade física. Exemplo: pessoa de 70kg sedentária → ~2.450ml/dia; moderadamente ativa → ~2.695ml/dia; muito ativa → ~2.940ml/dia. Calor intenso, exercícios e gravidez aumentam essa necessidade."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como calcular o período fértil e a ovulação?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A ovulação ocorre tipicamente 14 dias antes do início da próxima menstruação. Em ciclos de 28 dias, isso corresponde ao 14º dia após o início da última menstruação. A janela fértil vai de 5 dias antes da ovulação até 1 dia depois (7 dias no total). Para ciclos irregulares, o cálculo pode variar — use sempre o comprimento do seu ciclo específico."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como calcular as semanas de gestação?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A gestação é contada a partir do primeiro dia da última menstruação (DUM), não da data da concepção. Some os dias desde a DUM até hoje e divida por 7 para obter as semanas completas. A data provável do parto (DPP) é calculada somando 280 dias (40 semanas) à DUM — é a Regra de Naegele. Apenas 5% dos bebês nascem exatamente na DPP."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como calcular a rescisão sem justa causa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A rescisão sem justa causa inclui: saldo de salário (dias trabalhados no mês), aviso prévio indenizado (30 dias + 3 dias por ano completo, máximo 90 dias), 13º proporcional, férias proporcionais + 1/3, férias vencidas (se houver) + 1/3, e multa de 40% sobre o saldo do FGTS. Pedido de demissão não tem direito ao aviso indenizado nem à multa do FGTS."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Vale mais a pena alugar ou comprar um carro?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Depende do seu perfil de uso. Comprar faz mais sentido para quem roda mais de 2.000 km/mês, pretende usar o carro por mais de 5 anos e tem capital disponível. Alugar (assinatura) é melhor para quem roda pouco, quer trocar de carro com frequência ou prefere previsibilidade de custos fixos sem se preocupar com manutenção e depreciação."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como comparar rendimento entre CDB, Tesouro Selic e Poupança?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A comparação deve ser sempre pelo rendimento líquido (após IR). CDB e Tesouro Selic têm IR regressivo (22,5% até 6 meses, 20% até 1 ano, 17,5% até 2 anos, 15% após 2 anos). A poupança é isenta de IR mas rende 70% da Selic + TR quando a Selic está acima de 8,5% ao ano. Historicamente, CDB acima de 100% do CDI supera a poupança em quase todos os cenários."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como calcular a quantidade de carne para churrasco?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A referência padrão do Guia do Churrasqueiro: 400g de carne por homem adulto, 300g por mulher adulta e 150g por criança. Esse total deve ser distribuído entre os tipos de carne disponíveis. Além disso, calcule cerca de 1kg de carvão por hora de churrasqueiro + 1kg de reserva para cada 5 pessoas, e ~1,2kg de gelo por pessoa."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quanto custa por km rodar um carro?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O custo por km é a soma de: combustível (preço do litro ÷ consumo do carro), manutenção estimada (~R$ 0,06/km em média) e depreciação. A depreciação varia de 10% a 25% do valor do carro por ano dependendo da idade — um carro de R$ 60.000 rodando 15.000 km/ano tem custo de depreciação de R$ 0,40 a R$ 1,00 por km. Muitas pessoas subestimam o custo real por ignorar depreciação e manutenção."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como funciona o sistema Price e o SAC em financiamentos?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Na Tabela Price as parcelas são fixas durante todo o contrato — nas primeiras parcelas paga-se mais juros e menos amortização. No SAC (Sistema de Amortização Constante) a amortização é fixa e os juros diminuem com o tempo, resultando em parcelas decrescentes. O SAC costuma ser mais barato no total, mas as primeiras parcelas são mais altas. Sempre exija o CET (Custo Efetivo Total) antes de assinar qualquer contrato."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como calcular quantas calorias preciso por dia para emagrecer?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O cálculo usa a fórmula Mifflin-St Jeor para estimar o metabolismo basal (TMB), multiplica pelo fator de atividade física para obter o gasto total (TDEE) e aplica um déficit de 500 kcal/dia para emagrecimento gradual (~0,5kg por semana). Déficits maiores que 750 kcal/dia podem ser contraproducentes. Para mulheres: TMB = (10 × peso) + (6,25 × altura) - (5 × idade) - 161."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como sortear times de forma justa para uma pelada?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O método mais justo é embaralhar a lista de jogadores aleatoriamente e distribuir sequencialmente entre os times (1º jogador → Time A, 2º → Time B, 3º → Time A, e assim por diante). Isso garante distribuição equilibrada em número. Para times ainda mais equilibrados por habilidade, faça uma classificação prévia por nível e distribua alternadamente do melhor para o pior."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quanto salgado e doce calcular para uma festa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Para festas de adultos: 10 a 15 salgados por pessoa (quanto mais horas de festa, mais). Para crianças: 6 a 10 salgados. Docinhos: 4 a 5 por adulto e 5 a 6 por criança. Bolo: ~60-80g por fatia, calcule 1 andar para até 30 pessoas. Para bebidas: 350-500ml de refrigerante por adulto e 400-600ml de suco/água por criança, por hora de festa."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O Bora Apps salva meus dados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Não. Todos os cálculos acontecem diretamente no seu navegador. Nenhum dado que você digita é enviado para qualquer servidor. Alguns apps (como Bora Abastecer e Bora no Mercado) salvam dados no localStorage do seu dispositivo — isso significa que os dados ficam apenas no seu aparelho e somem se você limpar o cache do navegador."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0e0e0c;
+      --ink:#f5f2ea;
+      --muted:#7a7870;
+      --border:#2a2a26;
+      --orange:#f0722a;
+      --green:#2ecc71;
+      --card:#17170f;
+      --card-hover:#1e1e16;
+    }
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+
+    /* NAV */
+    nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);}
+    .nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--ink);text-decoration:none;}
+    .nav-logo span{color:var(--orange);}
+    .nav-back{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+    .nav-back:hover{color:var(--ink);}
+
+    /* HERO */
+    .hero{padding:60px 40px 48px;max-width:760px;margin:0 auto;}
+    .eyebrow{font-size:11px;letter-spacing:.15em;color:var(--orange);text-transform:uppercase;margin-bottom:16px;}
+    h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(32px,5vw,52px);line-height:1.05;letter-spacing:-1px;margin-bottom:12px;}
+    h1 em{font-style:italic;color:var(--orange);}
+    .hero-sub{font-size:15px;color:var(--muted);max-width:520px;line-height:1.7;}
+
+    /* FILTROS */
+    .filtros-wrap{padding:0 40px;max-width:760px;margin:0 auto 32px;}
+    .filtros{display:flex;flex-wrap:wrap;gap:8px;}
+    .filtro-btn{font-family:'DM Sans',sans-serif;font-size:12px;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+    .filtro-btn:hover{border-color:var(--orange);color:var(--ink);}
+    .filtro-btn.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+
+    /* FAQ */
+    .faq-wrap{max-width:760px;margin:0 auto;padding:0 40px 80px;}
+
+    .faq-categoria{margin-bottom:40px;}
+    .cat-titulo{font-family:'Fraunces',serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+    .cat-titulo::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    .faq-item{border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;transition:border-color .2s;}
+    .faq-item:hover{border-color:#3a3a36;}
+    .faq-item.open{border-color:var(--orange);}
+
+    .faq-pergunta{
+      width:100%;text-align:left;background:var(--card);border:none;
+      padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;
+      align-items:center;gap:16px;transition:background .15s;
+    }
+    .faq-item.open .faq-pergunta{background:var(--card-hover);}
+    .faq-pergunta-txt{font-size:15px;font-weight:500;color:var(--ink);line-height:1.4;text-align:left;}
+    .faq-icone{font-size:18px;color:var(--muted);flex-shrink:0;transition:transform .25s,color .15s;}
+    .faq-item.open .faq-icone{transform:rotate(45deg);color:var(--orange);}
+
+    .faq-resposta{
+      max-height:0;overflow:hidden;transition:max-height .35s ease;
+      background:var(--card-hover);
+    }
+    .faq-item.open .faq-resposta{max-height:600px;}
+    .faq-resposta-inner{padding:0 20px 20px;}
+    .faq-resposta-inner p{font-size:14px;color:var(--muted);line-height:1.8;}
+    .faq-resposta-inner strong{color:var(--ink);}
+
+    /* CTA */
+    .faq-cta{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .faq-cta-txt{font-size:13px;color:var(--muted);}
+    .faq-cta-txt strong{color:var(--ink);display:block;margin-bottom:3px;font-size:14px;}
+    .faq-cta-btn{background:var(--orange);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap;transition:opacity .15s;cursor:pointer;}
+    .faq-cta-btn:hover{opacity:.88;}
+
+    /* FOOTER */
+    footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+    .footer-logo{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--muted);}
+    .footer-logo span{color:var(--orange);}
+    .footer-links{display:flex;gap:20px;}
+    .footer-links a{font-size:12px;color:var(--muted);text-decoration:none;transition:color .15s;}
+    .footer-links a:hover{color:var(--ink);}
+    .footer-copy{font-size:12px;color:var(--muted);}
+
+    @media(max-width:600px){
+      nav{padding:16px 20px;}
+      .hero{padding:40px 20px 32px;}
+      .filtros-wrap{padding:0 20px;margin-bottom:24px;}
+      .faq-wrap{padding:0 20px 60px;}
+      footer{padding:20px;flex-direction:column;text-align:center;}
+      .faq-cta{flex-direction:column;align-items:flex-start;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="nav-back" href="index.html">← voltar</a>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">central de dúvidas</div>
+  <h1>Perguntas <em>frequentes</em></h1>
+  <p class="hero-sub">Respostas diretas para as dúvidas mais comuns sobre cálculos do dia a dia — caronas, contas, salário, sono, e muito mais.</p>
+</div>
+
+<div class="filtros-wrap">
+  <div class="filtros">
+    <button class="filtro-btn active" onclick="filtrar('todos', this)">Todos</button>
+    <button class="filtro-btn" onclick="filtrar('automovel', this)">🚗 Automóvel</button>
+    <button class="filtro-btn" onclick="filtrar('financas', this)">💰 Finanças</button>
+    <button class="filtro-btn" onclick="filtrar('clt', this)">💼 CLT</button>
+    <button class="filtro-btn" onclick="filtrar('saude', this)">🌿 Saúde</button>
+    <button class="filtro-btn" onclick="filtrar('festas', this)">🎉 Festas</button>
+    <button class="filtro-btn" onclick="filtrar('privacidade', this)">🔒 Privacidade</button>
+  </div>
+</div>
+
+<div class="faq-wrap">
+
+  <!-- AUTOMÓVEL -->
+  <div class="faq-categoria" data-cat="automovel">
+    <div class="cat-titulo">🚗 Automóvel</div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como calcular o valor justo de uma carona?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>O valor justo de carona considera três fatores: <strong>combustível</strong> (km rodados ÷ consumo do carro × preço do litro), <strong>depreciação do veículo</strong> (baseada no valor FIPE e anos de uso) e <strong>manutenção estimada</strong> (~R$ 0,06 por km). Some tudo e divida pelo número total de pessoas no carro (motorista + passageiros).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Vale mais a pena abastecer com etanol ou gasolina?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Use a <strong>regra dos 70%</strong>: se o preço do etanol for menor do que 70% do preço da gasolina, o etanol é mais barato por km rodado. Carros flex consomem cerca de 30% mais etanol para percorrer a mesma distância. Exemplo: gasolina a R$ 6,20 → limite para etanol = <strong>R$ 4,34/l</strong>. Acima disso, a gasolina vence.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Quanto custa por km rodar um carro?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>O custo por km é a soma de: <strong>combustível</strong> (preço do litro ÷ consumo do carro), <strong>manutenção estimada</strong> (~R$ 0,06/km) e <strong>depreciação</strong>. A depreciação varia de 10% a 25% do valor do carro por ano — um carro de R$ 60.000 rodando 15.000 km/ano pode ter custo de depreciação entre R$ 0,40 e R$ 1,00 por km. Muitos motoristas subestimam o custo real por ignorar esses dois últimos fatores.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Vale mais a pena alugar ou comprar um carro?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Depende do perfil de uso. <strong>Comprar faz mais sentido</strong> para quem roda mais de 2.000 km/mês, pretende usar o carro por mais de 5 anos e tem capital disponível. <strong>Alugar (assinatura) é melhor</strong> para quem roda pouco, quer trocar com frequência ou prefere custos fixos previsíveis sem se preocupar com manutenção, IPVA e depreciação.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-cta">
+      <div class="faq-cta-txt">
+        <strong>⛽ Bora Abastecer</strong>
+        Registre abastecimentos, calcule o consumo real e compare etanol vs gasolina.
+      </div>
+      <a class="faq-cta-btn" href="bora-abastecer.html">usar →</a>
+    </div>
+  </div>
+
+  <!-- FINANÇAS -->
+  <div class="faq-categoria" data-cat="financas">
+    <div class="cat-titulo">💰 Finanças e Divisão</div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como dividir a conta do bar quando nem todo mundo bebeu álcool?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Separe o total em duas partes: o valor gasto em <strong>bebidas alcoólicas</strong> (dividido apenas entre quem bebeu) e o <strong>restante</strong> — comida e não-alcoólicos — dividido igualmente entre todos. Gorjeta incide proporcionalmente sobre cada parte. Assim, quem não bebeu não arca com o consumo de quem bebeu.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como comparar CDB, Tesouro Selic e Poupança?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Compare sempre pelo <strong>rendimento líquido</strong> (após IR). CDB e Tesouro Selic têm IR regressivo: 22,5% até 6 meses, 20% até 1 ano, 17,5% até 2 anos, 15% após 2 anos. A <strong>poupança é isenta de IR</strong> mas rende 70% da Selic + TR quando a taxa está acima de 8,5% ao ano — quase sempre inferior ao CDB. CDB acima de 100% do CDI supera a poupança em praticamente todos os cenários.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como funciona o sistema Price e o SAC em financiamentos?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Na <strong>Tabela Price</strong> as parcelas são fixas — no início paga-se mais juros e menos amortização. No <strong>SAC</strong> (Sistema de Amortização Constante) a amortização é fixa e os juros diminuem, resultando em parcelas decrescentes. O SAC costuma ser mais barato no total, mas as primeiras parcelas são mais altas. Sempre exija o <strong>CET (Custo Efetivo Total)</strong> antes de assinar.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-cta">
+      <div class="faq-cta-txt">
+        <strong>🍻 Bora Lanchar</strong>
+        Divide a conta separando quem bebeu álcool de quem não bebeu. Justo para todo mundo.
+      </div>
+      <a class="faq-cta-btn" href="bora-lanchar.html">usar →</a>
+    </div>
+  </div>
+
+  <!-- CLT -->
+  <div class="faq-categoria" data-cat="clt">
+    <div class="cat-titulo">💼 CLT e Trabalho</div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como calcular o 13º salário?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>O 13º bruto = salário ÷ 12 × meses trabalhados no ano. Exemplo: salário de R$ 3.000 × 12 meses = <strong>R$ 3.000 bruto</strong>. Sobre esse valor incidem INSS (desconto progressivo por faixa) e IR (se aplicável). É pago em duas parcelas: <strong>até 30/11</strong> (50% do bruto, sem descontos) e <strong>até 20/12</strong> (restante com INSS e IR).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como calcular férias CLT?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Férias = salário proporcional aos dias de gozo + <strong>1/3 constitucional obrigatório</strong>. Exemplo: salário R$ 3.000, 30 dias de férias → R$ 3.000 + R$ 1.000 (1/3) = <strong>R$ 4.000 bruto</strong>. INSS incide sobre os R$ 3.000; IR incide sobre o total menos INSS. O adicional de 1/3 é isento de INSS, mas não de IR.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">O que entra na rescisão sem justa causa?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>A rescisão sem justa causa inclui: <strong>saldo de salário</strong> (dias trabalhados no mês), <strong>aviso prévio indenizado</strong> (30 dias + 3 dias por ano completo, máximo 90 dias), <strong>13º proporcional</strong>, <strong>férias proporcionais + 1/3</strong>, <strong>férias vencidas + 1/3</strong> (se houver) e <strong>multa de 40% do FGTS</strong>. Pedido de demissão não tem direito ao aviso indenizado nem à multa do FGTS.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-cta">
+      <div class="faq-cta-txt">
+        <strong>💼 Bora CLT</strong>
+        Calcule salário líquido, 13º, férias, rescisão e FGTS de forma simples.
+      </div>
+      <a class="faq-cta-btn" href="bora-clt.html">usar →</a>
+    </div>
+  </div>
+
+  <!-- SAÚDE -->
+  <div class="faq-categoria" data-cat="saude">
+    <div class="cat-titulo">🌿 Saúde e Bem-estar</div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Quantas horas de sono são ideais e como calcular o horário certo de acordar?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>O sono é dividido em <strong>ciclos de 90 minutos</strong>. Acordar no final de um ciclo evita a inércia do sono (aquela sensação de ressaca). O ideal são <strong>5 ou 6 ciclos completos</strong> (7h30 ou 9h). A maioria dos adultos leva em média 14 minutos para pegar no sono — some esse tempo ao calcular o horário de dormir. Acordar no meio de um ciclo causa mais cansaço do que dormir menos, mas em ciclo completo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Quanta água devo beber por dia?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>A recomendação geral é <strong>35ml por kg de peso</strong> por dia, ajustado pelo nível de atividade. Exemplo: 70kg sedentário → ~2.450ml/dia; moderadamente ativo → ~2.700ml/dia; muito ativo → ~2.950ml/dia. Calor intenso, exercícios, gravidez e amamentação aumentam essa necessidade. Café e chás contam, mas bebidas alcoólicas têm efeito diurético.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como calcular quantas calorias preciso por dia para emagrecer?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Use a fórmula <strong>Mifflin-St Jeor</strong> para o metabolismo basal (TMB), multiplique pelo fator de atividade para o gasto total diário (TDEE), e aplique um <strong>déficit de 500 kcal/dia</strong> para emagrecer ~0,5kg/semana. Déficits acima de 750 kcal podem ser contraproducentes. Mulheres: TMB = (10 × peso kg) + (6,25 × altura cm) − (5 × idade) − 161.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como calcular o período fértil e a data de ovulação?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>A ovulação ocorre tipicamente <strong>14 dias antes da próxima menstruação</strong>. Em ciclos de 28 dias, isso é o 14º dia após o início da última menstruação. A <strong>janela fértil</strong> vai de 5 dias antes da ovulação até 1 dia depois (7 dias no total). Para ciclos irregulares, use o comprimento real do seu ciclo para ajustar o cálculo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como calcular as semanas de gestação e a data provável do parto?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>A gestação é contada a partir do <strong>primeiro dia da última menstruação (DUM)</strong>, não da concepção. A data provável do parto (DPP) = DUM + 280 dias (40 semanas) — é a Regra de Naegele. Apenas <strong>5% dos bebês</strong> nascem exatamente na DPP. O acompanhamento com obstetra e ultrassonografias são essenciais para confirmação.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-cta">
+      <div class="faq-cta-txt">
+        <strong>😴 Bora Dormir</strong>
+        Descubra o horário certo de acordar com base nos seus ciclos de sono.
+      </div>
+      <a class="faq-cta-btn" href="bora-dormir.html">usar →</a>
+    </div>
+  </div>
+
+  <!-- FESTAS -->
+  <div class="faq-categoria" data-cat="festas">
+    <div class="cat-titulo">🎉 Festas e Churrasco</div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Quanta carne calcular por pessoa no churrasco?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>A referência do Guia do Churrasqueiro: <strong>400g por homem adulto</strong>, <strong>300g por mulher adulta</strong> e <strong>150g por criança</strong>. Esse total deve ser distribuído entre os tipos de carne disponíveis. Adicione: ~1kg de carvão por hora de churrasqueiro + 1kg de reserva para cada 5 pessoas, ~1,2kg de gelo por pessoa e sal grosso na proporção de 100g por kg de carne.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Quanto salgado e doce calcular para uma festa de aniversário?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Para adultos: <strong>10 a 15 salgados</strong> por pessoa (mais horas = mais salgados). Para crianças: 6 a 10. Docinhos: <strong>4 a 5 por adulto</strong> e 5 a 6 por criança. Bolo: ~60-80g por fatia, 1 andar para até 30 pessoas. Bebidas: 350-500ml de refrigerante por adulto e 400-600ml de suco/água por criança por hora de festa. Sempre arredonde para cima.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">Como sortear times de pelada de forma justa?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>O método mais justo: embaralhe a lista de jogadores aleatoriamente e distribua sequencialmente entre os times (1º → Time A, 2º → Time B, 3º → Time A...). Para times mais equilibrados por habilidade, classifique os jogadores por nível previamente e distribua <strong>alternando do melhor para o pior</strong> — assim cada time terá uma distribuição similar de habilidades.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-cta">
+      <div class="faq-cta-txt">
+        <strong>🥩 Bora Churrasquear</strong>
+        Lista de compras certa para não faltar — nem sobrar demais.
+      </div>
+      <a class="faq-cta-btn" href="bora-churrasquear.html">usar →</a>
+    </div>
+  </div>
+
+  <!-- PRIVACIDADE -->
+  <div class="faq-categoria" data-cat="privacidade">
+    <div class="cat-titulo">🔒 Privacidade e Dados</div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">O Bora Apps salva ou coleta meus dados?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p><strong>Não.</strong> Todos os cálculos acontecem diretamente no seu navegador — nenhum dado que você digita é enviado para qualquer servidor. Alguns apps (como Bora Abastecer e Bora no Mercado) salvam dados no <strong>localStorage</strong> do seu dispositivo, o que significa que as informações ficam apenas no seu aparelho e são apagadas se você limpar o cache do navegador.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">O site tem anúncios? Eles rastreiam minha navegação?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Sim, o Bora Apps exibe anúncios do <strong>Google AdSense</strong> para manter o serviço gratuito. O Google pode usar cookies para exibir anúncios relevantes ao seu perfil. Você pode gerenciar suas preferências em <strong>adssettings.google.com</strong>. Também usamos Google Analytics de forma agregada e anônima — sem identificar usuários individualmente.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" onclick="toggle(this)">
+        <span class="faq-pergunta-txt">O Bora Apps funciona sem internet?</span>
+        <span class="faq-icone">+</span>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Parcialmente. Se você já acessou o site antes e adicionou à tela inicial (PWA), algumas páginas podem funcionar offline graças ao cache do navegador. Porém, a primeira visita requer conexão. Os <strong>cálculos em si não dependem de internet</strong> — só o carregamento inicial da página.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">Bora <span>Apps</span></div>
+  <div class="footer-links">
+    <a href="index.html">ferramentas</a>
+    <a href="sobre.html">sobre</a>
+    <a href="privacidade.html">privacidade</a>
+  </div>
+  <div class="footer-copy">© 2025 Bora Apps</div>
+</footer>
+
+<script>
+  function toggle(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    // fecha todos
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    // abre o clicado (se não estava aberto)
+    if (!isOpen) item.classList.add('open');
+  }
+
+  function filtrar(cat, btn) {
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.faq-categoria').forEach(el => {
+      if (cat === 'todos' || el.dataset.cat === cat) {
+        el.style.display = 'block';
+      } else {
+        el.style.display = 'none';
+      }
+    });
+  }
+</script>
+</body>
+</html>
