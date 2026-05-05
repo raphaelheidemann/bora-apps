@@ -1,146 +1,166 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <link rel="canonical" href="[https://boraapps.com.br/](https://boraapps.com.br/)" />
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7831385824431254"
      crossorigin="anonymous"></script>
   <!-- Favicon navegador -->
-<link rel="icon" type="image/png" href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
+  <!-- Ícone tela inicial iOS -->
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- PWA - Android -->
+  <link rel="manifest" href="manifest.json">
 
-<!-- Ícone tela inicial iOS -->
-<link rel="apple-touch-icon" href="icon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bora Apps — ferramentas simples para o dia a dia</title>
+  <meta name="description" content="Apps gratuitos e simples para calcular caronas, rachar contas, dividir despesas e mais. Feito para o dia a dia brasileiro.">
 
-<!-- PWA - Android -->
-<link rel="manifest" href="manifest.json">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bora Apps — ferramentas simples para o dia a dia</title>
-<meta name="description" content="Apps gratuitos e simples para calcular caronas, rachar contas, dividir despesas e mais. Feito para o dia a dia brasileiro.">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0e0e0c;
-  --ink:#f5f2ea;
-  --muted:#7a7870;
-  --border:#2a2a26;
-  --orange:#f0722a;
-  --green:#2ecc71;
-  --yellow:#f5c842;
-  --blue:#4a9eff;
-  --card:#17170f;
-}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 
-/* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);}
-.nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--ink);text-decoration:none;}
-.nav-logo span{color:var(--orange);}
-.nav-links{display:flex;gap:24px;}
-.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
-.nav-links a:hover{color:var(--ink);}
+  <style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0e0e0c;
+    --ink:#f5f2ea;
+    --muted:#7a7870;
+    --border:#2a2a26;
+    --orange:#f0722a;
+    --green:#2ecc71;
+    --yellow:#f5c842;
+    --blue:#4a9eff;
+    --card:#17170f;
+  }
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;}
 
-/* HERO */
-.hero{padding:80px 40px 60px;max-width:760px;margin:0 auto;text-align:center;}
-.hero-eyebrow{font-size:11px;letter-spacing:.15em;color:var(--orange);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;}
-.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1;max-width:40px;height:1px;background:var(--orange);opacity:.4;}
-h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(40px,7vw,72px);line-height:1;letter-spacing:-1px;margin-bottom:24px;}
-h1 em{font-style:italic;color:var(--orange);}
-.hero-sub{font-size:16px;color:var(--muted);max-width:440px;margin:0 auto 40px;line-height:1.6;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--green);}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  /* CANVAS */
+  #hero-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.5;}
 
-/* ─── VISITADOS RECENTEMENTE ─── */
-#recentes-wrap{
-  max-width:960px;margin:0 auto;
-  padding:0 40px 32px;
-  display:none; /* mostrado via JS quando há histórico */
-}
-.recentes-label{
-  font-size:10px;letter-spacing:.12em;color:var(--muted);
-  text-transform:uppercase;margin-bottom:12px;
-}
-.recentes-lista{display:flex;gap:10px;flex-wrap:wrap;}
-.recente-item{
-  display:flex;align-items:center;gap:8px;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:10px;padding:8px 14px;
-  text-decoration:none;color:var(--ink);
-  font-size:13px;font-weight:500;
-  transition:border-color .15s, transform .15s;
-}
-.recente-item:hover{border-color:var(--orange);transform:translateY(-1px);}
-.recente-item .r-icon{font-size:18px;line-height:1;}
-.recente-item .r-nome{white-space:nowrap;}
+  /* NAV */
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 40px;border-bottom:1px solid var(--border);
+    background:transparent;position:sticky;top:0;z-index:100;
+    transition:background .35s,backdrop-filter .35s,border-color .35s;
+  }
+  nav.scrolled{
+    background:rgba(14,14,12,.85);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border-color:rgba(255,255,255,.05);
+  }
+  .nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--ink);text-decoration:none;}
+  .nav-logo span{color:var(--orange);}
+  .nav-links{display:flex;gap:24px;}
+  .nav-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s;}
+  .nav-links a:hover{color:var(--ink);}
 
-/* APPS GRID */
-.apps-section{padding:20px 40px 80px;max-width:960px;margin:0 auto;}
-.section-title{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:24px;}
-.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+  /* HERO */
+  .hero-wrap{position:relative;overflow:hidden;}
+  .hero{padding:80px 40px 60px;max-width:760px;margin:0 auto;text-align:center;position:relative;z-index:1;}
+  .hero-eyebrow{
+    font-size:11px;letter-spacing:.15em;color:var(--orange);text-transform:uppercase;
+    margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;
+    opacity:0;
+  }
+  .hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1;max-width:40px;height:1px;background:var(--orange);opacity:.4;}
+  h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(40px,7vw,72px);line-height:1;letter-spacing:-1px;margin-bottom:24px;opacity:0;}
+  h1 em{font-style:italic;color:var(--orange);}
+  .hero-sub{font-size:16px;color:var(--muted);max-width:440px;margin:0 auto 40px;line-height:1.6;opacity:0;}
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);
+    border-radius:20px;padding:8px 16px;font-size:12px;color:var(--green);
+    opacity:0;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-.app-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:24px;
-  text-decoration:none;
-  color:var(--ink);
-  display:flex;flex-direction:column;gap:12px;
-  transition:border-color .2s, transform .2s;
-  position:relative;overflow:hidden;
-}
-.app-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity:0;transition:opacity .2s;
-}
-.app-card:hover{border-color:var(--accent);transform:translateY(-2px);}
-.app-card:hover::before{opacity:1;}
-.app-card.disabled{pointer-events:none;opacity:.45;}
+  /* RECENTES */
+  #recentes-wrap{max-width:960px;margin:0 auto;padding:0 40px 32px;display:none;}
+  .recentes-label{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+  .recentes-lista{display:flex;gap:10px;flex-wrap:wrap;}
+  .recente-item{
+    display:flex;align-items:center;gap:8px;
+    background:var(--card);border:1px solid var(--border);
+    border-radius:10px;padding:8px 14px;
+    text-decoration:none;color:var(--ink);font-size:13px;font-weight:500;
+    transition:border-color .15s,transform .15s;
+    opacity:0;
+  }
+  .recente-item:hover{border-color:var(--orange);transform:translateY(-1px);}
+  .recente-item .r-icon{font-size:18px;line-height:1;}
+  .recente-item .r-nome{white-space:nowrap;}
 
-.app-card[data-color="orange"]{--accent:var(--orange);}
-.app-card[data-color="green"]{--accent:var(--green);}
-.app-card[data-color="yellow"]{--accent:var(--yellow);}
-.app-card[data-color="blue"]{--accent:var(--blue);}
+  /* APPS */
+  .apps-section{padding:20px 40px 80px;max-width:960px;margin:0 auto;}
+  .section-title{font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:24px;opacity:0;transform:translateX(-16px);}
+  .apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
 
-.app-icon{font-size:32px;line-height:1;}
-.app-name{font-family:'Fraunces',serif;font-weight:700;font-size:20px;}
-.app-desc{font-size:13px;color:var(--muted);line-height:1.6;flex:1;}
-.app-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px;width:fit-content;}
-.tag-live{background:rgba(46,204,113,.1);color:var(--green);border:1px solid rgba(46,204,113,.2);}
-.tag-soon{background:rgba(122,120,112,.1);color:var(--muted);border:1px solid var(--border);}
-.app-arrow{font-size:18px;color:var(--muted);align-self:flex-end;transition:transform .15s,color .15s;}
-.app-card:hover .app-arrow{transform:translate(3px,-3px);color:var(--accent);}
+  .app-card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:16px;padding:24px;
+    text-decoration:none;color:var(--ink);
+    display:flex;flex-direction:column;gap:12px;
+    position:relative;overflow:hidden;
+    opacity:0;transform:translateY(24px);
+    transition:border-color .2s;
+  }
+  .app-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    opacity:0;transition:opacity .2s;
+  }
+  .app-card:hover::before{opacity:1;}
+  .app-card:hover{border-color:var(--accent);}
+  .app-card.disabled{pointer-events:none;}
 
-/* ABOUT */
-.about-section{border-top:1px solid var(--border);padding:60px 40px;max-width:760px;margin:0 auto;text-align:center;}
-.about-section h2{font-family:'Fraunces',serif;font-size:32px;font-weight:700;margin-bottom:16px;}
-.about-section p{font-size:15px;color:var(--muted);line-height:1.7;max-width:480px;margin:0 auto;}
+  .app-card[data-color="orange"]{--accent:var(--orange);}
+  .app-card[data-color="green"] {--accent:var(--green);}
+  .app-card[data-color="yellow"]{--accent:var(--yellow);}
+  .app-card[data-color="blue"]  {--accent:var(--blue);}
 
-/* FOOTER */
-footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
-.footer-logo{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--muted);}
-.footer-logo span{color:var(--orange);}
-.footer-links{display:flex;gap:20px;}
-.footer-links a{font-size:12px;color:var(--muted);text-decoration:none;transition:color .15s;}
-.footer-links a:hover{color:var(--ink);}
-.footer-copy{font-size:12px;color:var(--muted);}
+  .app-icon{font-size:32px;line-height:1;display:inline-block;}
+  .app-name{font-family:'Fraunces',serif;font-weight:700;font-size:20px;}
+  .app-desc{font-size:13px;color:var(--muted);line-height:1.6;flex:1;}
+  .app-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px;width:fit-content;}
+  .tag-live{background:rgba(46,204,113,.1);color:var(--green);border:1px solid rgba(46,204,113,.2);}
+  .tag-soon{background:rgba(122,120,112,.1);color:var(--muted);border:1px solid var(--border);}
+  .app-arrow{font-size:18px;color:var(--muted);align-self:flex-end;transition:transform .15s,color .15s;}
+  .app-card:hover .app-arrow{transform:translate(3px,-3px);color:var(--accent);}
 
-@media(max-width:600px){
-  nav{padding:16px 20px;}
-  .hero{padding:48px 20px 40px;}
-  .apps-section{padding:20px 20px 60px;}
-  .about-section{padding:40px 20px;}
-  footer{padding:20px;flex-direction:column;text-align:center;}
-  .nav-links{display:none;}
-  #recentes-wrap{padding:0 20px 24px;}
-}
-</style>
+  /* ABOUT */
+  .about-section{border-top:1px solid var(--border);padding:60px 40px;max-width:760px;margin:0 auto;text-align:center;}
+  .about-section h2{font-family:'Fraunces',serif;font-size:32px;font-weight:700;margin-bottom:16px;}
+  .about-section p{font-size:15px;color:var(--muted);line-height:1.7;max-width:480px;margin:0 auto;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+  .footer-logo{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--muted);}
+  .footer-logo span{color:var(--orange);}
+  .footer-links{display:flex;gap:20px;}
+  .footer-links a{font-size:12px;color:var(--muted);text-decoration:none;transition:color .15s;}
+  .footer-links a:hover{color:var(--ink);}
+  .footer-copy{font-size:12px;color:var(--muted);}
+
+  @media(max-width:600px){
+    nav{padding:16px 20px;}
+    .hero{padding:48px 20px 40px;}
+    .apps-section{padding:20px 20px 60px;}
+    .about-section{padding:40px 20px;}
+    footer{padding:20px;flex-direction:column;text-align:center;}
+    .nav-links{display:none;}
+    #recentes-wrap{padding:0 20px 24px;}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    .hero-eyebrow,h1,.hero-sub,.hero-badge,.recente-item,.app-card,.section-title{
+      opacity:1!important;transform:none!important;
+    }
+  }
+  </style>
 </head>
 <body>
 
-<nav>
+<nav id="main-nav">
   <a class="nav-logo" href="index.html">Bora <span>Apps</span></a>
   <div class="nav-links">
     <a href="#apps">ferramentas</a>
@@ -150,17 +170,19 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
   </div>
 </nav>
 
-<section class="hero">
-  <div class="hero-eyebrow">ferramentas gratuitas</div>
-  <h1>simples, rápido,<br><em>sem enrolação</em></h1>
-  <p class="hero-sub">Apps para resolver as contas do dia a dia — caronas, rachas, divisões. Gratuito e sem cadastro.</p>
-  <div class="hero-badge">
-    <span class="dot"></span>
-    funciona direto no celular
-  </div>
-</section>
+<div class="hero-wrap">
+  <canvas id="hero-canvas"></canvas>
+  <section class="hero">
+    <div class="hero-eyebrow" id="hero-eyebrow">ferramentas gratuitas</div>
+    <h1 id="hero-h1">simples, rápido,<br><em>sem enrolação</em></h1>
+    <p class="hero-sub" id="hero-sub">Apps para resolver as contas do dia a dia — caronas, rachas, divisões. Gratuito e sem cadastro.</p>
+    <div class="hero-badge" id="hero-badge">
+      <span class="dot"></span>
+      funciona direto no celular
+    </div>
+  </section>
+</div>
 
-<!-- VISITADOS RECENTEMENTE -->
 <div id="recentes-wrap">
   <div class="recentes-label">⚡ visitados por último</div>
   <div class="recentes-lista" id="recentes-lista"></div>
@@ -170,158 +192,120 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
 
   <div class="section-title">💰 finanças e divisão</div>
   <div class="apps-grid">
-
-    <a class="app-card" href="bora-junto.html" data-color="green" data-nome="Bora Junto" data-icon="🚗">
-      <div class="app-icon">🚗</div>
-      <div class="app-name">Bora Junto</div>
+    <a class="app-card" href="bora-junto.html"     data-color="green"  data-nome="Bora Junto"      data-icon="🚗">
+      <div class="app-icon">🚗</div><div class="app-name">Bora Junto</div>
       <div class="app-desc">Calcula quanto cobrar de carona no mês — combustível, depreciação e manutenção incluídos.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-lanchar.html" data-color="orange" data-nome="Bora Lanchar" data-icon="🍻">
-      <div class="app-icon">🍻</div>
-      <div class="app-name">Bora Lanchar</div>
+    <a class="app-card" href="bora-lanchar.html"   data-color="orange" data-nome="Bora Lanchar"    data-icon="🍻">
+      <div class="app-icon">🍻</div><div class="app-name">Bora Lanchar</div>
       <div class="app-desc">Racha a conta do bar ou lanchonete de forma justa — separa quem bebeu álcool de quem não bebeu.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-clt.html" data-color="blue" data-nome="Bora CLT" data-icon="💼">
-      <div class="app-icon">💼</div>
-      <div class="app-name">Bora CLT</div>
+    <a class="app-card" href="bora-clt.html"       data-color="blue"   data-nome="Bora CLT"        data-icon="💼">
+      <div class="app-icon">💼</div><div class="app-name">Bora CLT</div>
       <div class="app-desc">Calcule salário líquido, 13º, férias, rescisão e FGTS. Simples e sem juridiquês.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-investir.html" data-color="yellow" data-nome="Bora Investir" data-icon="📈">
-      <div class="app-icon">📈</div>
-      <div class="app-name">Bora Investir</div>
+    <a class="app-card" href="bora-investir.html"  data-color="yellow" data-nome="Bora Investir"   data-icon="📈">
+      <div class="app-icon">📈</div><div class="app-name">Bora Investir</div>
       <div class="app-desc">Simula rendimento de CDB, Selic e juros compostos. Descubra quanto seu dinheiro vai render.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-financiar.html" data-color="yellow" data-nome="Bora Financiar" data-icon="🏦">
-      <div class="app-icon">🏦</div>
-      <div class="app-name">Bora Financiar</div>
+    <a class="app-card" href="bora-financiar.html" data-color="yellow" data-nome="Bora Financiar"  data-icon="🏦">
+      <div class="app-icon">🏦</div><div class="app-name">Bora Financiar</div>
       <div class="app-desc">Simula parcelas, juros e custo total de um financiamento. Antes de assinar, calcule.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
   </div>
 
   <div class="section-title" style="margin-top:40px;">🚘 automóvel</div>
   <div class="apps-grid">
-
     <a class="app-card" href="bora-abastecer.html" data-color="green" data-nome="Bora Abastecer" data-icon="⛽">
-      <div class="app-icon">⛽</div>
-      <div class="app-name">Bora Abastecer</div>
+      <div class="app-icon">⛽</div><div class="app-name">Bora Abastecer</div>
       <div class="app-desc">Histórico de abastecimentos com consumo real, gasto mensal e comparador etanol vs gasolina.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
   </div>
 
   <div class="section-title" style="margin-top:40px;">🛒 cotidiano</div>
   <div class="apps-grid">
-
-    <a class="app-card" href="bora-no-mercado.html" data-color="green" data-nome="Bora no Mercado" data-icon="🛒">
-      <div class="app-icon">🛒</div>
-      <div class="app-name">Bora no Mercado</div>
+    <a class="app-card" href="bora-no-mercado.html"   data-color="green"  data-nome="Bora no Mercado"   data-icon="🛒">
+      <div class="app-icon">🛒</div><div class="app-name">Bora no Mercado</div>
       <div class="app-desc">Lista de compras inteligente com categorização automática e comparação de preço com a última compra.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
     <a class="app-card" href="bora-churrasquear.html" data-color="orange" data-nome="Bora Churrasquear" data-icon="🥩">
-      <div class="app-icon">🥩</div>
-      <div class="app-name">Bora Churrasquear</div>
+      <div class="app-icon">🥩</div><div class="app-name">Bora Churrasquear</div>
       <div class="app-desc">Calcula carne, bebida, carvão e acompanhamentos na medida certa por número de homens, mulheres e crianças.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-festejar.html" data-color="yellow" data-nome="Bora Festejar" data-icon="🎂">
-      <div class="app-icon">🎂</div>
-      <div class="app-name">Bora Festejar</div>
+    <a class="app-card" href="bora-festejar.html"     data-color="yellow" data-nome="Bora Festejar"     data-icon="🎂">
+      <div class="app-icon">🎂</div><div class="app-name">Bora Festejar</div>
       <div class="app-desc">Salgado, doce e bebida na medida certa para a sua festa — calculado por número de convidados.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-placar.html" data-color="yellow" data-nome="Bora Placar" data-icon="🏆">
-      <div class="app-icon">🏆</div>
-      <div class="app-name">Bora Placar</div>
-      <div class="app-desc">Marcador de placar em modo paisagem, adaptado por esporte — futsal, vôlei, basquete e mais. Integra com o Bora Sortear.</div>
+    <a class="app-card" href="bora-placar.html"       data-color="yellow" data-nome="Bora Placar"       data-icon="🏆">
+      <div class="app-icon">🏆</div><div class="app-name">Bora Placar</div>
+      <div class="app-desc">Marcador de placar em modo paisagem, adaptado por esporte — futsal, vôlei, basquete e mais.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-sortear.html" data-color="blue" data-nome="Bora Sortear" data-icon="🎰">
-      <div class="app-icon">🎰</div>
-      <div class="app-name">Bora Sortear</div>
+    <a class="app-card" href="bora-sortear.html"      data-color="blue"   data-nome="Bora Sortear"      data-icon="🎰">
+      <div class="app-icon">🎰</div><div class="app-name">Bora Sortear</div>
       <div class="app-desc">Sorteador de nomes, números e times para pelada ou qualquer racha. Integra com o Bora Placar.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
   </div>
 
   <div class="section-title" style="margin-top:40px;">🌿 saúde e bem-estar</div>
   <div class="apps-grid">
-
-    <a class="app-card" href="bora-emagrecer.html" data-color="orange" data-nome="Bora Emagrecer" data-icon="🔥">
-      <div class="app-icon">🔥</div>
-      <div class="app-name">Bora Emagrecer</div>
+    <a class="app-card" href="bora-emagrecer.html"  data-color="orange" data-nome="Bora Emagrecer"  data-icon="🔥">
+      <div class="app-icon">🔥</div><div class="app-name">Bora Emagrecer</div>
       <div class="app-desc">Calcule suas calorias diárias com base em altura, peso, idade e atividade física. Com IMC e distribuição de macros.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-dormir.html" data-color="blue" data-nome="Bora Dormir" data-icon="😴">
-      <div class="app-icon">😴</div>
-      <div class="app-name">Bora Dormir</div>
+    <a class="app-card" href="bora-dormir.html"     data-color="blue"   data-nome="Bora Dormir"     data-icon="😴">
+      <div class="app-icon">😴</div><div class="app-name">Bora Dormir</div>
       <div class="app-desc">Calcula os melhores horários para acordar com base nos ciclos de sono — sem aquela sensação de ressaca.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
     <a class="app-card disabled" href="#" data-color="green">
-      <div class="app-icon">💧</div>
-      <div class="app-name">Bora Hidratar</div>
+      <div class="app-icon">💧</div><div class="app-name">Bora Hidratar</div>
       <div class="app-desc">Meta diária de água personalizada por peso e rotina, com lembretes configuráveis ao longo do dia.</div>
       <div class="app-tag tag-soon">em breve</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-engravidar.html" data-color="green" data-nome="Bora Engravidar" data-icon="🌸">
-      <div class="app-icon">🌸</div>
-      <div class="app-name">Bora Engravidar</div>
+    <a class="app-card" href="bora-engravidar.html" data-color="green"  data-nome="Bora Engravidar" data-icon="🌸">
+      <div class="app-icon">🌸</div><div class="app-name">Bora Engravidar</div>
       <div class="app-desc">Calcula o ciclo fértil e a janela de ovulação. Integra direto com o Bora Mamãe quando a gravidez for confirmada.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
-    <a class="app-card" href="bora-mamae.html" data-color="yellow" data-nome="Bora Mamãe" data-icon="🤰">
-      <div class="app-icon">🤰</div>
-      <div class="app-name">Bora Mamãe</div>
+    <a class="app-card" href="bora-mamae.html"      data-color="yellow" data-nome="Bora Mamãe"      data-icon="🤰">
+      <div class="app-icon">🤰</div><div class="app-name">Bora Mamãe</div>
       <div class="app-desc">Calcula semanas de gestação, data provável do parto e marcos importantes da gravidez semana a semana.</div>
       <div class="app-tag tag-live"><span class="dot" style="background:var(--green)"></span> disponível</div>
       <div class="app-arrow">↗</div>
     </a>
-
     <a class="app-card disabled" href="#" data-color="orange">
-      <div class="app-icon">💊</div>
-      <div class="app-name">Bora Remediar</div>
+      <div class="app-icon">💊</div><div class="app-name">Bora Remediar</div>
       <div class="app-desc">Controle de horários de medicamentos com alertas configuráveis — nunca mais esqueça um remédio.</div>
       <div class="app-tag tag-soon">em breve</div>
       <div class="app-arrow">↗</div>
     </a>
-
   </div>
 
 </section>
@@ -341,51 +325,173 @@ footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;justify
   <div class="footer-copy">© 2025 Bora Apps</div>
 </footer>
 
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
 <script>
+// ─── PARTÍCULAS FLUTUANTES NO HERO ───────────────────────────────────────────
+(function(){
+  const canvas = document.getElementById('hero-canvas');
+  const ctx    = canvas.getContext('2d');
+  const wrap   = canvas.parentElement;
+  let W, H;
+
+  function resize(){
+    W = canvas.width  = wrap.offsetWidth;
+    H = canvas.height = wrap.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize, {passive:true});
+
+  const COLORS = ['#f0722a','#f0722a','#f5c842','#2ecc71','#4a9eff'];
+  const N = window.innerWidth < 600 ? 20 : 40;
+  const particles = Array.from({length:N}, () => ({
+    x:  Math.random() * 1200,
+    y:  Math.random() * 500,
+    r:  Math.random() * 1.8 + 0.6,
+    vx: (Math.random() - .5) * 0.22,
+    vy: (Math.random() - .5) * 0.22,
+    c:  COLORS[Math.floor(Math.random() * COLORS.length)],
+    a:  Math.random() * 0.45 + 0.15,
+  }));
+
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(((p.x % W) + W) % W, ((p.y % H) + H) % H, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.c;
+      ctx.globalAlpha = p.a;
+      ctx.fill();
+      p.x += p.vx; p.y += p.vy;
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  })();
+})();
+
+// ─── GSAP ────────────────────────────────────────────────────────────────────
+gsap.registerPlugin(ScrollTrigger);
+const noMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+if(!noMotion){
+
+  // NAV blur ao rolar
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  }, {passive:true});
+
+  // HERO — sequência de entrada
+  gsap.set(['#hero-eyebrow','#hero-h1','#hero-sub','#hero-badge'], {y:30});
+  gsap.timeline({defaults:{ease:'power3.out'}})
+    .to('#hero-eyebrow', {opacity:1, y:0, duration:.7,  delay:.2 })
+    .to('#hero-h1',      {opacity:1, y:0, duration:.75         }, '-=.3')
+    .to('#hero-sub',     {opacity:1, y:0, duration:.6          }, '-=.4')
+    .to('#hero-badge',   {opacity:1, y:0, duration:.5, scale:1 }, '-=.35');
+
+  // SECTION TITLES — slide da esquerda ao entrar na viewport
+  gsap.utils.toArray('.section-title').forEach(el => {
+    gsap.to(el, {
+      opacity:1, x:0, duration:.55, ease:'power2.out',
+      scrollTrigger:{trigger:el, start:'top 88%', once:true}
+    });
+  });
+
+  // CARDS — stagger por grid ao entrar na viewport
+  gsap.utils.toArray('.apps-grid').forEach(grid => {
+    // cards ativos
+    gsap.to(grid.querySelectorAll('.app-card:not(.disabled)'), {
+      opacity:1, y:0, duration:.5, ease:'power2.out',
+      stagger:{amount:.3, from:'start'},
+      scrollTrigger:{trigger:grid, start:'top 86%', once:true}
+    });
+    // cards desativados: apenas fade, opacidade final menor
+    gsap.to(grid.querySelectorAll('.app-card.disabled'), {
+      opacity:.32, y:0, duration:.5, ease:'power2.out',
+      stagger:.08,
+      scrollTrigger:{trigger:grid, start:'top 86%', once:true}
+    });
+  });
+
+  // HOVER: ícone bounce + card scale
+  document.querySelectorAll('.app-card:not(.disabled)').forEach(card => {
+    const icon = card.querySelector('.app-icon');
+    card.addEventListener('mouseenter', () => {
+      gsap.to(card, {scale:1.028, duration:.18, ease:'power2.out'});
+      gsap.fromTo(icon, {y:0}, {y:-7, duration:.18, ease:'power2.out',
+        yoyo:true, repeat:1, repeatDelay:.02});
+    });
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {scale:1, duration:.2, ease:'power2.inOut'});
+    });
+  });
+
+  // ABOUT — fade in
+  gsap.from('.about-section h2, .about-section p', {
+    opacity:0, y:20, duration:.65, ease:'power2.out', stagger:.18,
+    scrollTrigger:{trigger:'.about-section', start:'top 86%', once:true}
+  });
+
+} else {
+  // acessibilidade: garante tudo visível sem animação
+  gsap.set([
+    '#hero-eyebrow','#hero-h1','#hero-sub','#hero-badge',
+    '.section-title','.app-card','.recente-item'
+  ], {clearProps:'all'});
+  document.querySelectorAll('.app-card.disabled')
+    .forEach(c => c.style.opacity = '.35');
+}
+
 // ─── VISITADOS RECENTEMENTE ───────────────────────────────────────────────────
-const SK_RECENTES = 'bora_recentes';
+const SK_RECENTES  = 'bora_recentes';
 const MAX_RECENTES = 5;
 
-// Registra o app atual se vier de um app (não da home)
-// (executado nos apps individuais — aqui apenas lemos e exibimos)
+function carregarRecentes(){
+  try{
+    const lista = JSON.parse(localStorage.getItem(SK_RECENTES)||'[]');
+    if(!lista.length) return;
 
-function carregarRecentes() {
-  try {
-    const lista = JSON.parse(localStorage.getItem(SK_RECENTES) || '[]');
-    if (!lista.length) return;
-
-    const wrap = document.getElementById('recentes-wrap');
+    const wrap    = document.getElementById('recentes-wrap');
     const listaEl = document.getElementById('recentes-lista');
 
-    listaEl.innerHTML = lista.map(item => `
+    listaEl.innerHTML = lista.map(item=>`
       <a class="recente-item" href="${item.href}">
         <span class="r-icon">${item.icon}</span>
         <span class="r-nome">${item.nome}</span>
-      </a>
-    `).join('');
+      </a>`).join('');
 
     wrap.style.display = 'block';
-  } catch(e) {}
+
+    if(!noMotion){
+      gsap.set('.recente-item', {x:-14});
+      gsap.to('.recente-item', {
+        opacity:1, x:0, duration:.38, ease:'power2.out',
+        stagger:.07, delay:.1
+      });
+    } else {
+      document.querySelectorAll('.recente-item')
+        .forEach(el=>el.style.opacity='1');
+    }
+  }catch(e){}
 }
 
-// Adiciona listeners nos cards para gravar visita
-document.querySelectorAll('.app-card[data-nome]').forEach(card => {
-  card.addEventListener('click', function() {
-    try {
-      const item = {
+// Grava visita ao clicar num card
+document.querySelectorAll('.app-card[data-nome]').forEach(card=>{
+  card.addEventListener('click', function(){
+    try{
+      const item={
         nome: this.dataset.nome,
         icon: this.dataset.icon,
         href: this.getAttribute('href'),
       };
-      let lista = JSON.parse(localStorage.getItem(SK_RECENTES) || '[]');
-      // remove duplicata
-      lista = lista.filter(i => i.href !== item.href);
-      // insere no início
+      let lista = JSON.parse(localStorage.getItem(SK_RECENTES)||'[]');
+      lista = lista.filter(i=>i.href!==item.href);
       lista.unshift(item);
-      // mantém só os últimos MAX_RECENTES
       lista = lista.slice(0, MAX_RECENTES);
       localStorage.setItem(SK_RECENTES, JSON.stringify(lista));
-    } catch(e) {}
+    }catch(e){}
   });
 });
 
