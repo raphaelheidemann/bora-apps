@@ -129,7 +129,7 @@ h1{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;line-height:1.1;
     </div>
     <div class="field">
       <label>ano do carro</label>
-      <input id="ano" type="number" placeholder="2019" value="2019" min="1990" max="2025">
+      <input id="ano" type="number" placeholder="2019" value="2019" min="1990" max="2050">
     </div>
   </div>
 
@@ -177,8 +177,8 @@ function calcular() {
   const km_total = (km_ida + km_volta) * dias;
   const custo_combustivel = (km_total / consumo) * preco_gas;
 
-  const anos_uso = 2025 - ano;
-  const deprec_pct = Math.min(0.10 + anos_uso * 0.005, 0.25);
+  const anos_uso = 2026 - ano;
+  const deprec_pct = Math.min(0.02 + anos_uso * 0.005, 0.25);
   const deprec_anual = fipe * deprec_pct;
   const deprec_por_km = deprec_anual / 15000;
   const custo_deprec = deprec_por_km * km_total;
