@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="manifest.json">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7831385824431254" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <link rel="canonical" href="https://boraapps.com.br/bora-afinar.html">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bora Afinar — Afinador online de violão, guitarra e baixo</title>
+  <meta name="description" content="Afine seu violão, guitarra, baixo ou ukulele online, grátis e sem instalar nada. Usa o microfone do celular para detectar a nota em tempo real.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a14;
+      --ink: #f0eeff;
+      --muted: #7a749a;
+      --border: #2a2840;
+      --card: #13112a;
+      --purple: #7c52d9;
+      --purple-light: #1e1a40;
+      --purple-mid: #9b7ff0;
+      --green: #27ae60;
+      --red: #e05252;
+      --yellow: #f0c040;
+      --orange: #e8622a;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 0 0 80px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; top: 0; left: 0; right: 0; height: 300px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(124,82,217,.18) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,20,.95);
+      backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 20;
+    }
+    .top-nav-logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: 18px; color: var(--ink); text-decoration: none; }
+    .top-nav-logo span { color: var(--purple-mid); }
+    .top-nav-back { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .15s; }
+    .top-nav-back:hover { color: var(--ink); }
+
+    .app { max-width: 480px; margin: 0 auto; padding: 24px 16px; position: relative; z-index: 1; }
+
+    .logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: 28px; color: var(--ink); }
+    .logo span { color: var(--purple-mid); }
+    .tagline { font-size: 12px; color: var(--muted); margin: 4px 0 24px; }
+
+    /* ── INSTRUMENTO TABS ── */
+    .inst-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+    .inst-tab {
+      flex: 1; min-width: 80px; padding: 10px 6px; text-align: center;
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 12px;
+      font-weight: 500; color: var(--muted); cursor: pointer; transition: all .15s;
+    }
+    .inst-tab .inst-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+    .inst-tab.active { background: var(--purple-light); border-color: var(--purple); color: var(--ink); }
+
+    /* ── DISPLAY PRINCIPAL ── */
+    .tuner-card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 28px 24px; text-align: center; margin-bottom: 16px;
+      position: relative; overflow: hidden;
+    }
+    .tuner-card::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 180px; height: 180px; border-radius: 50%;
+      background: var(--purple); opacity: .05; pointer-events: none;
+    }
+
+    .note-display {
+      font-family: 'Fraunces', serif; font-size: 88px; font-weight: 900;
+      line-height: 1; color: var(--ink); margin-bottom: 4px;
+      transition: color .2s;
+      min-height: 96px; display: flex; align-items: center; justify-content: center;
+    }
+    .note-display.tuned  { color: var(--green); }
+    .note-display.sharp  { color: var(--red); }
+    .note-display.flat   { color: var(--yellow); }
+
+    .freq-display {
+      font-size: 13px; color: var(--muted); margin-bottom: 20px; min-height: 20px;
+    }
+
+    /* ── GAUGE ── */
+    .gauge-wrap { margin: 0 auto 20px; width: 100%; max-width: 320px; }
+
+    .gauge-svg { width: 100%; }
+
+    .cents-label {
+      font-size: 12px; color: var(--muted); margin-top: 6px;
+      min-height: 18px; transition: color .2s;
+    }
+    .cents-label.tuned { color: var(--green); font-weight: 600; }
+    .cents-label.sharp { color: var(--red); }
+    .cents-label.flat  { color: var(--yellow); }
+
+    /* ── STATUS ── */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 16px; border-radius: 99px;
+      font-size: 12px; font-weight: 600; margin-bottom: 20px;
+      transition: all .3s;
+    }
+    .status-badge.idle    { background: var(--purple-light); color: var(--muted); border: 1px solid var(--border); }
+    .status-badge.listening { background: rgba(124,82,217,.15); color: var(--purple-mid); border: 1px solid rgba(124,82,217,.3); }
+    .status-badge.tuned   { background: rgba(39,174,96,.15); color: var(--green); border: 1px solid rgba(39,174,96,.4); }
+    .status-badge.sharp   { background: rgba(224,82,82,.12); color: var(--red); border: 1px solid rgba(224,82,82,.3); }
+    .status-badge.flat    { background: rgba(240,192,64,.12); color: var(--yellow); border: 1px solid rgba(240,192,64,.3); }
+    .dot-pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: currentColor; animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+    /* ── BTN MICROFONE ── */
+    .mic-btn {
+      width: 100%; background: var(--purple); border: none; border-radius: 12px;
+      padding: 16px; font-family: 'Fraunces', serif; font-weight: 700; font-size: 18px;
+      color: #fff; cursor: pointer; transition: all .2s; letter-spacing: .02em;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 12px;
+    }
+    .mic-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,82,217,.4); }
+    .mic-btn:active { transform: scale(.98); }
+    .mic-btn.active { background: var(--red); }
+    .mic-btn.active:hover { box-shadow: 0 8px 24px rgba(224,82,82,.4); }
+
+    /* ── CORDAS ── */
+    .strings-section { margin-bottom: 20px; }
+    .section-label { font-size: 10px; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
+
+    .strings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .string-card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 12px 8px; text-align: center;
+      cursor: pointer; transition: all .2s; user-select: none;
+    }
+    .string-card:hover { border-color: rgba(124,82,217,.5); }
+    .string-card.active { border-color: var(--purple); background: var(--purple-light); }
+    .string-num { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+    .string-note { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 900; color: var(--ink); line-height: 1; }
+    .string-freq { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+    /* ── AFINAÇÃO ALTERNATIVA ── */
+    .tunings-wrap { margin-bottom: 20px; }
+    .tuning-select {
+      width: 100%; background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 9px; color: var(--ink); font-family: 'DM Sans', sans-serif;
+      font-size: 13px; padding: 10px 12px; outline: none; transition: border-color .15s;
+      color-scheme: dark; cursor: pointer;
+    }
+    .tuning-select:focus { border-color: var(--purple); }
+
+    /* ── SOBRE ── */
+    .sobre-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; margin-top: 28px;
+    }
+    .sobre-box h2 { font-family: 'Fraunces', serif; font-size: 18px; margin-bottom: 10px; }
+    .sobre-box p { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 8px; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--card); border: 1px solid var(--border); border-radius: 99px;
+      padding: 10px 20px; font-size: 13px; color: var(--ink); z-index: 200;
+      transition: transform .3s, opacity .3s; opacity: 0; pointer-events: none; white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div id="toast"></div>
+
+<div class="app">
+  <div class="logo">Bora <span>Afinar</span></div>
+  <p class="tagline">afinador online para violão, guitarra, baixo e ukulele</p>
+
+  <!-- INSTRUMENTOS -->
+  <div class="inst-tabs">
+    <button class="inst-tab active" onclick="setInst('violao')"><span class="inst-icon">🎸</span>Violão</button>
+    <button class="inst-tab" onclick="setInst('guitarra')"><span class="inst-icon">⚡</span>Guitarra</button>
+    <button class="inst-tab" onclick="setInst('baixo')"><span class="inst-icon">🎵</span>Baixo</button>
+    <button class="inst-tab" onclick="setInst('ukulele')"><span class="inst-icon">🌺</span>Ukulele</button>
+  </div>
+
+  <!-- AFINAÇÃO -->
+  <div class="tunings-wrap">
+    <div class="section-label">Afinação</div>
+    <select class="tuning-select" id="tuning-select" onchange="setTuning()"></select>
+  </div>
+
+  <!-- TUNER CARD -->
+  <div class="tuner-card">
+    <div class="note-display" id="note-display">—</div>
+    <div class="freq-display" id="freq-display">Toque uma corda para começar</div>
+
+    <!-- GAUGE SVG -->
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+        <!-- trilha -->
+        <rect x="20" y="36" width="280" height="8" rx="4" fill="#2a2840"/>
+        <!-- zona afinada (centro) -->
+        <rect x="148" y="34" width="24" height="12" rx="3" fill="rgba(39,174,96,.25)"/>
+        <!-- marcas de cents -->
+        <line x1="20"  y1="30" x2="20"  y2="50" stroke="#3a3860" stroke-width="1"/>
+        <line x1="90"  y1="33" x2="90"  y2="47" stroke="#3a3860" stroke-width="1"/>
+        <line x1="160" y1="28" x2="160" y2="52" stroke="#5a5880" stroke-width="1.5"/>
+        <line x1="230" y1="33" x2="230" y2="47" stroke="#3a3860" stroke-width="1"/>
+        <line x1="300" y1="30" x2="300" y2="50" stroke="#3a3860" stroke-width="1"/>
+        <!-- labels -->
+        <text x="20"  y="64" text-anchor="middle" fill="#5a5880" font-size="9" font-family="DM Sans">-50</text>
+        <text x="90"  y="64" text-anchor="middle" fill="#5a5880" font-size="9" font-family="DM Sans">-25</text>
+        <text x="160" y="68" text-anchor="middle" fill="#7a749a" font-size="10" font-family="DM Sans">0</text>
+        <text x="230" y="64" text-anchor="middle" fill="#5a5880" font-size="9" font-family="DM Sans">+25</text>
+        <text x="300" y="64" text-anchor="middle" fill="#5a5880" font-size="9" font-family="DM Sans">+50</text>
+        <!-- ponteiro -->
+        <circle id="needle" cx="160" cy="40" r="10" fill="#7c52d9" opacity="0.3"/>
+        <circle id="needle-dot" cx="160" cy="40" r="6" fill="#9b7ff0"/>
+      </svg>
+      <div class="cents-label" id="cents-label">aguardando sinal…</div>
+    </div>
+
+    <div class="status-badge idle" id="status-badge">
+      <span class="dot-pulse"></span>
+      <span id="status-text">Microfone desligado</span>
+    </div>
+  </div>
+
+  <!-- BTN MIC -->
+  <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
+    🎙️ Ligar microfone
+  </button>
+
+  <!-- CORDAS -->
+  <div class="strings-section">
+    <div class="section-label">Cordas — clique para focar</div>
+    <div class="strings-grid" id="strings-grid"></div>
+  </div>
+
+  <!-- SOBRE -->
+  <div class="sobre-box">
+    <h2>Como usar o Bora Afinar</h2>
+    <p>Clique em <strong>Ligar microfone</strong>, permita o acesso quando o navegador pedir e toque uma corda do instrumento perto do celular. O afinador detecta a frequência em tempo real e mostra se a nota está grave (↓), aguda (↑) ou afinada (✓).</p>
+    <p>Para afinar, gire a tarraxa devagar enquanto observa o ponteiro. Quando ficar verde e centralizado, a corda está afinada. Repita para todas as cordas.</p>
+    <p>Funciona melhor em ambiente silencioso. Nenhum dado de áudio sai do seu celular — o processamento é todo local.</p>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  INSTRUMENTOS & AFINAÇÕES
+// ══════════════════════════════════════════
+const INSTRUMENTS = {
+  violao: {
+    label: 'Violão',
+    tunings: {
+      'Standard (E A D G B E)': [
+        { note:'E2', freq:82.41,  string:'6ª' },
+        { note:'A2', freq:110.00, string:'5ª' },
+        { note:'D3', freq:146.83, string:'4ª' },
+        { note:'G3', freq:196.00, string:'3ª' },
+        { note:'B3', freq:246.94, string:'2ª' },
+        { note:'E4', freq:329.63, string:'1ª' },
+      ],
+      'Drop D (D A D G B E)': [
+        { note:'D2', freq:73.42,  string:'6ª' },
+        { note:'A2', freq:110.00, string:'5ª' },
+        { note:'D3', freq:146.83, string:'4ª' },
+        { note:'G3', freq:196.00, string:'3ª' },
+        { note:'B3', freq:246.94, string:'2ª' },
+        { note:'E4', freq:329.63, string:'1ª' },
+      ],
+      'Open G (D G D G B D)': [
+        { note:'D2', freq:73.42,  string:'6ª' },
+        { note:'G2', freq:98.00,  string:'5ª' },
+        { note:'D3', freq:146.83, string:'4ª' },
+        { note:'G3', freq:196.00, string:'3ª' },
+        { note:'B3', freq:246.94, string:'2ª' },
+        { note:'D4', freq:293.66, string:'1ª' },
+      ],
+    }
+  },
+  guitarra: {
+    label: 'Guitarra',
+    tunings: {
+      'Standard (E A D G B E)': [
+        { note:'E2', freq:82.41,  string:'6ª' },
+        { note:'A2', freq:110.00, string:'5ª' },
+        { note:'D3', freq:146.83, string:'4ª' },
+        { note:'G3', freq:196.00, string:'3ª' },
+        { note:'B3', freq:246.94, string:'2ª' },
+        { note:'E4', freq:329.63, string:'1ª' },
+      ],
+      'Drop D (D A D G B E)': [
+        { note:'D2', freq:73.42,  string:'6ª' },
+        { note:'A2', freq:110.00, string:'5ª' },
+        { note:'D3', freq:146.83, string:'4ª' },
+        { note:'G3', freq:196.00, string:'3ª' },
+        { note:'B3', freq:246.94, string:'2ª' },
+        { note:'E4', freq:329.63, string:'1ª' },
+      ],
+      'Meio-tom abaixo (Eb Ab Db Gb Bb Eb)': [
+        { note:'Eb2', freq:77.78,  string:'6ª' },
+        { note:'Ab2', freq:103.83, string:'5ª' },
+        { note:'Db3', freq:138.59, string:'4ª' },
+        { note:'Gb3', freq:185.00, string:'3ª' },
+        { note:'Bb3', freq:233.08, string:'2ª' },
+        { note:'Eb4', freq:311.13, string:'1ª' },
+      ],
+      'Tom abaixo (D G C F A D)': [
+        { note:'D2', freq:73.42,  string:'6ª' },
+        { note:'G2', freq:98.00,  string:'5ª' },
+        { note:'C3', freq:130.81, string:'4ª' },
+        { note:'F3', freq:174.61, string:'3ª' },
+        { note:'A3', freq:220.00, string:'2ª' },
+        { note:'D4', freq:293.66, string:'1ª' },
+      ],
+    }
+  },
+  baixo: {
+    label: 'Baixo',
+    tunings: {
+      'Standard 4 cordas (E A D G)': [
+        { note:'E1', freq:41.20,  string:'4ª' },
+        { note:'A1', freq:55.00,  string:'3ª' },
+        { note:'D2', freq:73.42,  string:'2ª' },
+        { note:'G2', freq:98.00,  string:'1ª' },
+      ],
+      'Drop D 4 cordas (D A D G)': [
+        { note:'D1', freq:36.71,  string:'4ª' },
+        { note:'A1', freq:55.00,  string:'3ª' },
+        { note:'D2', freq:73.42,  string:'2ª' },
+        { note:'G2', freq:98.00,  string:'1ª' },
+      ],
+      'Standard 5 cordas (B E A D G)': [
+        { note:'B0', freq:30.87,  string:'5ª' },
+        { note:'E1', freq:41.20,  string:'4ª' },
+        { note:'A1', freq:55.00,  string:'3ª' },
+        { note:'D2', freq:73.42,  string:'2ª' },
+        { note:'G2', freq:98.00,  string:'1ª' },
+      ],
+    }
+  },
+  ukulele: {
+    label: 'Ukulele',
+    tunings: {
+      'Standard Soprano (G C E A)': [
+        { note:'G4', freq:392.00, string:'4ª' },
+        { note:'C4', freq:261.63, string:'3ª' },
+        { note:'E4', freq:329.63, string:'2ª' },
+        { note:'A4', freq:440.00, string:'1ª' },
+      ],
+      'Low G (G C E A)': [
+        { note:'G3', freq:196.00, string:'4ª' },
+        { note:'C4', freq:261.63, string:'3ª' },
+        { note:'E4', freq:329.63, string:'2ª' },
+        { note:'A4', freq:440.00, string:'1ª' },
+      ],
+      'Baritone (D G B E)': [
+        { note:'D3', freq:146.83, string:'4ª' },
+        { note:'G3', freq:196.00, string:'3ª' },
+        { note:'B3', freq:246.94, string:'2ª' },
+        { note:'E4', freq:329.63, string:'1ª' },
+      ],
+    }
+  }
+};
+
+// Todas as notas para detecção livre
+const ALL_NOTES = [
+  {note:'C0',freq:16.35},{note:'C#0',freq:17.32},{note:'D0',freq:18.35},{note:'D#0',freq:19.45},
+  {note:'E0',freq:20.60},{note:'F0',freq:21.83},{note:'F#0',freq:23.12},{note:'G0',freq:24.50},
+  {note:'G#0',freq:25.96},{note:'A0',freq:27.50},{note:'A#0',freq:29.14},{note:'B0',freq:30.87},
+  {note:'C1',freq:32.70},{note:'C#1',freq:34.65},{note:'D1',freq:36.71},{note:'D#1',freq:38.89},
+  {note:'E1',freq:41.20},{note:'F1',freq:43.65},{note:'F#1',freq:46.25},{note:'G1',freq:49.00},
+  {note:'G#1',freq:51.91},{note:'A1',freq:55.00},{note:'A#1',freq:58.27},{note:'B1',freq:61.74},
+  {note:'C2',freq:65.41},{note:'C#2',freq:69.30},{note:'D2',freq:73.42},{note:'D#2',freq:77.78},
+  {note:'E2',freq:82.41},{note:'F2',freq:87.31},{note:'F#2',freq:92.50},{note:'G2',freq:98.00},
+  {note:'G#2',freq:103.83},{note:'A2',freq:110.00},{note:'A#2',freq:116.54},{note:'B2',freq:123.47},
+  {note:'C3',freq:130.81},{note:'C#3',freq:138.59},{note:'D3',freq:146.83},{note:'D#3',freq:155.56},
+  {note:'E3',freq:164.81},{note:'F3',freq:174.61},{note:'F#3',freq:185.00},{note:'G3',freq:196.00},
+  {note:'G#3',freq:207.65},{note:'A3',freq:220.00},{note:'A#3',freq:233.08},{note:'B3',freq:246.94},
+  {note:'C4',freq:261.63},{note:'C#4',freq:277.18},{note:'D4',freq:293.66},{note:'D#4',freq:311.13},
+  {note:'E4',freq:329.63},{note:'F4',freq:349.23},{note:'F#4',freq:369.99},{note:'G4',freq:392.00},
+  {note:'G#4',freq:415.30},{note:'A4',freq:440.00},{note:'A#4',freq:466.16},{note:'B4',freq:493.88},
+  {note:'C5',freq:523.25},{note:'C#5',freq:554.37},{note:'D5',freq:587.33},{note:'D#5',freq:622.25},
+  {note:'E5',freq:659.25},{note:'F5',freq:698.46},{note:'F#5',freq:739.99},{note:'G5',freq:783.99},
+];
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentInst    = 'violao';
+let currentStrings = [];
+let focusedString  = null; // índice da corda focada ou null
+let micActive      = false;
+let audioCtx       = null;
+let analyser       = null;
+let micStream      = null;
+let animFrame      = null;
+let buffer         = null;
+
+// ══════════════════════════════════════════
+//  UI — INSTRUMENTO & AFINAÇÃO
+// ══════════════════════════════════════════
+function setInst(inst) {
+  currentInst = inst;
+  focusedString = null;
+  document.querySelectorAll('.inst-tab').forEach((el, i) => {
+    el.classList.toggle('active', ['violao','guitarra','baixo','ukulele'][i] === inst);
+  });
+  populateTunings();
+  setTuning();
+}
+
+function populateTunings() {
+  const sel = document.getElementById('tuning-select');
+  const tunings = INSTRUMENTS[currentInst].tunings;
+  sel.innerHTML = '';
+  Object.keys(tunings).forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    sel.appendChild(opt);
+  });
+}
+
+function setTuning() {
+  const sel  = document.getElementById('tuning-select');
+  const name = sel.value;
+  currentStrings = INSTRUMENTS[currentInst].tunings[name];
+  focusedString  = null;
+  renderStrings();
+  resetDisplay();
+}
+
+function renderStrings() {
+  const grid = document.getElementById('strings-grid');
+  grid.innerHTML = '';
+  // Ajusta colunas
+  const cols = currentStrings.length <= 4 ? currentStrings.length : 3;
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+  currentStrings.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'string-card' + (focusedString === i ? ' active' : '');
+    card.onclick = () => focusString(i);
+    card.innerHTML = `
+      <div class="string-num">${s.string}</div>
+      <div class="string-note">${s.note.replace(/\d/,'')}</div>
+      <div class="string-freq">${s.freq.toFixed(1)} Hz</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function focusString(idx) {
+  focusedString = focusedString === idx ? null : idx;
+  renderStrings();
+  resetDisplay();
+}
+
+// ══════════════════════════════════════════
+//  MICROFONE
+// ══════════════════════════════════════════
+async function toggleMic() {
+  if (micActive) { stopMic(); return; }
+
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }, video: false });
+    audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+    analyser  = audioCtx.createAnalyser();
+    analyser.fftSize = 4096;
+    analyser.smoothingTimeConstant = 0.8;
+    buffer    = new Float32Array(analyser.fftSize);
+
+    const source = audioCtx.createMediaStreamSource(micStream);
+    source.connect(analyser);
+
+    micActive = true;
+    document.getElementById('mic-btn').textContent = '🛑 Parar microfone';
+    document.getElementById('mic-btn').classList.add('active');
+    setStatus('listening', 'Ouvindo…');
+    detect();
+  } catch(e) {
+    toast('Não foi possível acessar o microfone. Verifique as permissões.');
+  }
+}
+
+function stopMic() {
+  micActive = false;
+  cancelAnimationFrame(animFrame);
+  if (micStream) micStream.getTracks().forEach(t => t.stop());
+  if (audioCtx)  audioCtx.close();
+  micStream = audioCtx = analyser = null;
+  document.getElementById('mic-btn').textContent = '🎙️ Ligar microfone';
+  document.getElementById('mic-btn').classList.remove('active');
+  setStatus('idle', 'Microfone desligado');
+  resetDisplay();
+}
+
+// ══════════════════════════════════════════
+//  DETECÇÃO — YIN algorithm simplificado
+// ══════════════════════════════════════════
+function detect() {
+  animFrame = requestAnimationFrame(detect);
+  analyser.getFloatTimeDomainData(buffer);
+
+  // volume mínimo (evita detectar silêncio)
+  let rms = 0;
+  for (let i = 0; i < buffer.length; i++) rms += buffer[i] * buffer[i];
+  rms = Math.sqrt(rms / buffer.length);
+  if (rms < 0.008) {
+    setStatus('listening', 'Ouvindo…');
+    return;
+  }
+
+  const freq = yin(buffer, audioCtx.sampleRate);
+  if (!freq) return;
+
+  // Encontra nota mais próxima (considerando foco)
+  let target;
+  if (focusedString !== null) {
+    target = currentStrings[focusedString];
+  } else {
+    // detecta qual nota da afinação atual é mais próxima
+    let minDist = Infinity;
+    currentStrings.forEach(s => {
+      const d = Math.abs(freqToCents(freq, s.freq));
+      if (d < minDist) { minDist = d; target = s; }
+    });
+    // fallback: usa catálogo completo se muito longe
+    if (minDist > 60) {
+      ALL_NOTES.forEach(n => {
+        const d = Math.abs(freqToCents(freq, n.freq));
+        if (d < minDist) { minDist = d; target = n; }
+      });
+    }
+  }
+
+  const cents = freqToCents(freq, target.freq);
+  updateDisplay(target.note, freq, cents);
+}
+
+// YIN pitch detection
+function yin(buf, sr) {
+  const len   = buf.length;
+  const half  = Math.floor(len / 2);
+  const diff  = new Float32Array(half);
+  const cmnd  = new Float32Array(half);
+
+  diff[0] = 0;
+  for (let tau = 1; tau < half; tau++) {
+    for (let i = 0; i < half; i++) {
+      const d = buf[i] - buf[i + tau];
+      diff[tau] += d * d;
+    }
+  }
+
+  cmnd[0] = 1;
+  let sum = 0;
+  for (let tau = 1; tau < half; tau++) {
+    sum += diff[tau];
+    cmnd[tau] = diff[tau] * tau / sum;
+  }
+
+  const thresh = 0.15;
+  let tau = -1;
+  for (let t = 2; t < half; t++) {
+    if (cmnd[t] < thresh) {
+      while (t + 1 < half && cmnd[t + 1] < cmnd[t]) t++;
+      tau = t;
+      break;
+    }
+  }
+
+  if (tau === -1 || tau < 2) return null;
+
+  // interpolação parabólica
+  const x0 = tau < 1 ? tau : tau - 1;
+  const x2 = tau + 1 < half ? tau + 1 : tau;
+  let betterTau;
+  if (x0 === tau)       betterTau = cmnd[tau] <= cmnd[x2] ? tau : x2;
+  else if (x2 === tau)  betterTau = cmnd[tau] <= cmnd[x0] ? tau : x0;
+  else {
+    const s0 = cmnd[x0], s1 = cmnd[tau], s2 = cmnd[x2];
+    betterTau = tau + (s2 - s0) / (2 * (2 * s1 - s2 - s0));
+  }
+
+  return sr / betterTau;
+}
+
+function freqToCents(detected, target) {
+  return 1200 * Math.log2(detected / target);
+}
+
+// ══════════════════════════════════════════
+//  DISPLAY
+// ══════════════════════════════════════════
+function updateDisplay(note, freq, cents) {
+  const noteEl   = document.getElementById('note-display');
+  const freqEl   = document.getElementById('freq-display');
+  const centsEl  = document.getElementById('cents-label');
+  const needle   = document.getElementById('needle');
+  const needleDot= document.getElementById('needle-dot');
+
+  const noteName = note.replace(/\d/,'');
+  noteEl.textContent = noteName;
+  freqEl.textContent = freq.toFixed(1) + ' Hz';
+
+  // clamp cents para gauge [-50, +50]
+  const clamped = Math.max(-50, Math.min(50, cents));
+  // mapeia -50..+50 → 20..300 (posição x no SVG)
+  const x = 160 + (clamped / 50) * 140;
+  needle.setAttribute('cx', x);
+  needleDot.setAttribute('cx', x);
+
+  let state, statusTxt, centsMsg;
+
+  if (Math.abs(cents) <= 5) {
+    state = 'tuned'; statusTxt = '✓ Afinado!'; centsMsg = '✓ Afinado!';
+    needle.setAttribute('fill', 'rgba(39,174,96,.4)');
+    needleDot.setAttribute('fill', '#27ae60');
+  } else if (cents > 5) {
+    state = 'sharp'; statusTxt = '↓ Grave — afrouxe a tarraxa';
+    centsMsg = `+${cents.toFixed(0)} cents — muito agudo, afrouxe`;
+    needle.setAttribute('fill', 'rgba(224,82,82,.35)');
+    needleDot.setAttribute('fill', '#e05252');
+  } else {
+    state = 'flat'; statusTxt = '↑ Agudo — aperte a tarraxa';
+    centsMsg = `${cents.toFixed(0)} cents — muito grave, aperte`;
+    needle.setAttribute('fill', 'rgba(240,192,64,.35)');
+    needleDot.setAttribute('fill', '#f0c040');
+  }
+
+  noteEl.className = 'note-display ' + state;
+  centsEl.className = 'cents-label ' + state;
+  centsEl.textContent = centsMsg;
+  setStatus(state, statusTxt);
+}
+
+function resetDisplay() {
+  document.getElementById('note-display').textContent = '—';
+  document.getElementById('note-display').className   = 'note-display';
+  document.getElementById('freq-display').textContent = 'Toque uma corda para começar';
+  document.getElementById('cents-label').textContent  = 'aguardando sinal…';
+  document.getElementById('cents-label').className    = 'cents-label';
+  const n = document.getElementById('needle');
+  const d = document.getElementById('needle-dot');
+  n.setAttribute('cx', 160); n.setAttribute('fill', 'rgba(124,82,217,.3)');
+  d.setAttribute('cx', 160); d.setAttribute('fill', '#9b7ff0');
+  if (micActive) setStatus('listening', 'Ouvindo…');
+}
+
+function setStatus(state, text) {
+  const badge = document.getElementById('status-badge');
+  badge.className = 'status-badge ' + state;
+  document.getElementById('status-text').textContent = text;
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+populateTunings();
+setTuning();
+</script>
+</body>
+</html>
