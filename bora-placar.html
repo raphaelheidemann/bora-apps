@@ -251,6 +251,20 @@ function setEsporte(e) {
 // verifica times do Bora Sortear
 (function(){
   try {
+    // Ler nomes vindos do Bora Jogar
+    const nA = localStorage.getItem('bora_placar_nomeA');
+    const nB = localStorage.getItem('bora_placar_nomeB');
+    if (nA) document.getElementById('nome-a').value = nA;
+    if (nB) document.getElementById('nome-b').value = nB;
+    if (nA || nB) {
+      const box = document.getElementById('import-box');
+      box.style.display = 'block';
+      box.innerHTML = '<strong>📲 Times importados do Bora Jogar!</strong><p style="font-size:11px;color:var(--muted);margin-top:4px;">Times já configurados. Escolha o esporte e inicie.</p>';
+      localStorage.removeItem('bora_placar_nomeA');
+      localStorage.removeItem('bora_placar_nomeB');
+      return;
+    }
+    // Fallback: Bora Sortear
     const dados = localStorage.getItem('bora_sortear_times');
     if (!dados) return;
     const times = JSON.parse(dados);

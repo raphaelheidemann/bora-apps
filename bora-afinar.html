@@ -8,7 +8,7 @@
   <meta charset="UTF-8">
   <link rel="canonical" href="https://boraapps.com.br/bora-afinar.html">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bora Afinar — Afinador online de violão, guitarra e baixo</title>
+  <title>Bora Afinar — Afinador online de violão, guitarra, baixo e ukulele</title>
   <meta name="description" content="Afine seu violão, guitarra, baixo ou ukulele online, grátis e sem instalar nada. Usa o microfone do celular para detectar a nota em tempo real.">
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -204,12 +204,11 @@
 
 <div class="app">
   <div class="logo">Bora <span>Afinar</span></div>
-  <p class="tagline">afinador online para violão, guitarra, baixo e ukulele</p>
+  <p class="tagline">afinador online para violão, guitarra, baixo e ukulele — sem instalar nada</p>
 
   <!-- INSTRUMENTOS -->
   <div class="inst-tabs">
-    <button class="inst-tab active" onclick="setInst('violao')"><span class="inst-icon">🎸</span>Violão</button>
-    <button class="inst-tab" onclick="setInst('guitarra')"><span class="inst-icon">⚡</span>Guitarra</button>
+    <button class="inst-tab active" onclick="setInst('violao')"><span class="inst-icon">🎸</span>Violão / Guitarra</button>
     <button class="inst-tab" onclick="setInst('baixo')"><span class="inst-icon">🎵</span>Baixo</button>
     <button class="inst-tab" onclick="setInst('ukulele')"><span class="inst-icon">🌺</span>Ukulele</button>
   </div>
@@ -283,7 +282,7 @@
 // ══════════════════════════════════════════
 const INSTRUMENTS = {
   violao: {
-    label: 'Violão',
+    label: 'Violão / Guitarra',
     tunings: {
       'Standard (E A D G B E)': [
         { note:'E2', freq:82.41,  string:'6ª' },
@@ -309,27 +308,6 @@ const INSTRUMENTS = {
         { note:'B3', freq:246.94, string:'2ª' },
         { note:'D4', freq:293.66, string:'1ª' },
       ],
-    }
-  },
-  guitarra: {
-    label: 'Guitarra',
-    tunings: {
-      'Standard (E A D G B E)': [
-        { note:'E2', freq:82.41,  string:'6ª' },
-        { note:'A2', freq:110.00, string:'5ª' },
-        { note:'D3', freq:146.83, string:'4ª' },
-        { note:'G3', freq:196.00, string:'3ª' },
-        { note:'B3', freq:246.94, string:'2ª' },
-        { note:'E4', freq:329.63, string:'1ª' },
-      ],
-      'Drop D (D A D G B E)': [
-        { note:'D2', freq:73.42,  string:'6ª' },
-        { note:'A2', freq:110.00, string:'5ª' },
-        { note:'D3', freq:146.83, string:'4ª' },
-        { note:'G3', freq:196.00, string:'3ª' },
-        { note:'B3', freq:246.94, string:'2ª' },
-        { note:'E4', freq:329.63, string:'1ª' },
-      ],
       'Meio-tom abaixo (Eb Ab Db Gb Bb Eb)': [
         { note:'Eb2', freq:77.78,  string:'6ª' },
         { note:'Ab2', freq:103.83, string:'5ª' },
@@ -348,6 +326,7 @@ const INSTRUMENTS = {
       ],
     }
   },
+
   baixo: {
     label: 'Baixo',
     tunings: {
@@ -430,6 +409,12 @@ let analyser       = null;
 let micStream      = null;
 let animFrame      = null;
 let buffer         = null;
+// Smoothing
+let smoothCents    = 0;
+let smoothFreq     = 0;
+let lastNote       = null;
+let stableCount    = 0;
+const SMOOTH       = 0.15; // 0=instantâneo, 1=nunca move
 
 // ══════════════════════════════════════════
 //  UI — INSTRUMENTO & AFINAÇÃO
@@ -438,7 +423,7 @@ function setInst(inst) {
   currentInst = inst;
   focusedString = null;
   document.querySelectorAll('.inst-tab').forEach((el, i) => {
-    el.classList.toggle('active', ['violao','guitarra','baixo','ukulele'][i] === inst);
+    el.classList.toggle('active', ['violao','baixo','ukulele'][i] === inst);
   });
   populateTunings();
   setTuning();
@@ -553,13 +538,11 @@ function detect() {
   if (focusedString !== null) {
     target = currentStrings[focusedString];
   } else {
-    // detecta qual nota da afinação atual é mais próxima
     let minDist = Infinity;
     currentStrings.forEach(s => {
       const d = Math.abs(freqToCents(freq, s.freq));
       if (d < minDist) { minDist = d; target = s; }
     });
-    // fallback: usa catálogo completo se muito longe
     if (minDist > 60) {
       ALL_NOTES.forEach(n => {
         const d = Math.abs(freqToCents(freq, n.freq));
@@ -568,8 +551,24 @@ function detect() {
     }
   }
 
-  const cents = freqToCents(freq, target.freq);
-  updateDisplay(target.note, freq, cents);
+  const rawCents = freqToCents(freq, target.freq);
+
+  // Smooth: se mudou de nota, reseta; senão aplica média exponencial
+  if (lastNote !== target.note) {
+    lastNote   = target.note;
+    smoothCents = rawCents;
+    smoothFreq  = freq;
+    stableCount = 0;
+  } else {
+    smoothCents = smoothCents + SMOOTH * (rawCents - smoothCents);
+    smoothFreq  = smoothFreq  + SMOOTH * (freq - smoothFreq);
+    stableCount++;
+  }
+
+  // Só atualiza display a cada 2 frames (reduz tremor visual)
+  if (stableCount % 2 !== 0) return;
+
+  updateDisplay(target.note, smoothFreq, smoothCents);
 }
 
 // YIN pitch detection

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="manifest.json">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7831385824431254" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <link rel="canonical" href="https://boraapps.com.br/bora-jogar.html">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bora Jogar — Organize sua pelada, sorteie times e registre o placar</title>
+  <meta name="description" content="Monte seu grupo de pelada, sorteie times equilibrados por posição, compartilhe a lista no WhatsApp e salve o histórico de jogos. Gratuito e sem cadastro.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a14; --ink: #f0eeff; --muted: #7a749a; --border: #2a2840;
+      --card: #13112a; --surface: #0f0e1e;
+      --purple: #7c52d9; --purple-light: #1e1a40; --purple-mid: #9b7ff0;
+      --green: #27ae60; --green-light: #0a2010;
+      --red: #e05252; --yellow: #f0c040; --orange: #e8622a;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; padding-bottom: 80px; overflow-x: hidden; }
+    body::before { content:''; position:fixed; top:0; left:0; right:0; height:300px; background:radial-gradient(ellipse at 50% 0%, rgba(124,82,217,.18) 0%, transparent 70%); pointer-events:none; z-index:0; }
+
+    /* NAV */
+    .top-nav { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--border); background:rgba(10,10,20,.95); backdrop-filter:blur(8px); position:sticky; top:0; z-index:20; }
+    .top-nav-logo { font-family:'Fraunces',serif; font-weight:900; font-size:18px; color:var(--ink); text-decoration:none; }
+    .top-nav-logo span { color:var(--purple-mid); }
+    .top-nav-back { font-size:13px; color:var(--muted); text-decoration:none; transition:color .15s; }
+    .top-nav-back:hover { color:var(--ink); }
+
+    .app { max-width:500px; margin:0 auto; padding:24px 16px; position:relative; z-index:1; }
+    .logo { font-family:'Fraunces',serif; font-weight:900; font-size:28px; color:var(--ink); }
+    .logo span { color:var(--purple-mid); }
+    .tagline { font-size:12px; color:var(--muted); margin:4px 0 24px; }
+
+    /* TABS */
+    .tabs { display:flex; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:24px; }
+    .tab { flex:1; padding:10px 4px; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:500; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all .15s; text-align:center; }
+    .tab.active { background:var(--purple); color:#fff; }
+
+    .section-label { font-size:10px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; margin-bottom:8px; margin-top:18px; }
+
+    /* GRUPOS LIST */
+    .grupos-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+    .grupo-card { background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .2s; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .grupo-card:hover { border-color:rgba(124,82,217,.4); }
+    .grupo-card.selected { border-color:var(--purple); background:var(--purple-light); }
+    .grupo-info { flex:1; min-width:0; }
+    .grupo-nome { font-family:'Fraunces',serif; font-size:16px; font-weight:700; }
+    .grupo-meta { font-size:11px; color:var(--muted); margin-top:2px; }
+    .grupo-actions { display:flex; gap:6px; }
+    .icon-btn { background:none; border:1px solid var(--border); border-radius:6px; color:var(--muted); font-size:13px; padding:5px 8px; cursor:pointer; transition:all .15s; }
+    .icon-btn:hover { border-color:var(--purple); color:var(--purple-mid); }
+    .icon-btn.danger:hover { border-color:var(--red); color:var(--red); }
+
+    .empty-state { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; }
+    .empty-state .emoji { font-size:40px; display:block; margin-bottom:10px; }
+
+    /* FORMS */
+    .field { display:flex; flex-direction:column; gap:5px; margin-bottom:10px; }
+    .field label { font-size:11px; color:var(--muted); }
+    .field input, .field select { font-family:'DM Sans',sans-serif; font-size:13px; border:1.5px solid var(--border); border-radius:9px; padding:10px 12px; background:var(--card); color:var(--ink); outline:none; width:100%; transition:border-color .15s; color-scheme:dark; }
+    .field input:focus, .field select:focus { border-color:var(--purple); }
+    .field input::placeholder { color:var(--muted); }
+
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+
+    /* BTNS */
+    .btn-primary { width:100%; background:var(--purple); border:none; border-radius:10px; padding:13px; font-family:'Fraunces',serif; font-weight:700; font-size:16px; color:#fff; cursor:pointer; transition:all .2s; margin-top:6px; }
+    .btn-primary:hover { opacity:.88; transform:translateY(-1px); }
+    .btn-primary:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+    .btn-outline { flex:1; padding:10px 12px; border-radius:9px; border:1.5px solid var(--border); background:transparent; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; color:var(--ink); cursor:pointer; transition:all .15s; text-align:center; }
+    .btn-outline:hover { border-color:var(--purple); color:var(--purple-mid); }
+    .btn-outline.green { background:var(--green); border-color:var(--green); color:#fff; }
+    .btn-outline.green:hover { opacity:.88; }
+    .btn-outline.wpp { background:#25d366; border-color:#25d366; color:#fff; }
+    .btn-outline.wpp:hover { opacity:.88; }
+    .btn-outline.danger { color:var(--red); }
+    .btn-outline.danger:hover { border-color:var(--red); }
+    .btn-row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+
+    /* MEMBROS */
+    .add-membro-row { display:flex; gap:6px; margin-bottom:8px; }
+    .add-membro-row input { flex:1; font-family:'DM Sans',sans-serif; font-size:13px; border:1.5px solid var(--border); border-radius:9px; padding:9px 12px; background:var(--card); color:var(--ink); outline:none; transition:border-color .15s; }
+    .add-membro-row input:focus { border-color:var(--purple); }
+    .add-membro-row input::placeholder { color:var(--muted); }
+    .add-membro-row select { font-family:'DM Sans',sans-serif; font-size:12px; border:1.5px solid var(--border); border-radius:9px; padding:9px 8px; background:var(--card); color:var(--ink); outline:none; transition:border-color .15s; color-scheme:dark; flex-shrink:0; }
+    .add-membro-row select:focus { border-color:var(--purple); }
+    .add-btn { background:var(--purple); color:#fff; border:none; border-radius:9px; padding:9px 14px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+
+    .membros-list { display:flex; flex-direction:column; gap:5px; max-height:300px; overflow-y:auto; margin-bottom:10px; }
+    .membros-list::-webkit-scrollbar { width:3px; }
+    .membros-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+
+    .membro-item { display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:9px 12px; animation:fadeUp .2s ease both; }
+    .membro-item.ausente { opacity:.45; }
+    .membro-item.ausente .membro-nome { text-decoration:line-through; }
+    .membro-check { width:20px; height:20px; border-radius:5px; border:1.5px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; background:transparent; }
+    .membro-item:not(.ausente) .membro-check { background:var(--green); border-color:var(--green); }
+    .membro-nome { flex:1; font-size:13px; font-weight:500; }
+    .membro-pos { font-size:10px; color:var(--purple-mid); background:var(--purple-light); border-radius:99px; padding:2px 8px; white-space:nowrap; }
+    .membro-mens { font-size:10px; border-radius:99px; padding:2px 8px; white-space:nowrap; cursor:pointer; transition:all .15s; }
+    .membro-mens.pago { background:rgba(39,174,96,.15); color:var(--green); border:1px solid rgba(39,174,96,.3); }
+    .membro-mens.pendente { background:rgba(224,82,82,.12); color:var(--red); border:1px solid rgba(224,82,82,.3); }
+    .membro-del { background:none; border:none; color:var(--muted); cursor:pointer; font-size:16px; padding:0 2px; transition:color .15s; }
+    .membro-del:hover { color:var(--red); }
+
+    /* ESPORTE TABS */
+    .esp-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .esp-tab { flex:1; min-width:70px; padding:8px 4px; text-align:center; background:var(--card); border:1.5px solid var(--border); border-radius:9px; font-size:11px; color:var(--muted); cursor:pointer; transition:all .15s; font-family:'DM Sans',sans-serif; }
+    .esp-tab .ei { font-size:18px; display:block; margin-bottom:2px; }
+    .esp-tab.active { background:var(--purple-light); border-color:var(--purple); color:var(--ink); }
+
+    /* SORTEIO RESULTADO */
+    .times-sorteio { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; }
+    .time-box { background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:14px; }
+    .time-box.time-a { border-color:rgba(124,82,217,.5); }
+    .time-box.time-b { border-color:rgba(232,98,42,.5); }
+    .time-header { font-family:'Fraunces',serif; font-size:15px; font-weight:700; margin-bottom:10px; }
+    .time-a .time-header { color:var(--purple-mid); }
+    .time-b .time-header { color:var(--orange); }
+    .time-membro { font-size:12px; padding:4px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .time-membro:last-child { border-bottom:none; }
+    .time-membro-pos { font-size:10px; color:var(--muted); }
+
+    /* HISTÓRICO */
+    .hist-item { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:8px; }
+    .hist-data { font-size:10px; color:var(--muted); margin-bottom:6px; }
+    .hist-placar { font-family:'Fraunces',serif; font-size:20px; font-weight:900; margin-bottom:6px; }
+    .hist-times { font-size:11px; color:var(--muted); line-height:1.6; }
+
+    /* MENSALIDADE */
+    .mens-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .mens-stats { display:flex; gap:8px; }
+    .mens-chip { background:var(--card); border:1px solid var(--border); border-radius:99px; padding:5px 12px; font-size:11px; color:var(--muted); }
+    .mens-chip b { color:var(--ink); }
+
+    /* TOAST */
+    #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--card); border:1px solid var(--border); border-radius:99px; padding:10px 20px; font-size:13px; color:var(--ink); z-index:200; transition:transform .3s, opacity .3s; opacity:0; pointer-events:none; white-space:nowrap; }
+    #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+    /* MODAL */
+    .modal-bg { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.75); backdrop-filter:blur(4px); align-items:flex-end; justify-content:center; padding:16px; }
+    .modal-bg.open { display:flex; }
+    .modal { background:#1a1830; border:1.5px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:480px; animation:slideUp .3s ease; max-height:90vh; overflow-y:auto; }
+    .modal-title { font-family:'Fraunces',serif; font-size:20px; margin-bottom:16px; }
+    .modal-close { width:100%; margin-top:10px; padding:10px; border-radius:9px; border:1px solid var(--border); background:transparent; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideUp { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .hidden { display:none !important; }
+
+    .sobre-box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-top:32px; }
+    .sobre-box h2 { font-family:'Fraunces',serif; font-size:18px; margin-bottom:10px; }
+    .sobre-box p { font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:8px; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="top-nav-logo" href="index.html">Bora <span>Apps</span></a>
+  <a class="top-nav-back" href="index.html">← início</a>
+</nav>
+
+<div id="toast"></div>
+
+<!-- MODAL CRIAR/EDITAR GRUPO -->
+<div class="modal-bg" id="modal-grupo">
+  <div class="modal">
+    <p class="modal-title" id="modal-grupo-title">🏟️ Novo Grupo</p>
+    <div class="field"><label>Nome do grupo</label><input type="text" id="mg-nome" placeholder="ex: Pelada de Terça 22h"></div>
+    <div class="row2">
+      <div class="field"><label>Dia da semana</label>
+        <select id="mg-dia">
+          <option>Segunda</option><option>Terça</option><option>Quarta</option>
+          <option>Quinta</option><option>Sexta</option><option>Sábado</option><option>Domingo</option>
+        </select>
+      </div>
+      <div class="field"><label>Horário</label><input type="time" id="mg-hora" value="20:00"></div>
+    </div>
+    <div class="field"><label>Esporte</label>
+      <select id="mg-esporte">
+        <option value="futsal">⚽ Futsal</option>
+        <option value="futebol">⚽ Futebol</option>
+        <option value="basquete">🏀 Basquete</option>
+        <option value="volei">🏐 Vôlei</option>
+        <option value="outro">🏆 Outro</option>
+      </select>
+    </div>
+    <div class="field"><label>Dia de reset da mensalidade</label>
+      <select id="mg-reset">
+        <option value="1">Todo dia 1</option>
+        <option value="15">Todo dia 15</option>
+        <option value="manual">Manual</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="salvarGrupo()">Salvar grupo</button>
+    <button class="modal-close" onclick="fecharModal('modal-grupo')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL SORTEIO -->
+<div class="modal-bg" id="modal-sorteio">
+  <div class="modal">
+    <p class="modal-title">🎲 Times Sorteados</p>
+    <div class="section-label" id="sorteio-info-label"></div>
+    <div class="times-sorteio" id="times-sorteio-display"></div>
+    <div class="btn-row">
+      <button class="btn-outline" onclick="sortearTimes()">↺ Sortear de novo</button>
+      <button class="btn-outline green" onclick="irParaPlacar()">🏆 Abrir Placar</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-outline wpp" onclick="compartilharTimes()">💬 Compartilhar times</button>
+    </div>
+    <button class="modal-close" onclick="fecharModal('modal-sorteio')">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL HISTÓRICO JOGO -->
+<div class="modal-bg" id="modal-jogo">
+  <div class="modal">
+    <p class="modal-title">📋 Registrar Resultado</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Salve o resultado final da partida no histórico do grupo.</p>
+    <div class="row2">
+      <div class="field"><label id="lbl-placar-a">Time A</label><input type="number" id="jogo-placar-a" min="0" value="0"></div>
+      <div class="field"><label id="lbl-placar-b">Time B</label><input type="number" id="jogo-placar-b" min="0" value="0"></div>
+    </div>
+    <button class="btn-primary" onclick="salvarJogo()">💾 Salvar no histórico</button>
+    <button class="modal-close" onclick="fecharModal('modal-jogo')">Cancelar</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+  <div class="logo">Bora <span>Jogar</span></div>
+  <p class="tagline">organize sua pelada, sorteie times e guarde o histórico</p>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-btn-grupos" onclick="setTab('grupos')">👥 Grupos</button>
+    <button class="tab" id="tab-btn-jogos" onclick="setTab('jogos')">🎲 Jogar</button>
+    <button class="tab" id="tab-btn-hist" onclick="setTab('hist')">📋 Histórico</button>
+  </div>
+
+  <!-- ══════ ABA GRUPOS ══════ -->
+  <div id="tab-grupos">
+    <div class="grupos-list" id="grupos-list"></div>
+    <button class="btn-primary" onclick="abrirModalGrupo()">+ Criar novo grupo</button>
+
+    <!-- DETALHE DO GRUPO SELECIONADO -->
+    <div id="grupo-detalhe" class="hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;margin-bottom:4px;">
+        <div class="section-label" style="margin:0;" id="detalhe-titulo">Membros</div>
+        <div class="mens-stats">
+          <div class="mens-chip">✅ <b id="mens-pago">0</b> pagaram</div>
+          <div class="mens-chip">⏳ <b id="mens-pend">0</b> pendentes</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+        <button class="btn-outline" style="font-size:11px;" onclick="marcarTodosPresentes()">✅ Todos presentes</button>
+        <button class="btn-outline" style="font-size:11px;" onclick="resetMensalidade()">🔄 Reset mensalidade</button>
+      </div>
+
+      <div class="add-membro-row">
+        <input type="text" id="inp-membro" placeholder="Nome do jogador…" onkeydown="if(event.key==='Enter')addMembro()">
+        <select id="sel-posicao" style="width:110px;"></select>
+        <button class="add-btn" onclick="addMembro()">+ add</button>
+      </div>
+
+      <div class="membros-list" id="membros-list"></div>
+
+      <div class="btn-row">
+        <button class="btn-outline wpp" onclick="compartilharLista()">💬 Compartilhar lista</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ ABA JOGAR ══════ -->
+  <div id="tab-jogos" class="hidden">
+    <div id="jogar-sem-grupo" class="empty-state">
+      <span class="emoji">👥</span>
+      Crie um grupo primeiro na aba <strong>Grupos</strong> para poder sortear times.
+    </div>
+
+    <div id="jogar-conteudo" class="hidden">
+      <div class="section-label">Grupo</div>
+      <select class="field" id="sel-grupo-jogar" onchange="carregarGrupoJogar()" style="width:100%;font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;background:var(--card);color:var(--ink);outline:none;margin-bottom:16px;color-scheme:dark;"></select>
+
+      <div class="section-label">Jogadores confirmados</div>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:8px;">Desmarque quem não vai jogar hoje.</p>
+      <div class="membros-list" id="confirmados-list"></div>
+
+      <div class="section-label" style="margin-top:16px;">Número de times</div>
+      <div class="row3" style="margin-bottom:16px;">
+        <button class="btn-outline" id="nteams-2" onclick="setNTimes(2)" style="font-size:14px;font-weight:600;">2 times</button>
+        <button class="btn-outline" id="nteams-3" onclick="setNTimes(3)" style="font-size:14px;font-weight:600;">3 times</button>
+        <button class="btn-outline" id="nteams-4" onclick="setNTimes(4)" style="font-size:14px;font-weight:600;">4 times</button>
+      </div>
+
+      <button class="btn-primary" onclick="sortearTimes()">🎲 Sortear times</button>
+    </div>
+  </div>
+
+  <!-- ══════ ABA HISTÓRICO ══════ -->
+  <div id="tab-hist" class="hidden">
+    <div id="hist-sem-grupo" class="empty-state">
+      <span class="emoji">📋</span>
+      Nenhum jogo registrado ainda. Jogue e salve o resultado para aparecer aqui.
+    </div>
+    <div id="hist-conteudo" class="hidden">
+      <div class="section-label">Filtrar por grupo</div>
+      <select id="sel-grupo-hist" onchange="renderHistorico()" style="width:100%;font-family:'DM Sans',sans-serif;font-size:13px;border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;background:var(--card);color:var(--ink);outline:none;margin-bottom:16px;color-scheme:dark;"></select>
+      <div id="hist-list"></div>
+    </div>
+  </div>
+
+  <!-- SOBRE -->
+  <div class="sobre-box">
+    <h2>Sobre o Bora Jogar</h2>
+    <p>O <strong>Bora Jogar</strong> organiza sua pelada recorrente do começo ao fim. Crie o grupo uma vez, adicione os jogadores com suas posições e todo jogo: compartilhe a lista no WhatsApp para a galera confirmar presença, sorteie times equilibrados por posição e abra o placar direto no app.</p>
+    <p>O histórico de resultados fica salvo no seu celular. Sem cadastro, sem servidor — tudo no navegador.</p>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  POSIÇÕES POR ESPORTE
+// ══════════════════════════════════════════
+const POSICOES = {
+  futsal:   ['Goleiro','Fixo','Ala','Pivo'],
+  futebol:  ['Goleiro','Zagueiro','Lateral','Meia','Atacante'],
+  basquete: ['Armador','Ala','Pivô'],
+  volei:    ['Levantador','Oposto','Ponteiro','Central','Líbero'],
+  outro:    ['Jogador'],
+};
+
+// ══════════════════════════════════════════
+//  STORAGE
+// ══════════════════════════════════════════
+const SK_GRUPOS  = 'boraJogar_grupos_v1';
+const SK_JOGOS   = 'boraJogar_jogos_v1';
+
+function loadGrupos()  { try { return JSON.parse(localStorage.getItem(SK_GRUPOS) || '[]'); } catch { return []; } }
+function saveGrupos(g) { localStorage.setItem(SK_GRUPOS, JSON.stringify(g)); }
+function loadJogos()   { try { return JSON.parse(localStorage.getItem(SK_JOGOS) || '[]'); } catch { return []; } }
+function saveJogos(j)  { localStorage.setItem(SK_JOGOS, JSON.stringify(j)); }
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let grupos       = loadGrupos();
+let jogos        = loadJogos();
+let grupoAtual   = null;   // id do grupo aberto
+let editandoId   = null;   // id do grupo sendo editado
+let nTimes       = 2;
+let timesAtual   = [];     // [{nome, membros:[]}]
+let grupoJogar   = null;   // grupo selecionado na aba jogar
+
+// ══════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════
+function setTab(t) {
+  ['grupos','jogos','hist'].forEach(id => {
+    document.getElementById('tab-' + id).classList.toggle('hidden', id !== t);
+    document.getElementById('tab-btn-' + id).classList.toggle('active', id === t);
+  });
+  if (t === 'jogos') renderAbaJogar();
+  if (t === 'hist')  renderAbaHist();
+}
+
+// ══════════════════════════════════════════
+//  ABA GRUPOS
+// ══════════════════════════════════════════
+function renderGrupos() {
+  const el = document.getElementById('grupos-list');
+  el.innerHTML = '';
+  if (!grupos.length) {
+    el.innerHTML = '<div class="empty-state"><span class="emoji">🏟️</span>Nenhum grupo criado ainda. Crie o primeiro abaixo!</div>';
+    return;
+  }
+  grupos.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'grupo-card' + (grupoAtual === g.id ? ' selected' : '');
+    div.innerHTML = `
+      <div class="grupo-info" onclick="selecionarGrupo('${g.id}')">
+        <div class="grupo-nome">${g.nome}</div>
+        <div class="grupo-meta">${g.dia} · ${g.hora} · ${POSICOES[g.esporte]?.[0] ? g.esporte : 'outro'} · ${g.membros.length} jogadores</div>
+      </div>
+      <div class="grupo-actions">
+        <button class="icon-btn" onclick="event.stopPropagation();abrirModalGrupo('${g.id}')">✏️</button>
+        <button class="icon-btn danger" onclick="event.stopPropagation();deletarGrupo('${g.id}')">🗑️</button>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+function selecionarGrupo(id) {
+  grupoAtual = grupoAtual === id ? null : id;
+  renderGrupos();
+  renderDetalheGrupo();
+}
+
+function renderDetalheGrupo() {
+  const det = document.getElementById('grupo-detalhe');
+  if (!grupoAtual) { det.classList.add('hidden'); return; }
+  const g = grupos.find(x => x.id === grupoAtual);
+  if (!g) { det.classList.add('hidden'); return; }
+  det.classList.remove('hidden');
+  document.getElementById('detalhe-titulo').textContent = `Membros — ${g.nome}`;
+
+  // posições do esporte
+  const posOpts = (POSICOES[g.esporte] || POSICOES.outro);
+  const sel = document.getElementById('sel-posicao');
+  sel.innerHTML = posOpts.map(p => `<option>${p}</option>`).join('');
+
+  renderMembros(g);
+}
+
+function renderMembros(g) {
+  const el = document.getElementById('membros-list');
+  el.innerHTML = '';
+  let pagos = 0, pend = 0;
+
+  g.membros.forEach((m, i) => {
+    if (m.pagou) pagos++; else pend++;
+    const div = document.createElement('div');
+    div.className = 'membro-item' + (m.presente === false ? ' ausente' : '');
+    div.innerHTML = `
+      <div class="membro-check" onclick="togglePresente('${g.id}',${i})" title="Presença">
+        ${m.presente !== false ? '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}
+      </div>
+      <span class="membro-nome">${m.nome}</span>
+      <span class="membro-pos">${m.posicao}</span>
+      <span class="membro-mens ${m.pagou ? 'pago' : 'pendente'}" onclick="toggleMensalidade('${g.id}',${i})">${m.pagou ? '💰 Pago' : '⏳ Pendente'}</span>
+      <button class="membro-del" onclick="removeMembro('${g.id}',${i})">×</button>
+    `;
+    el.appendChild(div);
+  });
+
+  document.getElementById('mens-pago').textContent = pagos;
+  document.getElementById('mens-pend').textContent = pend;
+}
+
+function addMembro() {
+  const g = grupos.find(x => x.id === grupoAtual);
+  if (!g) return;
+  const nome = document.getElementById('inp-membro').value.trim();
+  const pos  = document.getElementById('sel-posicao').value;
+  if (!nome) return;
+  g.membros.push({ nome, posicao: pos, presente: true, pagou: false });
+  saveGrupos(grupos);
+  document.getElementById('inp-membro').value = '';
+  document.getElementById('inp-membro').focus();
+  renderMembros(g);
+}
+
+function removeMembro(gid, idx) {
+  const g = grupos.find(x => x.id === gid);
+  g.membros.splice(idx, 1);
+  saveGrupos(grupos);
+  renderMembros(g);
+}
+
+function togglePresente(gid, idx) {
+  const g = grupos.find(x => x.id === gid);
+  g.membros[idx].presente = g.membros[idx].presente === false ? true : false;
+  saveGrupos(grupos);
+  renderMembros(g);
+}
+
+function toggleMensalidade(gid, idx) {
+  const g = grupos.find(x => x.id === gid);
+  g.membros[idx].pagou = !g.membros[idx].pagou;
+  saveGrupos(grupos);
+  renderMembros(g);
+}
+
+function marcarTodosPresentes() {
+  const g = grupos.find(x => x.id === grupoAtual);
+  g.membros.forEach(m => m.presente = true);
+  saveGrupos(grupos);
+  renderMembros(g);
+  toast('Todos marcados como presentes ✅');
+}
+
+function resetMensalidade() {
+  if (!confirm('Resetar status de mensalidade de todos?')) return;
+  const g = grupos.find(x => x.id === grupoAtual);
+  g.membros.forEach(m => m.pagou = false);
+  saveGrupos(grupos);
+  renderMembros(g);
+  toast('Mensalidades resetadas 🔄');
+}
+
+function compartilharLista() {
+  const g = grupos.find(x => x.id === grupoAtual);
+  if (!g) return;
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  let msg = `🏟️ *${g.nome} — ${g.dia} ${g.hora}*\n📅 ${hoje}\n\nConfirma presença? Responda com ✅ ou ❌\n\n`;
+  g.membros.forEach(m => {
+    msg += `${m.presente !== false ? '✅' : '❌'} ${m.nome} (${m.posicao})\n`;
+  });
+  msg += `\n_via Bora Jogar · boraapps.com.br_`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ══════════════════════════════════════════
+//  MODAL GRUPO
+// ══════════════════════════════════════════
+function abrirModalGrupo(id) {
+  editandoId = id || null;
+  const g = id ? grupos.find(x => x.id === id) : null;
+  document.getElementById('modal-grupo-title').textContent = g ? '✏️ Editar Grupo' : '🏟️ Novo Grupo';
+  document.getElementById('mg-nome').value    = g ? g.nome : '';
+  document.getElementById('mg-dia').value     = g ? g.dia : 'Terça';
+  document.getElementById('mg-hora').value    = g ? g.hora : '20:00';
+  document.getElementById('mg-esporte').value = g ? g.esporte : 'futsal';
+  document.getElementById('mg-reset').value   = g ? g.resetDia : '1';
+  abrirModal('modal-grupo');
+}
+
+function salvarGrupo() {
+  const nome = document.getElementById('mg-nome').value.trim();
+  if (!nome) { toast('Digite o nome do grupo.'); return; }
+
+  if (editandoId) {
+    const g = grupos.find(x => x.id === editandoId);
+    g.nome     = nome;
+    g.dia      = document.getElementById('mg-dia').value;
+    g.hora     = document.getElementById('mg-hora').value;
+    g.esporte  = document.getElementById('mg-esporte').value;
+    g.resetDia = document.getElementById('mg-reset').value;
+  } else {
+    grupos.push({
+      id:       'g_' + Date.now(),
+      nome,
+      dia:      document.getElementById('mg-dia').value,
+      hora:     document.getElementById('mg-hora').value,
+      esporte:  document.getElementById('mg-esporte').value,
+      resetDia: document.getElementById('mg-reset').value,
+      membros:  [],
+      criadoEm: new Date().toISOString(),
+    });
+  }
+
+  saveGrupos(grupos);
+  fecharModal('modal-grupo');
+  renderGrupos();
+  toast(editandoId ? 'Grupo atualizado ✅' : 'Grupo criado! Adicione os jogadores abaixo 👇');
+  editandoId = null;
+}
+
+function deletarGrupo(id) {
+  if (!confirm('Apagar este grupo e todo o histórico relacionado?')) return;
+  grupos = grupos.filter(x => x.id !== id);
+  if (grupoAtual === id) grupoAtual = null;
+  saveGrupos(grupos);
+  renderGrupos();
+  renderDetalheGrupo();
+  toast('Grupo removido.');
+}
+
+// ══════════════════════════════════════════
+//  ABA JOGAR
+// ══════════════════════════════════════════
+function renderAbaJogar() {
+  const temGrupos = grupos.length > 0;
+  document.getElementById('jogar-sem-grupo').classList.toggle('hidden', temGrupos);
+  document.getElementById('jogar-conteudo').classList.toggle('hidden', !temGrupos);
+  if (!temGrupos) return;
+
+  const sel = document.getElementById('sel-grupo-jogar');
+  sel.innerHTML = grupos.map(g => `<option value="${g.id}">${g.nome}</option>`).join('');
+  if (grupoJogar) sel.value = grupoJogar;
+  carregarGrupoJogar();
+  setNTimes(nTimes);
+}
+
+function carregarGrupoJogar() {
+  const gid = document.getElementById('sel-grupo-jogar').value;
+  grupoJogar = gid;
+  const g = grupos.find(x => x.id === gid);
+  if (!g) return;
+
+  const el = document.getElementById('confirmados-list');
+  el.innerHTML = '';
+  g.membros.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = 'membro-item' + (m.presente === false ? ' ausente' : '');
+    div.innerHTML = `
+      <div class="membro-check" onclick="togglePresenteJogar('${gid}',${i})" title="Vai jogar?">
+        ${m.presente !== false ? '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}
+      </div>
+      <span class="membro-nome">${m.nome}</span>
+      <span class="membro-pos">${m.posicao}</span>
+    `;
+    el.appendChild(div);
+  });
+}
+
+function togglePresenteJogar(gid, idx) {
+  const g = grupos.find(x => x.id === gid);
+  g.membros[idx].presente = g.membros[idx].presente === false ? true : false;
+  saveGrupos(grupos);
+  carregarGrupoJogar();
+}
+
+function setNTimes(n) {
+  nTimes = n;
+  [2,3,4].forEach(i => {
+    const btn = document.getElementById('nteams-' + i);
+    if (btn) btn.classList.toggle('green', i === n);
+  });
+}
+
+// ══════════════════════════════════════════
+//  SORTEIO
+// ══════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function sortearTimes() {
+  const gid = document.getElementById('sel-grupo-jogar')?.value || grupoJogar;
+  const g   = grupos.find(x => x.id === gid);
+  if (!g) return;
+
+  const presentes = g.membros.filter(m => m.presente !== false);
+  if (presentes.length < nTimes) {
+    toast(`Precisa de pelo menos ${nTimes} jogadores confirmados.`);
+    return;
+  }
+
+  // Sorteia respeitando posições: agrupa por posição e distribui round-robin
+  const porPosicao = {};
+  presentes.forEach(m => {
+    if (!porPosicao[m.posicao]) porPosicao[m.posicao] = [];
+    porPosicao[m.posicao].push(m);
+  });
+
+  // Embaralha dentro de cada posição
+  Object.keys(porPosicao).forEach(p => porPosicao[p] = shuffle(porPosicao[p]));
+
+  // Monta times vazios
+  const nomesTimes = ['Time A','Time B','Time C','Time D'];
+  timesAtual = Array.from({ length: nTimes }, (_, i) => ({ nome: nomesTimes[i], membros: [] }));
+
+  // Distribui round-robin por posição
+  let t = 0;
+  Object.values(porPosicao).forEach(jogadores => {
+    jogadores.forEach(j => {
+      timesAtual[t % nTimes].membros.push(j);
+      t++;
+    });
+  });
+
+  // Render modal
+  const display = document.getElementById('times-sorteio-display');
+  const labels  = ['time-a','time-b','time-c','time-d'];
+  display.innerHTML = '';
+  display.style.gridTemplateColumns = nTimes <= 2 ? '1fr 1fr' : '1fr 1fr';
+
+  timesAtual.forEach((time, i) => {
+    const box = document.createElement('div');
+    box.className = `time-box ${labels[i]}`;
+    box.innerHTML = `
+      <div class="time-header">${time.nome}</div>
+      ${time.membros.map(m => `
+        <div class="time-membro">
+          <span>${m.nome}</span>
+          <span class="time-membro-pos">${m.posicao}</span>
+        </div>`).join('')}
+    `;
+    display.appendChild(box);
+  });
+
+  const label = presentes.length + ' jogadores · ' + nTimes + ' times';
+  document.getElementById('sorteio-info-label').textContent = label;
+
+  // Salva no localStorage para o Bora Placar
+  const dadosPlacar = timesAtual.map(t => ({ nome: t.nome }));
+  localStorage.setItem('bora_sortear_times', JSON.stringify(dadosPlacar));
+
+  abrirModal('modal-sorteio');
+}
+
+function compartilharTimes() {
+  let msg = '🎲 *Times Sorteados — Bora Jogar*\n\n';
+  timesAtual.forEach(t => {
+    msg += `*${t.nome}:*\n`;
+    t.membros.forEach(m => msg += `  • ${m.nome} (${m.posicao})\n`);
+    msg += '\n';
+  });
+  msg += '_via Bora Jogar · boraapps.com.br_';
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function irParaPlacar() {
+  fecharModal('modal-sorteio');
+  // Preenche nomes dos times e abre Bora Placar
+  const nomeA = timesAtual[0]?.nome || 'Time A';
+  const nomeB = timesAtual[1]?.nome || 'Time B';
+  localStorage.setItem('bora_placar_nomeA', nomeA);
+  localStorage.setItem('bora_placar_nomeB', nomeB);
+
+  // Abre modal de registro de resultado antes de ir para o placar
+  document.getElementById('lbl-placar-a').textContent = nomeA;
+  document.getElementById('lbl-placar-b').textContent = nomeB;
+
+  window.open('bora-placar.html', '_blank');
+
+  // Pergunta se quer registrar resultado depois
+  setTimeout(() => {
+    if (confirm('Quando a partida terminar, volte aqui para registrar o resultado no histórico.\n\nJá terminou? Registrar agora?')) {
+      abrirModal('modal-jogo');
+    }
+  }, 800);
+}
+
+// ══════════════════════════════════════════
+//  HISTÓRICO
+// ══════════════════════════════════════════
+function renderAbaHist() {
+  const temJogos = jogos.length > 0;
+  document.getElementById('hist-sem-grupo').classList.toggle('hidden', temJogos);
+  document.getElementById('hist-conteudo').classList.toggle('hidden', !temJogos);
+  if (!temJogos) return;
+
+  const sel = document.getElementById('sel-grupo-hist');
+  sel.innerHTML = '<option value="">Todos os grupos</option>' +
+    grupos.map(g => `<option value="${g.id}">${g.nome}</option>`).join('');
+  renderHistorico();
+}
+
+function renderHistorico() {
+  const filtro = document.getElementById('sel-grupo-hist').value;
+  const lista  = filtro ? jogos.filter(j => j.grupoId === filtro) : jogos;
+  const el     = document.getElementById('hist-list');
+
+  if (!lista.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:20px 0;"><span class="emoji" style="font-size:28px;">📋</span>Nenhum jogo registrado neste grupo.</div>';
+    return;
+  }
+
+  el.innerHTML = [...lista].reverse().map(j => {
+    const g = grupos.find(x => x.id === j.grupoId);
+    const vencedor = j.placarA > j.placarB ? j.nomeA : j.placarB > j.placarA ? j.nomeB : 'Empate';
+    return `
+      <div class="hist-item">
+        <div class="hist-data">📅 ${j.data}${g ? ' · ' + g.nome : ''}</div>
+        <div class="hist-placar">${j.nomeA} ${j.placarA} × ${j.placarB} ${j.nomeB}</div>
+        <div class="hist-times">
+          ${vencedor !== 'Empate' ? '🏆 ' + vencedor : '🤝 Empate'}<br>
+          <span style="color:var(--purple-mid);">Time A:</span> ${j.membrosA.join(', ')}<br>
+          <span style="color:var(--orange);">Time B:</span> ${j.membrosB.join(', ')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function salvarJogo() {
+  const pA = parseInt(document.getElementById('jogo-placar-a').value) || 0;
+  const pB = parseInt(document.getElementById('jogo-placar-b').value) || 0;
+  const gid = grupoJogar;
+  const nomeA = timesAtual[0]?.nome || 'Time A';
+  const nomeB = timesAtual[1]?.nome || 'Time B';
+
+  jogos.push({
+    id:       'j_' + Date.now(),
+    grupoId:  gid,
+    data:     new Date().toLocaleDateString('pt-BR'),
+    nomeA,
+    nomeB,
+    placarA:  pA,
+    placarB:  pB,
+    membrosA: (timesAtual[0]?.membros || []).map(m => m.nome),
+    membrosB: (timesAtual[1]?.membros || []).map(m => m.nome),
+  });
+
+  saveJogos(jogos);
+  fecharModal('modal-jogo');
+  toast('Resultado salvo no histórico! 📋');
+}
+
+// ══════════════════════════════════════════
+//  MODAIS
+// ══════════════════════════════════════════
+function abrirModal(id)  { document.getElementById(id).classList.add('open'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Fechar clicando fora
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+renderGrupos();
+</script>
+</body>
+</html>

@@ -167,6 +167,10 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:180px;backgro
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.4 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
       mandar lista no whatsapp
     </button>
+    <button class="share-btn" onclick="levarParaMercado()" style="background:var(--green);margin-top:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      levar para o Bora no Mercado
+    </button>
   </div>
 </div>
 
@@ -290,6 +294,57 @@ function calcular() {
   const el = document.getElementById('resultado');
   el.style.display='block';
   el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function levarParaMercado() {
+  const r = listaResultado;
+  if (!r || !r.total) return;
+
+  // Monta array de itens no formato do Bora no Mercado
+  const itens = [];
+
+  r.carnes.forEach(i => {
+    itens.push({ nome: i.nome, qty: i.qtd, categoria: 'carnes e peixes', origem: 'churrasco' });
+  });
+  r.bebidas.forEach(i => {
+    itens.push({ nome: i.nome, qty: i.qtd, categoria: 'bebidas', origem: 'churrasco' });
+  });
+  r.acomp.forEach(i => {
+    itens.push({ nome: i.nome, qty: i.qtd, categoria: 'outros', origem: 'churrasco' });
+  });
+  itens.push({ nome: 'Carvão', qty: r.carvao + ' kg', categoria: 'outros', origem: 'churrasco' });
+  itens.push({ nome: 'Gelo', qty: r.gelo + ' kg', categoria: 'outros', origem: 'churrasco' });
+  itens.push({ nome: 'Sal grosso', qty: r.salKg + ' kg', categoria: 'temperos e condimentos', origem: 'churrasco' });
+
+  // Salva no localStorage para o Bora no Mercado ler
+  const existentes = JSON.parse(localStorage.getItem('bora_mercado_lista') || '[]');
+  const nomesExist = existentes.map(i => i.nome.toLowerCase());
+
+  const novos = itens
+    .filter(i => !nomesExist.includes(i.nome.toLowerCase()))
+    .map(i => ({
+      id: Date.now() + Math.random(),
+      nome: i.nome,
+      qty: i.qty,
+      preco: null,
+      categoria: i.categoria,
+      comprado: false,
+      ultimoPreco: null,
+      origem: 'churrasco'
+    }));
+
+  const merged = [...existentes, ...novos];
+  localStorage.setItem('bora_mercado_lista', JSON.stringify(merged));
+
+  // Feedback e redireciona
+  const total = novos.length;
+  if (total === 0) {
+    alert('Todos os itens já estão na sua lista do mercado!');
+  } else {
+    if (confirm(\`✅ \${total} item(ns) adicionado(s) ao Bora no Mercado!\n\nAbrir o Bora no Mercado agora?\`)) {
+      window.location.href = 'bora-no-mercado.html';
+    }
+  }
 }
 
 function compartilhar() {
